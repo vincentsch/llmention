@@ -1,0 +1,204 @@
+id: research.programming
+version: 2
+type: programming
+purpose: "Check facts about programming languages and their APIs, such as which version added a feature."
+context_mode: item_local
+default_modes: [memory, search_auto]
+repetitions: 1
+variants:
+  - id: default
+evaluators:
+  - id: exact
+    type: exact_or_alias
+metrics:
+  - id: programming.correct_rate
+    evaluator: exact
+    kind: rate
+  - id: programming.not_attempted_rate
+    evaluator: exact
+    kind: rate
+  - id: programming.hallucinated_api_rate
+    evaluator: exact
+    kind: rate
+  - id: programming.version_drift_rate
+    evaluator: exact
+    kind: rate
+  - id: programming.deprecated_as_current_rate
+    evaluator: exact
+    kind: rate
+  - id: programming.wrong_error_cause_rate
+    evaluator: exact
+    kind: rate
+  - id: programming.search_recovery_rate
+    evaluator: exact
+    kind: rate
+  - id: programming.search_regression_rate
+    evaluator: exact
+    kind: rate
+items:
+  - id: programming.go.range-over-func
+    type: programming.version_fact
+    stack:
+      language: go
+      ecosystem: go
+    question: "In Go, which version introduced range-over-function iterators?"
+    answers:
+      canonical: "Go 1.23"
+      aliases: ["1.23", "Go version 1.23"]
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    failure_cases:
+      - id: go-1-22
+        class: wrong_version
+        aliases: ["Go 1.22", "1.22"]
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [go, language-version, iterators]
+  - id: programming.typescript.satisfies-version
+    type: programming.version_fact
+    stack:
+      language: typescript
+      ecosystem: node
+      api: satisfies
+    question: "Which TypeScript version introduced the satisfies operator?"
+    answers:
+      canonical: "TypeScript 4.9"
+      aliases: ["4.9"]
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    failure_cases:
+      - id: ts-4-8
+        class: wrong_version
+        aliases: ["TypeScript 4.8", "4.8"]
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [typescript, language-version]
+  - id: programming.python.distutils-removed-version
+    type: programming.deprecation
+    stack:
+      language: python
+      ecosystem: python
+      library: distutils
+    question: "Which Python version removed distutils from the standard library?"
+    answers:
+      canonical: "Python 3.12"
+      aliases: ["3.12"]
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    failure_cases:
+      - id: distutils-still-in-stdlib
+        class: outdated_answer
+        aliases: ["still in the standard library", "distutils is still included"]
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [python, deprecation, stdlib]
+  - id: programming.postgresql.jsonb-version
+    type: programming.version_fact
+    stack:
+      language: sql
+      ecosystem: postgresql
+      library: postgresql
+      api: jsonb
+    question: "Which PostgreSQL version introduced jsonb?"
+    answers:
+      canonical: "PostgreSQL 9.4"
+      aliases: ["9.4"]
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    failure_cases:
+      - id: postgres-9-3
+        class: wrong_version
+        aliases: ["PostgreSQL 9.3", "9.3"]
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [postgresql, database, json]
+  - id: programming.redis.set-if-absent-flag
+    type: programming.api_existence
+    stack:
+      language: redis
+      ecosystem: redis
+      library: redis
+      api: set
+    question: "Which Redis SET option only sets a key when it does not already exist?"
+    answers:
+      canonical: "NX"
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    failure_cases:
+      - id: xx-flag
+        class: other_incorrect
+        aliases: ["XX"]
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [redis, api]
+  - id: programming.laravel.make-job-command
+    type: programming.api_existence
+    stack:
+      language: php
+      ecosystem: laravel
+      library: laravel
+      api: artisan-make-job
+    question: "Which Artisan command creates a queued job class in Laravel?"
+    answers:
+      canonical: "php artisan make:job"
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    failure_cases:
+      - id: make-queue-job
+        class: hallucinated_api
+        aliases: ["php artisan make:queue-job", "artisan make:queue-job"]
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [laravel, php, cli]
+  - id: programming.node.buffer-from-replacement
+    type: programming.deprecation
+    stack:
+      language: javascript
+      ecosystem: node
+      library: node
+      api: buffer
+    question: "In Node.js, which Buffer API is the non-deprecated replacement for creating a buffer from a string instead of using new Buffer(string)?"
+    answers:
+      canonical: "Buffer.from"
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    failure_cases:
+      - id: new-buffer
+        class: deprecated_as_current
+        aliases: ["new Buffer", "new Buffer(string)"]
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [node, javascript, deprecation]
+  - id: programming.go.concurrent-map-writes
+    type: programming.error_diagnosis
+    stack:
+      language: go
+      ecosystem: go
+    question: "In Go, what is the usual cause of the runtime error fatal error: concurrent map writes?"
+    answers:
+      canonical: "unsynchronized concurrent writes to a map"
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    failure_cases:
+      - id: gc-bug
+        class: wrong_error_cause
+        aliases: ["garbage collector bug", "Go runtime bug"]
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [go, error-diagnosis, concurrency]

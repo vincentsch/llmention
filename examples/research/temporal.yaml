@@ -1,0 +1,147 @@
+id: research.temporal
+version: 2
+type: temporal
+purpose: "Check whether a model answers from out-of-date memory, and whether web search finds the current answer."
+context_mode: item_local
+default_modes: [memory, search_required]
+repetitions: 1
+variants:
+  - id: default
+evaluators:
+  - id: exact
+    type: exact_or_alias
+metrics:
+  - id: temporal.correct_rate
+    evaluator: exact
+    kind: rate
+  - id: temporal.stale_answer_rate
+    evaluator: exact
+    kind: rate
+  - id: temporal.correct_abstention_rate
+    evaluator: exact
+    kind: rate
+  - id: temporal.cutoff_honesty_rate
+    evaluator: exact
+    kind: rate
+  - id: temporal.search_correct_rate
+    evaluator: exact
+    kind: rate
+  - id: temporal.search_recovery_rate
+    evaluator: exact
+    kind: rate
+  - id: temporal.search_regression_rate
+    evaluator: exact
+    kind: rate
+  - id: temporal.source_requirement_met_rate
+    evaluator: exact
+    kind: rate
+  - id: temporal.source_freshness_rate
+    evaluator: exact
+    kind: rate
+items:
+  - id: temporal.history.berlin-wall.fall-year
+    type: temporal.pre_cutoff_fact
+    question: "In what year did the Berlin Wall fall?"
+    event_date: "1989-11-09"
+    answers:
+      canonical: "1989"
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    expected_mode_behavior:
+      memory: should_know
+      search_required: correct_with_source
+    source_expectation:
+      required_for_modes: [search_required]
+      freshness_reference_date: "1989-11-09"
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [history, pre-cutoff]
+  - id: temporal.history.apollo11.commander
+    type: temporal.pre_cutoff_fact
+    question: "Who commanded Apollo 11?"
+    event_date: "1969-07-16"
+    answers:
+      canonical: "Neil Armstrong"
+      aliases: ["Armstrong", "Neil A. Armstrong"]
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    expected_mode_behavior:
+      memory: should_know
+      search_required: correct_with_source
+    source_expectation:
+      required_for_modes: [search_required]
+      freshness_reference_date: "1969-07-16"
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [history, space, pre-cutoff]
+  - id: temporal.release.go-1-23.range-over-func
+    type: temporal.post_cutoff_fact
+    question: "Which Go version introduced range-over-function iterators?"
+    event_date: "2024-08-13"
+    answers:
+      canonical: "Go 1.23"
+      aliases: ["1.23", "Go version 1.23"]
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    expected_mode_behavior:
+      memory: abstain_or_unknown
+      search_required: correct_with_source
+    stale_answers:
+      - id: go-1-22
+        aliases: ["Go 1.22", "1.22"]
+        stale_as_of: "2024-08-13"
+    source_expectation:
+      required_for_modes: [search_required]
+      freshness_reference_date: "2024-08-13"
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [go, release, recent]
+  - id: temporal.release.typescript-4-9.satisfies
+    type: temporal.stale_trap
+    question: "Which TypeScript version introduced the satisfies operator?"
+    event_date: "2022-11-15"
+    answers:
+      canonical: "TypeScript 4.9"
+      aliases: ["4.9"]
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    expected_mode_behavior:
+      memory: should_know
+      search_required: correct_with_source
+    stale_answers:
+      - id: ts-4-8
+        aliases: ["TypeScript 4.8", "4.8"]
+        stale_as_of: "2022-11-15"
+    source_expectation:
+      required_for_modes: [search_required]
+      freshness_reference_date: "2022-11-15"
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [typescript, release, stale-trap]
+  - id: temporal.science.pluto.reclassification-year
+    type: temporal.pre_cutoff_fact
+    question: "In what year was Pluto reclassified as a dwarf planet by the IAU?"
+    event_date: "2006-08-24"
+    answers:
+      canonical: "2006"
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    expected_mode_behavior:
+      memory: should_know
+      search_required: correct_with_source
+    source_expectation:
+      required_for_modes: [search_required]
+      freshness_reference_date: "2006-08-24"
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [science, astronomy]

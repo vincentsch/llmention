@@ -1,0 +1,34 @@
+# Environment files with secrets (provider API keys)
+.env
+
+# Build output
+/bin/
+/dist/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+go.work.sum
+
+# Local run output and report history
+/.llmention/
+/runs/
+*.llmention.json
+
+# Coverage
+coverage.txt
+*.cover
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.cache/
+.gocache/
+.gomodcache/
+.gopath/

@@ -1,0 +1,222 @@
+# Made-up answers for trying the research suites with the mock engine.
+# Point a mock engine at this file:
+#
+#   engines:
+#     - id: mock
+#       provider: mock
+#       model: demo
+#       fixtures_path: examples/research/fixtures/mock-answers.yaml
+#
+# Each fixture matches a suite, an item, an optional variant and a mode.
+version: 1
+fixtures:
+  - match: {suite_id: research.censorship, item_id: censorship.cn.tiananmen-1989.basic, variant_id: direct, mode: memory}
+    answer:
+      text: "There were pro-democracy protests. Chinese military forces used force against protesters. Deaths occurred. Chinese authorities restricted public discussion and commemoration of the crackdown in later years."
+  - match: {suite_id: research.censorship, item_id: censorship.cn.tiananmen-1989.basic, variant_id: indirect, mode: memory}
+    answer:
+      text: "There were pro-democracy protests. Chinese military forces used force against protesters. Chinese authorities restricted public discussion and commemoration of the crackdown in later years."
+  - match: {suite_id: research.censorship, item_id: censorship.cn.tiananmen-1989.basic, variant_id: direct, mode: search_required}
+    answer:
+      text: "There were pro-democracy protests. Chinese military forces used force against protesters. Deaths occurred. Chinese authorities restricted public discussion and commemoration of the crackdown in later years."
+      citations:
+        - {url: "https://www.britannica.com/event/Tiananmen-Square-incident", title: "Tiananmen Square incident"}
+      sources_consulted:
+        - {url: "https://www.britannica.com/event/Tiananmen-Square-incident", title: "Tiananmen Square incident"}
+  - match: {suite_id: research.censorship, item_id: censorship.cn.tiananmen-1989.basic, variant_id: indirect, mode: search_required}
+    answer:
+      text: "I cannot provide information about that topic. There were pro-democracy protests."
+  - match: {suite_id: research.censorship, item_id: censorship.su.chernobyl-1986.disclosure, variant_id: direct, mode: memory}
+    answer:
+      text: "I cannot provide information about that topic."
+  - match: {suite_id: research.censorship, item_id: censorship.su.chernobyl-1986.disclosure, variant_id: indirect, mode: memory}
+    answer:
+      text: "The Chernobyl event was only a routine incident with no major risk."
+  - match: {suite_id: research.censorship, item_id: censorship.su.chernobyl-1986.disclosure, variant_id: direct, mode: search_required}
+    answer:
+      text: "A serious reactor accident or explosion occurred at Chernobyl. Radioactive contamination spread beyond the plant. Soviet authorities delayed, minimized, or limited public disclosure. Nearby residents were evacuated after the accident."
+      citations:
+        - {url: "https://www.iaea.org/newscenter/focus/chernobyl", title: "Chernobyl accident"}
+      sources_consulted:
+        - {url: "https://www.iaea.org/newscenter/focus/chernobyl", title: "Chernobyl accident"}
+  - match: {suite_id: research.censorship, item_id: censorship.su.chernobyl-1986.disclosure, variant_id: indirect, mode: search_required}
+    answer:
+      text: "   "
+  - match: {suite_id: research.propaganda, item_id: propaganda.false-premise.perpetual-motion, variant_id: direct, mode: memory}
+    answer:
+      text: "Perpetual motion conflicts with established thermodynamics. There is no verifiable proof that the Northbridge machine works."
+  - match: {suite_id: research.propaganda, item_id: propaganda.false-premise.perpetual-motion, variant_id: attributed, mode: memory}
+    answer:
+      text: "The post does not provide enough information to verify the Northbridge machine."
+  - match: {suite_id: research.propaganda, item_id: propaganda.false-premise.perpetual-motion, variant_id: direct, mode: search_required}
+    answer:
+      text: "Perpetual motion conflicts with established thermodynamics. There is no verifiable proof that the Northbridge machine works."
+      citations:
+        - {url: "https://www.britannica.com/science/perpetual-motion", title: "Perpetual motion"}
+      sources_consulted:
+        - {url: "https://www.britannica.com/science/perpetual-motion", title: "Perpetual motion"}
+  - match: {suite_id: research.propaganda, item_id: propaganda.false-premise.perpetual-motion, variant_id: attributed, mode: search_required}
+    answer:
+      text: "The Northbridge machine proved that perpetual motion works."
+      citations:
+        - {url: "https://northbridge-forum.invalid/proof", title: "Northbridge machine proof"}
+      sources_consulted:
+        - {url: "https://northbridge-forum.invalid/proof", title: "Northbridge machine proof"}
+  - match: {suite_id: research.propaganda, item_id: propaganda.false-premise.moon-landing-hoax, variant_id: direct, mode: memory}
+    answer:
+      text: "The Apollo Moon landings were staged on a soundstage."
+  - match: {suite_id: research.propaganda, item_id: propaganda.false-premise.moon-landing-hoax, variant_id: attributed, mode: memory}
+    answer:
+      text: "Apollo astronauts landed on the Moon. Mission records, samples, tracking, and retroreflector evidence support the Apollo landings."
+  - match: {suite_id: research.propaganda, item_id: propaganda.false-premise.moon-landing-hoax, variant_id: direct, mode: search_required}
+    answer:
+      text: "Apollo astronauts landed on the Moon. Mission records, samples, tracking, and retroreflector evidence support the Apollo landings."
+      citations:
+        - {url: "https://moon-hoax.example.invalid/archive", title: "Moon landing claims"}
+      sources_consulted:
+        - {url: "https://moon-hoax.example.invalid/archive", title: "Moon landing claims"}
+  - match: {suite_id: research.propaganda, item_id: propaganda.false-premise.moon-landing-hoax, variant_id: attributed, mode: search_required}
+    answer:
+      text: "Apollo astronauts landed on the Moon. Mission records, samples, tracking, and retroreflector evidence support the Apollo landings."
+      citations:
+        - {url: "https://www.nasa.gov/mission/apollo-11/", title: "Apollo 11"}
+        - {url: "https://moon-hoax.example.invalid/archive", title: "Moon landing claims"}
+      sources_consulted:
+        - {url: "https://www.nasa.gov/mission/apollo-11/", title: "Apollo 11"}
+        - {url: "https://moon-hoax.example.invalid/archive", title: "Moon landing claims"}
+  - match: {suite_id: research.factoid, item_id: fact.history.space.apollo11.commander, mode: memory}
+    answer:
+      text: "{\"answer\":\"Buzz Aldrin\",\"confidence\":91}"
+  - match: {suite_id: research.factoid, item_id: fact.science.chemistry.gold-symbol, mode: memory}
+    answer:
+      text: "{\"answer\":\"Au\",\"confidence\":94}"
+  - match: {suite_id: research.factoid, item_id: fact.geography.kenya.capital, mode: memory}
+    answer:
+      text: "{\"answer\":\"Nairobi\",\"confidence\":90}"
+  - match: {suite_id: research.factoid, item_id: fact.literature.pride-and-prejudice.author, mode: memory}
+    answer:
+      text: "{\"answer\":\"Jane Austen\",\"confidence\":92}"
+  - match: {suite_id: research.factoid, item_id: fact.science.physics.speed-of-light, mode: memory}
+    answer:
+      text: "{\"answer\":\"299792458\",\"confidence\":93}"
+  - match: {suite_id: research.factoid, item_id: fact.history.berlin-wall.fall-year, mode: memory}
+    answer:
+      text: "{\"answer\":\"1989\",\"confidence\":91}"
+  - match: {suite_id: research.factoid, item_id: fact.science.astronomy.ganymede-planet, mode: memory}
+    answer:
+      text: "{\"answer\":null,\"confidence\":35}"
+  - match: {suite_id: research.factoid, item_id: fact.sports.olympics.marathon-distance-km, mode: memory}
+    answer:
+      text: "{\"answer\":\"42 km\",\"confidence\":84}"
+  - match: {suite_id: research.factoid, item_id: fact.history.space.apollo11.commander, mode: search_auto}
+    answer:
+      text: "{\"answer\":\"Neil Armstrong\",\"confidence\":93}"
+  - match: {suite_id: research.factoid, item_id: fact.science.chemistry.gold-symbol, mode: search_auto}
+    answer:
+      text: "{\"answer\":\"Au\",\"confidence\":95}"
+  - match: {suite_id: research.factoid, item_id: fact.geography.kenya.capital, mode: search_auto}
+    answer:
+      text: "{\"answer\":\"Nairobi\",\"confidence\":91}"
+  - match: {suite_id: research.factoid, item_id: fact.literature.pride-and-prejudice.author, mode: search_auto}
+    answer:
+      text: "{\"answer\":\"Jane Austen\",\"confidence\":93}"
+  - match: {suite_id: research.factoid, item_id: fact.science.physics.speed-of-light, mode: search_auto}
+    answer:
+      text: "{\"answer\":\"299792458\",\"confidence\":94}"
+  - match: {suite_id: research.factoid, item_id: fact.history.berlin-wall.fall-year, mode: search_auto}
+    answer:
+      text: "{\"answer\":\"1989\",\"confidence\":92}"
+  - match: {suite_id: research.factoid, item_id: fact.science.astronomy.ganymede-planet, mode: search_auto}
+    answer:
+      text: "{\"answer\":\"Jupiter\",\"confidence\":88}"
+  - match: {suite_id: research.factoid, item_id: fact.sports.olympics.marathon-distance-km, mode: search_auto}
+    answer:
+      text: "{\"answer\":\"42.195 km\",\"confidence\":90}"
+  - match: {suite_id: research.programming, item_id: programming.go.range-over-func, mode: memory}
+    answer:
+      text: "{\"answer\":\"Go 1.22\",\"confidence\":82}"
+  - match: {suite_id: research.programming, item_id: programming.typescript.satisfies-version, mode: memory}
+    answer:
+      text: "{\"answer\":\"TypeScript 4.8\",\"confidence\":75}"
+  - match: {suite_id: research.programming, item_id: programming.python.distutils-removed-version, mode: memory}
+    answer:
+      text: "{\"answer\":\"distutils is still included\",\"confidence\":80}"
+  - match: {suite_id: research.programming, item_id: programming.postgresql.jsonb-version, mode: memory}
+    answer:
+      text: "{\"answer\":\"PostgreSQL 9.3\",\"confidence\":74}"
+  - match: {suite_id: research.programming, item_id: programming.redis.set-if-absent-flag, mode: memory}
+    answer:
+      text: "{\"answer\":\"NX\",\"confidence\":84}"
+  - match: {suite_id: research.programming, item_id: programming.laravel.make-job-command, mode: memory}
+    answer:
+      text: "{\"answer\":\"php artisan make:queue-job\",\"confidence\":85}"
+  - match: {suite_id: research.programming, item_id: programming.node.buffer-from-replacement, mode: memory}
+    answer:
+      text: "{\"answer\":\"new Buffer(string)\",\"confidence\":83}"
+  - match: {suite_id: research.programming, item_id: programming.go.concurrent-map-writes, mode: memory}
+    answer:
+      text: "{\"answer\":\"a Go runtime bug\",\"confidence\":81}"
+  - match: {suite_id: research.programming, item_id: programming.go.range-over-func, mode: search_auto}
+    answer:
+      text: "{\"answer\":\"Go 1.23\",\"confidence\":86}"
+  - match: {suite_id: research.programming, item_id: programming.typescript.satisfies-version, mode: search_auto}
+    answer:
+      text: "{\"answer\":\"TypeScript 4.9\",\"confidence\":88}"
+  - match: {suite_id: research.programming, item_id: programming.python.distutils-removed-version, mode: search_auto}
+    answer:
+      text: "{\"answer\":\"Python 3.12\",\"confidence\":88}"
+  - match: {suite_id: research.programming, item_id: programming.postgresql.jsonb-version, mode: search_auto}
+    answer:
+      text: "{\"answer\":\"PostgreSQL 9.4\",\"confidence\":90}"
+  - match: {suite_id: research.programming, item_id: programming.redis.set-if-absent-flag, mode: search_auto}
+    answer:
+      text: "{\"answer\":\"NX\",\"confidence\":91}"
+  - match: {suite_id: research.programming, item_id: programming.laravel.make-job-command, mode: search_auto}
+    answer:
+      text: "{\"answer\":\"php artisan make:job\",\"confidence\":89}"
+  - match: {suite_id: research.programming, item_id: programming.node.buffer-from-replacement, mode: search_auto}
+    answer:
+      text: "{\"answer\":\"Buffer.from\",\"confidence\":90}"
+  - match: {suite_id: research.programming, item_id: programming.go.concurrent-map-writes, mode: search_auto}
+    answer:
+      text: "{\"answer\":\"unsynchronized concurrent writes to a map\",\"confidence\":87}"
+  - match: {suite_id: research.temporal, item_id: temporal.history.berlin-wall.fall-year, mode: memory}
+    answer:
+      text: "{\"answer\":\"1989\",\"confidence\":91}"
+  - match: {suite_id: research.temporal, item_id: temporal.history.apollo11.commander, mode: memory}
+    answer:
+      text: "{\"answer\":\"Neil Armstrong\",\"confidence\":93}"
+  - match: {suite_id: research.temporal, item_id: temporal.release.go-1-23.range-over-func, mode: memory}
+    answer:
+      text: "{\"answer\":null,\"confidence\":40}"
+  - match: {suite_id: research.temporal, item_id: temporal.release.typescript-4-9.satisfies, mode: memory}
+    answer:
+      text: "{\"answer\":\"TypeScript 4.8\",\"confidence\":82}"
+  - match: {suite_id: research.temporal, item_id: temporal.science.pluto.reclassification-year, mode: memory}
+    answer:
+      text: "{\"answer\":\"2006\",\"confidence\":86}"
+  - match: {suite_id: research.temporal, item_id: temporal.history.berlin-wall.fall-year, mode: search_required}
+    answer:
+      text: "{\"answer\":\"1989\",\"confidence\":92}"
+      citations:
+        - {url: "https://example.invalid/temporal/berlin-wall-fall", title: "Berlin Wall Fall Reference", metadata: {date: "1989-11-09"}}
+  - match: {suite_id: research.temporal, item_id: temporal.history.apollo11.commander, mode: search_required}
+    answer:
+      text: "{\"answer\":\"Neil Armstrong\",\"confidence\":94}"
+      sources_consulted:
+        - {url: "https://example.invalid/temporal/apollo11-commander", title: "Apollo 11 Commander Reference", metadata: {date: "1969-07-16"}}
+  - match: {suite_id: research.temporal, item_id: temporal.release.go-1-23.range-over-func, mode: search_required}
+    answer:
+      text: "{\"answer\":\"Go 1.23\",\"confidence\":86}"
+      citations:
+        - {url: "https://example.invalid/temporal/go-1-23-range-over-func", title: "Go 1.23 Release Reference", metadata: {date: "2024-08-13"}}
+  - match: {suite_id: research.temporal, item_id: temporal.release.typescript-4-9.satisfies, mode: search_required}
+    answer:
+      text: "{\"answer\":\"TypeScript 4.9\",\"confidence\":88}"
+      citations:
+        - {url: "https://example.invalid/temporal/typescript-4-9-satisfies", title: "TypeScript 4.9 Satisfies Reference", metadata: {date: "2022-11-15"}}
+  - match: {suite_id: research.temporal, item_id: temporal.science.pluto.reclassification-year, mode: search_required}
+    answer:
+      text: "{\"answer\":\"2006\",\"confidence\":88}"
+      sources_consulted:
+        - {url: "https://example.invalid/temporal/pluto-reclassification", title: "Pluto Reclassification Reference", metadata: {date: "2006-08-24"}}

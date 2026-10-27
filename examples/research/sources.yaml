@@ -1,0 +1,87 @@
+id: research.sources
+version: 1
+type: sources
+purpose: "Check which sites a searching assistant reads or cites when asked about your brand."
+context_mode: project_bound
+default_modes: [search_auto, search_required]
+repetitions: 1
+variants:
+  - id: direct
+    template: "{{ .Prompt }}"
+evaluators:
+  - id: source
+    type: source_domain
+metrics:
+  - id: sources.owned_domain_citation_rate
+    evaluator: source
+    kind: rate
+  - id: sources.competitor_domain_citation_rate
+    evaluator: source
+    kind: rate
+  - id: sources.preferred_domain_citation_rate
+    evaluator: source
+    kind: rate
+  - id: sources.blocked_domain_citation_rate
+    evaluator: source
+    kind: rate
+  - id: sources.owned_domain_citation_share
+    evaluator: source
+    kind: rate
+  - id: sources.competitor_domain_citation_share
+    evaluator: source
+    kind: rate
+  - id: sources.preferred_domain_citation_share
+    evaluator: source
+    kind: rate
+  - id: sources.blocked_domain_citation_share
+    evaluator: source
+    kind: rate
+  - id: sources.owned_domain_consulted_rate
+    evaluator: source
+    kind: rate
+  - id: sources.competitor_domain_consulted_rate
+    evaluator: source
+    kind: rate
+  - id: sources.cited_domain_count
+    evaluator: source
+    kind: integer
+  - id: sources.consulted_domain_count
+    evaluator: source
+    kind: integer
+  - id: sources.citation_domain_observation_count
+    evaluator: source
+    kind: integer
+  - id: sources.consulted_domain_observation_count
+    evaluator: source
+    kind: integer
+  - id: sources.search_query_count
+    evaluator: source
+    kind: integer
+  - id: sources.citation_source_mismatch_rate
+    evaluator: source
+    kind: rate
+items:
+  - id: sources.brand.domain-citation
+    type: sources.owned_domain
+    prompt: "What is {{ .Brand.Name }} and what does it offer in {{ .Brand.Category }}?"
+    preferred_domains: ["github.com"]
+    blocked_domains: ["reddit.com", "quora.com"]
+    evaluator_ids: [source]
+    metric_ids:
+      - sources.owned_domain_citation_rate
+      - sources.competitor_domain_citation_rate
+      - sources.preferred_domain_citation_rate
+      - sources.blocked_domain_citation_rate
+      - sources.owned_domain_citation_share
+      - sources.competitor_domain_citation_share
+      - sources.preferred_domain_citation_share
+      - sources.blocked_domain_citation_share
+      - sources.owned_domain_consulted_rate
+      - sources.competitor_domain_consulted_rate
+      - sources.cited_domain_count
+      - sources.consulted_domain_count
+      - sources.citation_domain_observation_count
+      - sources.consulted_domain_observation_count
+      - sources.search_query_count
+      - sources.citation_source_mismatch_rate
+    tags: [brand, source-quality]

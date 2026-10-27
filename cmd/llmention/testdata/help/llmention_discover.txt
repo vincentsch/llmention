@@ -1,0 +1,45 @@
+Suggest prompts for llmention.yaml. Without --from it fills question templates with your topics, which costs nothing. With --from chab and CHAB_API_KEY set, it uses search data from Chab (chab.ai). It reads the "People also ask" questions on Google and asks for related search phrases, then sorts the questions by how often people search for them each month. Questions that name your brand are left out. Use --out to write a prompts file.
+
+Related commands:
+  llmention run
+  llmention init
+
+Output:
+  Shows text you can read in your terminal.
+  Use --json to get JSON for scripts and other programs.
+  Use --jq to filter the JSON output with a jq expression.
+  Use --template to format the output with a Go template.
+
+Usage:
+  llmention discover [flags]
+
+Examples:
+llmention discover
+llmention discover --seed "LLM cost tracking" --seed "OpenAI usage dashboard"
+llmention discover --from chab --seed "LLM cost tracking" --dry-run
+llmention discover --from chab --seed "LLM cost tracking" --out prompts.txt
+
+Flags:
+      --country string     Country for search data, as a two-letter code (default "US")
+      --force              Overwrite the --out file
+      --from string        Where to find questions: chab, or leave it out for templates
+  -h, --help               help for discover
+      --language string    Language for search data (default "en-US")
+      --limit int          Show at most this many suggestions (default 25)
+      --out string         Write the suggestions to this prompts file, one per line
+      --pages int          Search result pages to read with --from chab (5 Chab credits each) (default 3)
+      --seed stringArray   A topic or search phrase (repeatable, default: brand.category)
+
+Global Flags:
+      --config string     Path to the config file
+      --dry-run           Preview changes without performing them
+      --include-meta      Wrap machine output as {data, meta} (commands that expose request metadata)
+      --jq string         Transform stable JSON output with a jq expression (commands with machine output)
+      --json              Output stable JSON instead of the human view
+      --no-ansi           Disable all ANSI/control sequences in human output
+      --no-color          Disable color in human output
+      --no-pager          Never use a pager for long human output
+      --no-prompt         Never block on an interactive prompt
+      --plain             Print unstyled, copy-safe text (commands with human output)
+      --quiet             Suppress non-essential output
+      --template string   Render stable JSON output through a Go text/template (commands with machine output)

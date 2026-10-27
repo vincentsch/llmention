@@ -1,0 +1,46 @@
+Send the prompts in llmention.yaml to each engine in each mode, then save the answers as a run and print the summary. Use --dry-run first. It sends nothing and shows how many requests the run would send and roughly what they cost. It also says which API keys are set. Ctrl+C stops the run and saves the answers that already came back.
+
+Related commands:
+  llmention report
+  llmention init
+
+Output:
+  Shows text you can read in your terminal.
+  Use --json to get JSON for scripts and other programs.
+  Use --jq to filter the JSON output with a jq expression.
+  Use --template to format the output with a Go template.
+
+Usage:
+  llmention run [flags]
+
+Examples:
+llmention run --dry-run
+llmention run
+llmention run --engine chatgpt --mode search
+llmention run --fail-under mention-rate=40%
+llmention run --suite recognition.basic
+llmention run --json
+
+Flags:
+      --engine strings           Only ask these engines (ids from llmention.yaml, comma-separated)
+      --fail-under stringArray   Fail with exit code 7 when a number is below a threshold, for example mention-rate=40% (repeatable)
+  -h, --help                     help for run
+      --judge                    Use the AI grader set up under analysis.judge
+      --max-requests int         The most requests this run may send, retries included (default execution.max_requests)
+      --mode strings             Only use these modes (no-search, search, forced-search, default)
+      --repetitions int          Ask each prompt this many times (default from llmention.yaml)
+      --suite strings            Run these suites instead of your prompts, for example recognition.basic
+
+Global Flags:
+      --config string     Path to the config file
+      --dry-run           Preview changes without performing them
+      --include-meta      Wrap machine output as {data, meta} (commands that expose request metadata)
+      --jq string         Transform stable JSON output with a jq expression (commands with machine output)
+      --json              Output stable JSON instead of the human view
+      --no-ansi           Disable all ANSI/control sequences in human output
+      --no-color          Disable color in human output
+      --no-pager          Never use a pager for long human output
+      --no-prompt         Never block on an interactive prompt
+      --plain             Print unstyled, copy-safe text (commands with human output)
+      --quiet             Suppress non-essential output
+      --template string   Render stable JSON output through a Go text/template (commands with machine output)

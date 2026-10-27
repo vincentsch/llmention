@@ -1,0 +1,166 @@
+id: research.factoid
+version: 2
+type: factoid
+purpose: "Check short factual answers against one right answer and its accepted spellings."
+context_mode: item_local
+default_modes: [memory, search_auto]
+repetitions: 1
+variants:
+  - id: default
+evaluators:
+  - id: exact
+    type: exact_or_alias
+metrics:
+  - id: factoid.correct_rate
+    evaluator: exact
+    kind: rate
+  - id: factoid.incorrect_rate
+    evaluator: exact
+    kind: rate
+  - id: factoid.not_attempted_rate
+    evaluator: exact
+    kind: rate
+  - id: factoid.overconfident_wrong_rate
+    evaluator: exact
+    kind: rate
+  - id: factoid.search_recovery_rate
+    evaluator: exact
+    kind: rate
+  - id: factoid.search_regression_rate
+    evaluator: exact
+    kind: rate
+items:
+  - id: fact.history.space.apollo11.commander
+    type: factoid.single_answer
+    question: "Who commanded Apollo 11?"
+    answers:
+      canonical: "Neil Armstrong"
+      aliases: ["Armstrong", "Neil A. Armstrong"]
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    known_wrong_answers:
+      - id: buzz-aldrin
+        aliases: ["Buzz Aldrin"]
+    sources:
+      - title: "Apollo 11 Mission Overview"
+        url: "https://example.invalid/fact/apollo11-mission-overview"
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [history, space, person]
+  - id: fact.science.chemistry.gold-symbol
+    type: factoid.single_answer
+    question: "What is the chemical symbol for gold?"
+    answers:
+      canonical: "Au"
+      aliases: ["gold symbol Au"]
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    sources:
+      - title: "Gold Element Reference"
+        url: "https://example.invalid/fact/gold-element-reference"
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [science, chemistry]
+  - id: fact.geography.kenya.capital
+    type: factoid.single_answer
+    question: "What is the capital of Kenya?"
+    answers:
+      canonical: "Nairobi"
+      aliases: ["Nairobi, Kenya"]
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    sources:
+      - title: "Kenya Capital Reference"
+        url: "https://example.invalid/fact/kenya-capital-reference"
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [geography, capital]
+  - id: fact.literature.pride-and-prejudice.author
+    type: factoid.single_answer
+    question: "Who wrote Pride and Prejudice?"
+    answers:
+      canonical: "Jane Austen"
+      aliases: ["Austen", "Jane A."]
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    sources:
+      - title: "Pride and Prejudice Reference"
+        url: "https://example.invalid/fact/pride-and-prejudice-reference"
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [arts, literature]
+  - id: fact.science.physics.speed-of-light
+    type: factoid.single_answer
+    question: "What is the exact speed of light in vacuum in meters per second?"
+    answers:
+      canonical: "299792458"
+      aliases: ["299,792,458", "299792458 m/s", "299,792,458 m/s"]
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    sources:
+      - title: "Speed of Light Reference"
+        url: "https://example.invalid/fact/speed-of-light-reference"
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [science, physics]
+  - id: fact.history.berlin-wall.fall-year
+    type: factoid.single_answer
+    question: "In what year did the Berlin Wall fall?"
+    answers:
+      canonical: "1989"
+      aliases: ["the year 1989"]
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    sources:
+      - title: "Berlin Wall Reference"
+        url: "https://example.invalid/fact/berlin-wall-reference"
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [history]
+  - id: fact.science.astronomy.ganymede-planet
+    type: factoid.single_answer
+    question: "Ganymede is a moon of which planet?"
+    answers:
+      canonical: "Jupiter"
+      aliases: ["planet Jupiter"]
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    sources:
+      - title: "Ganymede Reference"
+        url: "https://example.invalid/fact/ganymede-reference"
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [science, astronomy]
+  - id: fact.sports.olympics.marathon-distance-km
+    type: factoid.single_answer
+    question: "What is the standard Olympic marathon distance in kilometers?"
+    answers:
+      canonical: "42.195 km"
+      aliases: ["42.195km", "42.195 kilometers"]
+    grading:
+      type: exact_or_alias
+      abstain_allowed: true
+      confidence: optional
+    known_wrong_answers:
+      - id: forty-two-km
+        aliases: ["42 km", "42 kilometers"]
+    sources:
+      - title: "Marathon Distance Reference"
+        url: "https://example.invalid/fact/marathon-distance-reference"
+    dimensions: {}
+    comparison_group_id: ""
+    tags: [sports, measurement]

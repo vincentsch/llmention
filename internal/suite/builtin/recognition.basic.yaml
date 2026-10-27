@@ -1,0 +1,38 @@
+id: recognition.basic
+version: 3
+type: recognition
+context_mode: project_bound
+purpose: "Ask each model, without web search, who or what each name and site under brand in llmention.yaml is."
+default_modes: [memory]
+repetitions: 1
+evaluators:
+  - id: cluster
+    type: entity_cluster
+metrics:
+  - id: recognition.target_recognition_rate
+    evaluator: cluster
+    kind: rate
+  - id: recognition.known_namesake_rate
+    evaluator: cluster
+    kind: rate
+  - id: recognition.unknown_namesake_rate
+    evaluator: cluster
+    kind: rate
+  - id: recognition.hallucination_candidate_rate
+    evaluator: cluster
+    kind: rate
+  - id: recognition.non_target_rate
+    evaluator: cluster
+    kind: rate
+  - id: recognition.model_coverage
+    evaluator: cluster
+    kind: rate
+  - id: recognition.avg_confidence
+    evaluator: cluster
+    kind: number
+  - id: recognition.strength
+    evaluator: cluster
+    kind: score
+# The items come from brand.name, brand.products, brand.people and
+# brand.domains in llmention.yaml when the suite runs.
+items: []

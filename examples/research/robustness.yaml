@@ -1,0 +1,41 @@
+id: research.robustness
+version: 1
+type: robustness
+purpose: "Check whether your brand still comes up when the same question is worded differently."
+context_mode: project_bound
+default_modes: [provider_default, memory, search_auto]
+repetitions: 1
+evaluators:
+  - id: mention
+    type: mention_match
+  - id: source
+    type: source_domain
+  - id: stability
+    type: stability
+metrics:
+  - id: robustness.mention_variance
+    evaluator: stability
+    kind: number
+  - id: robustness.citation_domain_variance
+    evaluator: stability
+    kind: number
+  - id: robustness.consulted_domain_variance
+    evaluator: stability
+    kind: number
+items:
+  - id: robustness.visibility.alternatives
+    type: robustness.paraphrase_set
+    base_item: visibility.brand.alternatives
+    variants:
+      - id: direct
+        prompt: "What are alternatives to {{ .Brand.Name }}?"
+      - id: buyer
+        prompt: "I am considering {{ .Brand.Name }}. Which similar {{ .Brand.Category }} options should I evaluate?"
+      - id: neutral
+        prompt: "List {{ .Brand.Category }} options in the same category as {{ .Brand.Name }}."
+    evaluator_ids: [mention, source, stability]
+    metric_ids:
+      - robustness.mention_variance
+      - robustness.citation_domain_variance
+      - robustness.consulted_domain_variance
+    tags: [robustness, visibility]
