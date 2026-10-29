@@ -91,6 +91,14 @@ func TestDryRunNotesStandApartFromTheEngineList(t *testing.T) {
 	}
 }
 
+func TestDryRunEngineListStaysAlignedWithLongIDs(t *testing.T) {
+	inTempProject(t, strings.Replace(mockProject, "{id: claude-demo,", "{id: perplexity-typo-demo,", 1))
+	res := runApp(t, "run", "--dry-run")
+	if res.Exit != 0 || !strings.Contains(res.Stdout, "  chatgpt-demo         mock demo") || !strings.Contains(res.Stdout, "  perplexity-typo-demo mock demo") {
+		t.Fatalf("exit %d:\n%s", res.Exit, res.Stdout)
+	}
+}
+
 func TestDryRunNamesProblemsThatStopTheRun(t *testing.T) {
 	inTempProject(t, mockProject+"analysis:\n  model_assisted_enabled: true\n  judge: {provider: openai, model: gpt-6-luna, key_env: OPENAI_API_KEY}\n")
 	res := runApp(t, "run", "--dry-run")

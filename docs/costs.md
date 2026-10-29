@@ -10,35 +10,43 @@ the provider bills you as usual.
 ```text
 Would send 40 requests: 10 prompts to 2 engines, in no web search and web search modes.
 Failed requests are retried. The run stops at 100 requests, its budget.
-Estimated cost: about $0.60, from list prices checked on 2026-10-26. Thinking tokens and extra web searches can make it higher.
+Estimated cost: about $1.72, from list prices checked on 2026-10-26. Longer answers and extra web searches can make it higher.
 ```
 
 Providers bill by the token, a short piece of text that is often part of a
-word. The estimate assumes that each answer is about 600 tokens long. In a web
-search mode, it also assumes one search per answer. That search adds about
-4,000 tokens of web pages, which providers bill as input, plus the provider's
-fee for the search.
+word. The estimate assumes that each answer is about 1,000 tokens long,
+including the tokens the model spends thinking. In a web search mode it also
+counts the pages the model reads, which providers bill as input, and the fee
+for each search.
+
+Those amounts differ by provider, so the estimate uses what answers needed in
+a live run in October 2026. OpenAI's model searched two or three times per
+answer and read 30,000 to 38,000 tokens of pages. Claude searched once and
+read about 14,000 tokens. For other providers the estimate assumes one search
+and 10,000 tokens. Perplexity's models charge a fee for each request instead,
+also when they don't search.
 
 The prices come from a table inside llmention. It was copied from the
 providers' pricing pages on the date shown. When a model is not in that table,
 the estimate names it and leaves it out. It also says when it leaves out
-Perplexity's fee per request.
+Perplexity's fee per request. The price for Perplexity's Sonar on OpenRouter
+comes from OpenRouter's model list.
 
 What you pay in the end depends on how long the answers are and how many
-searches a model runs. Two things push the bill above the estimate. Current
-models think before they answer, and providers bill those thinking tokens as
-output. Also, Anthropic's and OpenRouter's search tools may run up to five
-searches for one answer. So for search modes, expect to pay at least the
-estimate, and check your provider's usage page after the first run.
+searches a model runs, and both change from question to question. Answers
+with web search cost the most. With the starter models, an OpenAI answer with
+web search costs about ten times as much as one without. Check your
+provider's usage page after the first run. Each saved run also records the
+tokens and searches that the provider reported for every answer.
 
 Some examples at the October 2026 prices of the starter models:
 
 | Run | Requests | Estimate |
 | --- | --- | --- |
-| 10 prompts, OpenAI and Anthropic, two modes | 40 | about $0.60 |
-| 10 prompts, all four starter providers, two modes | 80 | about $0.86, plus Perplexity's request fees |
+| 10 prompts, OpenAI and Anthropic, two modes | 40 | about $1.72 |
+| 10 prompts, all four starter providers, two modes | 80 | about $2.06, plus Perplexity's request fees |
 
-Weekly runs of the first size come to about $30 a year.
+Weekly runs of the first size come to about $90 a year.
 
 ## The budget
 
@@ -84,6 +92,8 @@ a run may need. The cost estimate leaves them out.
 - Ask fewer engines or one mode: `llmention run --engine chatgpt --mode search`.
   Such a run is for a quick look. `--trend` leaves it out, and `--diff` never
   compares the next full run with it.
+- Ask without web search: `llmention run --mode no-search`. Most of the cost
+  is in the web search answers.
 - Use a smaller model. The [providers page](providers.md) names some.
 - Leave `repetitions` at 1 unless the numbers jump around a lot.
 - Remove prompts whose answers never name any brand you track.

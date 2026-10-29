@@ -31,7 +31,7 @@ it does. It also looks for the products you compete with. Then it installs
 llmention and writes the settings file, `llmention.yaml`, with the questions to
 ask. Before anything is sent, it shows you a dry run with the number of
 requests and the estimated cost. Ten questions on two providers come to about
-$0.60 at October 2026 list prices. [AGENTS.md](AGENTS.md) lists each step the
+$1.70 at October 2026 list prices. [AGENTS.md](AGENTS.md) lists each step the
 agent takes.
 
 ## Try it without an API key
@@ -129,7 +129,7 @@ ten questions. `quick` also adds an engine for each provider key it finds. With
 Dry run: nothing was sent.
 Would send 40 requests: 10 prompts to 2 engines, in no web search and web search modes.
 Failed requests are retried. The run stops at 100 requests, its budget.
-Estimated cost: about $0.60, from list prices checked on 2026-10-26. Thinking tokens and extra web searches can make it higher.
+Estimated cost: about $1.72, from list prices checked on 2026-10-26. Longer answers and extra web searches can make it higher.
 ```
 
 Run the same command without `--dry-run` to write `llmention.yaml` and ask the

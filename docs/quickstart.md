@@ -109,7 +109,7 @@ llmention run --dry-run
 Dry run: nothing was sent.
 Would send 40 requests: 10 prompts to 2 engines, in no web search and web search modes.
 Failed requests are retried. The run stops at 100 requests, its budget.
-Estimated cost: about $0.60, from list prices checked on 2026-10-26. Thinking tokens and extra web searches can make it higher.
+Estimated cost: about $1.72, from list prices checked on 2026-10-26. Longer answers and extra web searches can make it higher.
 
   chatgpt      openai gpt-6.1-sol, 20 requests
   claude       anthropic claude-sonnet-5-5, 20 requests

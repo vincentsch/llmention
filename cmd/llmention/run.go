@@ -252,11 +252,15 @@ func writePlanText(w io.Writer, pv planPreview) {
 	case pv.EstimatedCost.Dollars == 0:
 		fmt.Fprintf(w, "Estimated cost: %s.\n", pv.EstimatedCost)
 	default:
-		fmt.Fprintf(w, "Estimated cost: %s, from list prices checked on %s. Thinking tokens and extra web searches can make it higher.\n", pv.EstimatedCost, pv.PricesCheckedOn)
+		fmt.Fprintf(w, "Estimated cost: %s, from list prices checked on %s. Longer answers and extra web searches can make it higher.\n", pv.EstimatedCost, pv.PricesCheckedOn)
 	}
 	fmt.Fprintln(w)
+	width := 12
 	for _, e := range pv.Engines {
-		fmt.Fprintf(w, "  %-12s %s %s, %d %s\n", e.ID, e.Provider, e.Model, e.Requests, pluralWord(e.Requests, "request", "requests"))
+		width = max(width, len(e.ID))
+	}
+	for _, e := range pv.Engines {
+		fmt.Fprintf(w, "  %-*s %s %s, %d %s\n", width, e.ID, e.Provider, e.Model, e.Requests, pluralWord(e.Requests, "request", "requests"))
 	}
 	if len(pv.Keys) > 0 || len(pv.Skipped) > 0 || len(pv.Checks) > 0 || pv.JudgeRequests > 0 || len(pv.Warnings) > 0 {
 		fmt.Fprintln(w)
