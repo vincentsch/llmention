@@ -1,0 +1,6 @@
+{
+ "error": {
+  "message": "perplexity/sonarr is not a valid model ID",
+  "code": 400
+ }
+}

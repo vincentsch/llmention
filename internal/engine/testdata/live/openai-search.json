@@ -1,0 +1,227 @@
+{
+ "id": "resp_fixture1",
+ "object": "response",
+ "created_at": 1793253218,
+ "status": "completed",
+ "access_programs": null,
+ "background": false,
+ "billing": {
+  "payer": "developer"
+ },
+ "completed_at": 1793253259,
+ "error": null,
+ "frequency_penalty": 0.0,
+ "incomplete_details": null,
+ "instructions": null,
+ "max_output_tokens": null,
+ "max_tool_calls": null,
+ "model": "gpt-6.1-sol",
+ "moderation": null,
+ "output": [
+  {
+   "id": "ws_fixture2",
+   "type": "web_search_call",
+   "status": "completed",
+   "action": {
+    "type": "search",
+    "queries": [
+     "LLM API cost tracking tools Helicone Langfuse Portkey LiteLLM pricing features 2026",
+     "AI API cost tracking OpenAI Anthropic spend tracking tools LangSmith Braintrust"
+    ],
+    "query": "LLM API cost tracking tools Helicone Langfuse Portkey LiteLLM pricing features 2026"
+   }
+  },
+  {
+   "id": "rs_fixture3",
+   "type": "reasoning",
+   "content": [],
+   "encrypted_content": "redacted",
+   "summary": []
+  },
+  {
+   "id": "ws_fixture4",
+   "type": "web_search_call",
+   "status": "completed",
+   "action": {
+    "type": "search",
+    "queries": [
+     "site.langfuse.com token cost tracking pricing",
+     "site.docs.litellm.ai spend tracking budgets",
+     "site.portkey.ai docs cost tracking budgets",
+     "site.helicone.ai maintenance mode Mintlify March 2026"
+    ],
+    "query": "site.langfuse.com token cost tracking pricing"
+   }
+  },
+  {
+   "id": "ws_fixture5",
+   "type": "web_search_call",
+   "status": "completed",
+   "action": {
+    "type": "search",
+    "queries": [
+     "site.portkey.ai/docs budgets cost analytics",
+     "site.docs.langchain.com langsmith cost tracking",
+     "site.vantage.sh AI costs OpenAI Anthropic integration",
+     "site.langfuse.com self hosting open source"
+    ],
+    "query": "site.portkey.ai/docs budgets cost analytics"
+   }
+  },
+  {
+   "id": "rs_fixture6",
+   "type": "reasoning",
+   "content": [],
+   "encrypted_content": "redacted",
+   "summary": []
+  },
+  {
+   "id": "ws_fixture7",
+   "type": "web_search_call",
+   "status": "completed",
+   "action": {
+    "type": "open_page",
+    "url": "https://portkey.ai/docs/product/observability/analytics"
+   }
+  },
+  {
+   "id": "rs_fixture8",
+   "type": "reasoning",
+   "content": [],
+   "encrypted_content": "redacted",
+   "summary": []
+  },
+  {
+   "id": "msg_fixture9",
+   "type": "message",
+   "status": "completed",
+   "content": [
+    {
+     "type": "output_text",
+     "annotations": [
+      {
+       "type": "url_citation",
+       "end_index": 2081,
+       "start_index": 1973,
+       "title": "Token & Cost Tracking - Langfuse",
+       "url": "https://langfuse.com/docs/observability/features/token-and-cost-tracking?utm_source=openai"
+      },
+      {
+       "type": "url_citation",
+       "end_index": 2349,
+       "start_index": 2241,
+       "title": "Token & Cost Tracking - Langfuse",
+       "url": "https://langfuse.com/docs/observability/features/token-and-cost-tracking?utm_source=openai"
+      },
+      {
+       "type": "url_citation",
+       "end_index": 2620,
+       "start_index": 2559,
+       "title": "Budgets, Rate Limits | liteLLM",
+       "url": "https://docs.litellm.ai/docs/proxy/users"
+      },
+      {
+       "type": "url_citation",
+       "end_index": 2845,
+       "start_index": 2771,
+       "title": "Cost tracking - Docs by LangChain",
+       "url": "https://docs.langchain.com/langsmith/cost-tracking"
+      },
+      {
+       "type": "url_citation",
+       "end_index": 2983,
+       "start_index": 2904,
+       "title": "Vantage Launches Support for Anthropic Costs | Vantage",
+       "url": "https://www.vantage.sh/blog/anthropic-support?utm_source=openai"
+      },
+      {
+       "type": "url_citation",
+       "end_index": 3422,
+       "start_index": 3335,
+       "title": "Spend Tracking | liteLLM",
+       "url": "https://docs.litellm.ai/docs/proxy/cost_tracking?utm_source=openai"
+      }
+     ],
+     "logprobs": [],
+     "text": "Assuming you mean **tracking spending on LLM APIs**, my shortlist is **Langfuse, LiteLLM, Portkey, LangSmith, and Vantage**. The right choice depends on whether you want to **explain costs, enforce budgets, or report spending to finance**.\n\n## Best tools by use case\n\n| Tool | My pick for | Cost-tracking strengths | Main trade-off |\n|---|---|---|---|\n| **Langfuse** | **Most application teams** | Tracks costs per LLM call, model, user, and tag; supports dashboards, threshold alerts, and custom model pricing. Open-source and self-hostable. | Requires instrumentation and correct usage/model metadata. Self-hosting means operating its infrastructure. |\n| **LiteLLM** | **Centralized tracking and budget controls** | Gateway tracks spending by API key, user, and team across providers; supports budgets and rate limits. | Adds a gateway to your request path. Budget enforcement requires a database. |\n| **Portkey — now Prisma AIRS AI Gateway** | **Managed gateway and governance** | Cost/token analytics, metadata-based breakdowns, caching savings, and workspace budget controls. | Best suited to teams that also want gateway functionality, not just a spending dashboard. |\n| **LangSmith** | **Agent debugging, especially alongside LangChain** | Shows costs within individual traces and across projects; can include manually supplied costs for tools and retrieval steps. | Broader than a cost tracker; you need to account for its own usage-based platform charges. |\n| **Vantage** | **Finance and FinOps reporting** | Ingests provider billing data—for example, Anthropic usage and costs—and combines it with cloud spending, budgets, and anomaly detection. | Better for financial allocation than debugging which prompt or agent step caused a spike. |\n\nSources: Langfuse’s cost-tracking and self-hosting docs; LiteLLM’s spend and budget docs; Portkey’s analytics and integration docs; LangSmith’s cost documentation and pricing; Vantage’s provider-integration documentation. ([langfuse.com](https://langfuse.com/docs/observability/features/token-and-cost-tracking?utm_source=openai))\n\n## What I’d choose\n\n- **“Which customer or feature is expensive?” → Langfuse.** Its user/tag breakdowns and per-call costs make it my default starting point. ([langfuse.com](https://langfuse.com/docs/observability/features/token-and-cost-tracking?utm_source=openai))\n- **“Stop teams or API keys from overspending.” → LiteLLM**, or **Portkey** if you prefer a managed gateway. Test enforcement under concurrent traffic rather than assuming a budget is an exact dollar ceiling. ([docs.litellm.ai](https://docs.litellm.ai/docs/proxy/users))\n- **“Why did this agent run cost so much?” → LangSmith.** Trace-level aggregation helps separate model spending from custom tool and retrieval costs. ([docs.langchain.com](https://docs.langchain.com/langsmith/cost-tracking))\n- **“Put AI spend alongside our cloud bill.” → Vantage.** ([vantage.sh](https://www.vantage.sh/blog/anthropic-support?utm_source=openai))\n\n**One important caveat:** request-level cost calculations are not automatically identical to your invoice. Check support for cached tokens, provider pricing tiers, and negotiated rates, and reconcile against provider billing. LiteLLM explicitly documents this discrepancy-checking workflow; Langfuse supports custom pricing and ingested cost values. ([docs.litellm.ai](https://docs.litellm.ai/docs/proxy/cost_tracking?utm_source=openai))\n\nWhich providers are you using, and do you need **visibility only** or **spending limits too**?"
+    }
+   ],
+   "phase": "final_answer",
+   "role": "assistant"
+  }
+ ],
+ "parallel_tool_calls": true,
+ "presence_penalty": 0.0,
+ "previous_response_id": null,
+ "prompt_cache_key": null,
+ "prompt_cache_retention": "24h",
+ "reasoning": {
+  "context": "all_turns",
+  "effort": "medium",
+  "mode": "standard",
+  "summary": null
+ },
+ "safety_identifier": null,
+ "service_tier": "default",
+ "store": false,
+ "temperature": 1.0,
+ "text": {
+  "format": {
+   "type": "text"
+  },
+  "verbosity": "medium"
+ },
+ "tool_choice": "auto",
+ "tool_usage": {
+  "image_gen": {
+   "input_tokens": 0,
+   "input_tokens_details": {
+    "image_tokens": 0,
+    "text_tokens": 0
+   },
+   "output_tokens": 0,
+   "output_tokens_details": {
+    "image_tokens": 0,
+    "text_tokens": 0
+   },
+   "total_tokens": 0
+  },
+  "web_search": {
+   "num_requests": 3
+  }
+ },
+ "tools": [
+  {
+   "type": "web_search",
+   "return_token_budget": "default",
+   "search_content_types": [
+    "text"
+   ],
+   "search_context_size": "medium",
+   "user_location": {
+    "type": "approximate",
+    "city": null,
+    "country": "US",
+    "region": null,
+    "timezone": null
+   }
+  }
+ ],
+ "top_logprobs": 0,
+ "top_p": 0.98,
+ "truncation": "disabled",
+ "usage": {
+  "input_tokens": 38088,
+  "input_tokens_details": {
+   "cache_write_tokens": 0,
+   "cached_tokens": 4450
+  },
+  "output_tokens": 1202,
+  "output_tokens_details": {
+   "reasoning_tokens": 399
+  },
+  "total_tokens": 39290
+ },
+ "user": null,
+ "metadata": {}
+}

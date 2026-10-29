@@ -147,6 +147,9 @@ type anthropicUsage struct {
 	InputTokens          int `json:"input_tokens"`
 	OutputTokens         int `json:"output_tokens"`
 	CacheReadInputTokens int `json:"cache_read_input_tokens"`
+	ServerToolUse        *struct {
+		WebSearchRequests int `json:"web_search_requests"`
+	} `json:"server_tool_use"`
 }
 
 type anthropicBlock struct {
@@ -388,6 +391,9 @@ func anthropicMetadata(parsed anthropicMessageResponse, header http.Header, drop
 		setProviderMetadataInt(metadata, "usage_input_tokens", parsed.Usage.InputTokens)
 		setProviderMetadataInt(metadata, "usage_output_tokens", parsed.Usage.OutputTokens)
 		setProviderMetadataInt(metadata, "usage_cached_tokens", parsed.Usage.CacheReadInputTokens)
+		if parsed.Usage.ServerToolUse != nil {
+			setProviderMetadataInt(metadata, "usage_search_queries", parsed.Usage.ServerToolUse.WebSearchRequests)
+		}
 	}
 	setDroppedEvidenceMetadata(metadata, dropped)
 	return metadata
@@ -418,12 +424,18 @@ type anthropicErrorPayload struct {
 }
 
 func anthropicHTTPError(provider string, resp reply, key string) *ProviderError {
-	message, code := "", ""
+	message, code, hint := "", "", ""
 	var payload anthropicErrorPayload
 	if json.Unmarshal(resp.body, &payload) == nil && payload.Error != nil {
 		message, code = payload.Error.Message, payload.Error.Type
 	}
-	return httpError(provider, resp, key, message, anthropicErrorClass(resp.status, code, string(resp.body)))
+	// The Messages API has one path, so "not found" means the model. Its
+	// message is only "model: <id>".
+	if code == "not_found_error" {
+		message = "model not found (" + message + ")"
+		hint = unknownModelHint
+	}
+	return httpError(provider, resp, key, message, hint, anthropicErrorClass(resp.status, code, string(resp.body)))
 }
 
 func anthropicErrorClass(status int, code, body string) ErrorClass {

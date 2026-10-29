@@ -46,8 +46,9 @@ type ProviderError struct {
 	SafeSnippet string         `json:"safe_snippet,omitempty"`
 }
 
-// Error reads like "openai: OpenAI answered with status 429: rate limit
-// reached (request req_123)".
+// Error reads like "OpenAI answered with status 429: rate limit reached
+// (request req_123)". A message that does not name the provider gets the
+// provider id in front, as in "openai: could not reach api.openai.com".
 func (e *ProviderError) Error() string {
 	if e == nil {
 		return "<nil>"
@@ -59,7 +60,7 @@ func (e *ProviderError) Error() string {
 			message = fmt.Sprintf("status %d", e.StatusCode)
 		}
 	}
-	if e.ProviderID != "" {
+	if e.ProviderID != "" && !strings.HasPrefix(message, providerDisplayName(e.ProviderID)+" ") {
 		message = e.ProviderID + ": " + message
 	}
 	if e.RequestID != "" {

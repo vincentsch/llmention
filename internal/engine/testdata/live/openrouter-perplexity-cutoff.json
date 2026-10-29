@@ -1,0 +1,48 @@
+
+         
+{
+ "id": "gen_fixture1",
+ "object": "chat.completion",
+ "created": 1793253003,
+ "model": "perplexity/sonar",
+ "provider": "Perplexity",
+ "system_fingerprint": null,
+ "service_tier": null,
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "length",
+   "native_finish_reason": "length",
+   "message": {
+    "role": "assistant",
+    "content": "Good alternatives to Helicone depend on what you’re using it for—mainly LLM observability, request logging, prompt management, evals, cost tracking, or routing. Here are strong options, grouped by use case:\n\n## 1) Open-source LLM observability / tracing\n- **Langfuse** — Probably the closest all-around alternative. Great for tracing, prompt/version management, evals, user/session analytics, and self-hosting.\n- **Arize Phoenix** — Strong for debugging, tracing, and evaluation workflows, especially if you want more ML/LLM experimentation and analysis.\n- **OpenTelemetry + your own backend** — Best if you want vendor-neutral tracing and already use observability tooling; more setup, but very flexible.\n\n## 2) Hosted observability platforms\n- **Braintrust** — Good for evals, datasets, prompt testing, and monitoring. Strong developer experience.\n- **LangSmith** — Best if you’re in the LangChain ecosystem; good tracing, debugging, datasets, and evals.\n- **Traceloop** — Lightweight observability and tracing focused on LLM apps; easy to adopt.\n\n## 3) API gateways / routing / cost control\n- **LiteLLM** — Excellent if you want a drop-in proxy for multiple model providers, centralized logging, budgets, rate limits, retries, and fallbacks.\n- **Portkey** — Strong gateway/orchestration layer with",
+    "refusal": null,
+    "reasoning": null
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 8,
+  "completion_tokens": 300,
+  "total_tokens": 308,
+  "cost": 0.0052569,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00531,
+   "upstream_inference_prompt_cost": 8e-06,
+   "upstream_inference_completions_cost": 0.005302
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ }
+}

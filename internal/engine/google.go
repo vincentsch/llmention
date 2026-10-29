@@ -389,22 +389,32 @@ type googleErrorPayload struct {
 }
 
 func googleHTTPError(provider string, resp reply, key string) *ProviderError {
-	message, code := "", ""
+	message, code, hint := "", "", ""
 	var payload googleErrorPayload
-	if json.Unmarshal(resp.body, &payload) == nil && payload.Error != nil {
+	if json.Unmarshal(resp.body, &payload) != nil || payload.Error == nil {
+		// The Interactions API sends the error inside a list.
+		var list []googleErrorPayload
+		if json.Unmarshal(resp.body, &list) == nil && len(list) > 0 {
+			payload = list[0]
+		}
+	}
+	if payload.Error != nil {
 		message, code = payload.Error.Message, payload.Error.Status
 		if code == "" && payload.Error.Code != nil {
 			code = fmt.Sprint(payload.Error.Code)
 		}
 	}
-	return httpError(provider, resp, key, message, googleErrorClass(resp.status, code, string(resp.body)))
+	if code == "NOT_FOUND" {
+		hint = unknownModelHint
+	}
+	return httpError(provider, resp, key, message, hint, googleErrorClass(resp.status, code, string(resp.body)))
 }
 
 func googleErrorClass(status int, code, body string) ErrorClass {
 	code = strings.ToUpper(code)
 	lowerBody := strings.ToLower(body)
 	switch {
-	case status == http.StatusUnauthorized || code == "UNAUTHENTICATED":
+	case status == http.StatusUnauthorized || code == "UNAUTHENTICATED" || strings.Contains(body, "API_KEY_INVALID"):
 		return ErrorClassConfig
 	case status == http.StatusForbidden || code == "PERMISSION_DENIED" || code == "SERVICE_DISABLED" || code == "BILLING_NOT_ENABLED" || strings.Contains(lowerBody, "billing"):
 		return ErrorClassConfig

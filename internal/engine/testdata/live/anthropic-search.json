@@ -1,0 +1,343 @@
+{
+ "model": "claude-sonnet-5-5",
+ "id": "msg_fixture1",
+ "type": "message",
+ "role": "assistant",
+ "content": [
+  {
+   "type": "server_tool_use",
+   "id": "srvtoolu_fixture2",
+   "name": "web_search",
+   "input": {
+    "query": "best LLM API cost tracking tools 2026"
+   }
+  },
+  {
+   "type": "web_search_tool_result",
+   "tool_use_id": "srvtoolu_fixture2",
+   "content": [
+    {
+     "type": "web_search_result",
+     "title": "Best LLM Cost Tracking Tools in 2026",
+     "url": "https://www.getmaxim.ai/articles/best-llm-cost-tracking-tools-in-2026/",
+     "encrypted_content": "redacted",
+     "page_age": "15 days ago"
+    },
+    {
+     "type": "web_search_result",
+     "title": "10 Best LLM Cost Optimization Tools in 2026",
+     "url": "https://www.nops.io/blog/llm-cost-optimization-tools/",
+     "encrypted_content": "redacted",
+     "page_age": "126 days ago"
+    },
+    {
+     "type": "web_search_result",
+     "title": "Best LLM Cost Tracking Tools in 2026: 7 Platforms Compared",
+     "url": "https://futureagi.com/blog/best-llm-cost-tracking-tools-2026",
+     "encrypted_content": "redacted",
+     "page_age": "172 days ago"
+    },
+    {
+     "type": "web_search_result",
+     "title": "Top 5 Tools for LLM Cost and Usage Monitoring",
+     "url": "https://www.getmaxim.ai/articles/top-5-tools-for-llm-cost-and-usage-monitoring/",
+     "encrypted_content": "redacted",
+     "page_age": "15 days ago"
+    },
+    {
+     "type": "web_search_result",
+     "title": "6 Best AI Cost Tracking Tools for 2026 - Amnic",
+     "url": "https://amnic.com/blogs/ai-cost-tracking-tools",
+     "encrypted_content": "redacted",
+     "page_age": "133 days ago"
+    },
+    {
+     "type": "web_search_result",
+     "title": "Best LLM Cost Tracking Tools (2026) - Loupe by LeanLM",
+     "url": "https://leanlm.ai/blog/llm-cost-tracking-tools",
+     "encrypted_content": "redacted",
+     "page_age": "111 days ago"
+    },
+    {
+     "type": "web_search_result",
+     "title": "What Are AI Tokens? The 7 Best LLM Cost Tracking Tools For October 2026",
+     "url": "https://aisecurityguard.io/learn/comparison/what-are-ai-tokens-and-how-to-track-them",
+     "encrypted_content": "redacted",
+     "page_age": "146 days ago"
+    },
+    {
+     "type": "web_search_result",
+     "title": "Best LLM Cost Tracking Tools 2026: Complete Comparison",
+     "url": "https://aicostboard.com/guides/best-llm-cost-tracking-tools-2026",
+     "encrypted_content": "redacted",
+     "page_age": null
+    },
+    {
+     "type": "web_search_result",
+     "title": "LLM Cost Tracking Tools Compared (2026)",
+     "url": "https://llm-track.com/compare/llm-cost-tracking-tools",
+     "encrypted_content": "redacted",
+     "page_age": "13 days ago"
+    }
+   ],
+   "caller": {
+    "type": "direct"
+   }
+  },
+  {
+   "type": "thinking",
+   "thinking": "",
+   "signature": "redacted"
+  },
+  {
+   "type": "text",
+   "text": "The best tool depends on how you want to capture costs. Most 2026 comparisons sort the tools into a few layers.\n\n## Gateways and proxies\nThese sit in the request path, so they can enforce budgets before tokens are spent.\n- **LiteLLM** is an open-source proxy. "
+  },
+  {
+   "citations": [
+    {
+     "type": "web_search_result_location",
+     "cited_text": "LiteLLM\nLiteLLM is an open-source LLM proxy that provides a unified interface for over 100 LLM providers with built-in spend tracking capabilities. It...",
+     "url": "https://www.getmaxim.ai/articles/top-5-tools-for-llm-cost-and-usage-monitoring/",
+     "title": "Top 5 Tools for LLM Cost and Usage Monitoring",
+     "encrypted_index": "redacted"
+    }
+   ],
+   "type": "text",
+   "text": "It covers 100+ providers, maps model-specific token pricing automatically, and exposes cost data at the key, user, and team level."
+  },
+  {
+   "type": "text",
+   "text": " One caveat is that "
+  },
+  {
+   "citations": [
+    {
+     "type": "web_search_result_location",
+     "cited_text": "Its docs say it tracks spend \"for keys, users, and teams across 100+ LLMs\"; spend by tag is an enterprise feature.\n\n",
+     "url": "https://llm-track.com/compare/llm-cost-tracking-tools",
+     "title": "LLM Cost Tracking Tools Compared (2026)",
+     "encrypted_index": "redacted"
+    }
+   ],
+   "type": "text",
+   "text": "spend by tag is an enterprise feature."
+  },
+  {
+   "type": "text",
+   "text": "\n- **Helicone** is a "
+  },
+  {
+   "citations": [
+    {
+     "type": "web_search_result_location",
+     "cited_text": "- **Helicone:** One-line proxy that logs per-request LLM cost, tokens and latency within an afternoon.\n",
+     "url": "https://amnic.com/blogs/ai-cost-tracking-tools",
+     "title": "6 Best AI Cost Tracking Tools for 2026 - Amnic",
+     "encrypted_index": "redacted"
+    }
+   ],
+   "type": "text",
+   "text": "one-line proxy that logs per-request LLM cost, tokens and latency."
+  },
+  {
+   "type": "text",
+   "text": " One comparison lists "
+  },
+  {
+   "citations": [
+    {
+     "type": "web_search_result_location",
+     "cited_text": "## TL;DR Comparison Table\n| Tool | Layer | Open Source | Free Tier | Paid Starts At | Best For |\n| --- | --- | --- | --- | --- | --- |\n| ArtificialAna...",
+     "url": "https://leanlm.ai/blog/llm-cost-tracking-tools",
+     "title": "Best LLM Cost Tracking Tools (2026) - Loupe by LeanLM",
+     "encrypted_index": "redacted"
+    }
+   ],
+   "type": "text",
+   "text": "a free tier of 10K requests/month and paid plans from $79/mo."
+  },
+  {
+   "type": "text",
+   "text": "\n- **Portkey** and **Cloudflare AI Gateway** are also options. Cloudflare's gateway offers "
+  },
+  {
+   "citations": [
+    {
+     "type": "web_search_result_location",
+     "cited_text": "### Cloudflare AI Gateway\nhosted gateway\n\nCaching, rate limiting, retries, model fallback, logs, and analytics that include cost.\n\n",
+     "url": "https://llm-track.com/compare/llm-cost-tracking-tools",
+     "title": "LLM Cost Tracking Tools Compared (2026)",
+     "encrypted_index": "redacted"
+    }
+   ],
+   "type": "text",
+   "text": "caching, rate limiting, retries, model fallback, logs, and analytics that include cost."
+  },
+  {
+   "type": "text",
+   "text": "\n- **Bifrost (Maxim AI)** is pitched for "
+  },
+  {
+   "citations": [
+    {
+     "type": "web_search_result_location",
+     "cited_text": "Maxim AI (Bifrost)  | Cost attribution + enforcement  | Organizations requiring granular budget controls and cost enforcement  | Contact for pricing  ...",
+     "url": "https://www.nops.io/blog/llm-cost-optimization-tools/",
+     "title": "10 Best LLM Cost Optimization Tools in 2026",
+     "encrypted_index": "redacted"
+    }
+   ],
+   "type": "text",
+   "text": "granular budget controls and cost enforcement."
+  },
+  {
+   "type": "text",
+   "text": " Maxim publishes the source I found for this, so treat its ranking with some skepticism.\n\n## Observability and tracing\nThese attribute cost to traces, users, and features after the fact.\n- **Langfuse** is open source and self-hostable. It "
+  },
+  {
+   "citations": [
+    {
+     "type": "web_search_result_location",
+     "cited_text": "- **Langfuse:** Open-source observability that records cost inside the trace, down to each step of an agent run.",
+     "url": "https://amnic.com/blogs/ai-cost-tracking-tools",
+     "title": "6 Best AI Cost Tracking Tools for 2026 - Amnic",
+     "encrypted_index": "redacted"
+    }
+   ],
+   "type": "text",
+   "text": "records cost inside the trace, down to each step of an agent run."
+  },
+  {
+   "type": "text",
+   "text": " "
+  },
+  {
+   "citations": [
+    {
+     "type": "web_search_result_location",
+     "cited_text": "## TL;DR Comparison Table\n| Tool | Layer | Open Source | Free Tier | Paid Starts At | Best For |\n| --- | --- | --- | --- | --- | --- |\n| ArtificialAna...",
+     "url": "https://leanlm.ai/blog/llm-cost-tracking-tools",
+     "title": "Best LLM Cost Tracking Tools (2026) - Loupe by LeanLM",
+     "encrypted_index": "redacted"
+    }
+   ],
+   "type": "text",
+   "text": "The free tier is 50K observations/month, and paid plans start at $59/mo."
+  },
+  {
+   "type": "text",
+   "text": "\n- **LangSmith** is the natural fit if you use LangChain or LangGraph. "
+  },
+  {
+   "citations": [
+    {
+     "type": "web_search_result_location",
+     "cited_text": "It captures detailed traces of every LLM call, including token usage and associated costs, with tight integration into the LangChain ecosystem.\n\n",
+     "url": "https://www.getmaxim.ai/articles/best-llm-cost-tracking-tools-in-2026/",
+     "title": "Best LLM Cost Tracking Tools in 2026",
+     "encrypted_index": "redacted"
+    }
+   ],
+   "type": "text",
+   "text": "It captures detailed traces of every LLM call, including token usage and cost."
+  },
+  {
+   "type": "text",
+   "text": "\n- **Datadog LLM Observability** suits teams already on Datadog, but "
+  },
+  {
+   "citations": [
+    {
+     "type": "web_search_result_location",
+     "cited_text": "Datadog LLM Observability is metered per ingested span and indexed log; expect five-figure monthly contracts at scale. ",
+     "url": "https://futureagi.com/blog/best-llm-cost-tracking-tools-2026",
+     "title": "Best LLM Cost Tracking Tools in 2026: 7 Platforms Compared",
+     "encrypted_index": "redacted"
+    }
+   ],
+   "type": "text",
+   "text": "it is metered per ingested span and indexed log, and one source expects five-figure monthly contracts at scale."
+  },
+  {
+   "type": "text",
+   "text": "\n- **Braintrust** and **Arize Phoenix** combine evaluation with monitoring.\n\n## FinOps and billing\n- **CloudZero, Vantage, and Amnic** "
+  },
+  {
+   "citations": [
+    {
+     "type": "web_search_result_location",
+     "cited_text": "Vantage, CloudZero, and Datadog correlate LLM cost with cloud infra cost in the same dashboard. ",
+     "url": "https://futureagi.com/blog/best-llm-cost-tracking-tools-2026",
+     "title": "Best LLM Cost Tracking Tools in 2026: 7 Platforms Compared",
+     "encrypted_index": "redacted"
+    }
+   ],
+   "type": "text",
+   "text": "correlate LLM cost with cloud infrastructure cost in the same dashboard"
+  },
+  {
+   "type": "text",
+   "text": " (the source names Vantage, CloudZero, and Datadog for this).\n- One source suggests this layer is "
+  },
+  {
+   "citations": [
+    {
+     "type": "web_search_result_location",
+     "cited_text": "Needed when LLM spend exceeds ~$50K/month and finance teams get involved.\n\n",
+     "url": "https://leanlm.ai/blog/llm-cost-tracking-tools",
+     "title": "Best LLM Cost Tracking Tools (2026) - Loupe by LeanLM",
+     "encrypted_index": "redacted"
+    }
+   ],
+   "type": "text",
+   "text": "needed when LLM spend exceeds about $50K/month and finance teams get involved."
+  },
+  {
+   "type": "text",
+   "text": "\n\n## Quick picks\n| Need | Pick |\n|---|---|\n| Fastest setup | Helicone |\n| Self-hosting and data ownership | Langfuse or LiteLLM |\n| Budget enforcement per team or key | LiteLLM or Portkey |\n| LangChain stack | LangSmith |\n| Existing Datadog user | Datadog |\n| Finance and chargeback | CloudZero or Vantage |\n\nOne comparison says that "
+  },
+  {
+   "citations": [
+    {
+     "type": "web_search_result_location",
+     "cited_text": "For traces with cost attached, Langfuse or LangSmith. For spend control in the request path, a gateway such as Portkey, LiteLLM or Cloudflare AI Gatew...",
+     "url": "https://llm-track.com/compare/llm-cost-tracking-tools",
+     "title": "LLM Cost Tracking Tools Compared (2026)",
+     "encrypted_index": "redacted"
+    }
+   ],
+   "type": "text",
+   "text": "for traces with cost attached, Langfuse or LangSmith fit best, and for spend control in the request path, a gateway like Portkey, LiteLLM or Cloudflare AI Gateway fits best."
+  },
+  {
+   "type": "text",
+   "text": " Many teams pair a gateway with an observability tool.\n\nMany of these \"best of\" lists are written by vendors who rank themselves first. Check pricing and features on each tool's own site before you commit.\n\nIf you tell me your provider mix, monthly spend, and whether you need to self-host, I can narrow this to one or two options."
+  }
+ ],
+ "container": null,
+ "stop_reason": "end_turn",
+ "stop_sequence": null,
+ "stop_details": null,
+ "usage": {
+  "input_tokens": 14191,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "cache_creation": {
+   "ephemeral_5m_input_tokens": 0,
+   "ephemeral_1h_input_tokens": 0
+  },
+  "output_tokens": 1370,
+  "output_tokens_details": {
+   "thinking_tokens": 27
+  },
+  "service_tier": "standard",
+  "inference_geo": "global",
+  "speed": "standard",
+  "server_tool_use": {
+   "web_search_requests": 1,
+   "web_fetch_requests": 0
+  }
+ },
+ "diagnostics": null
+}

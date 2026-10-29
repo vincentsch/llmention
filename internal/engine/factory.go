@@ -289,11 +289,15 @@ func baseCapabilityProfile(provider, model string) CapabilityProfile {
 		profile.ExposesToolCalls = true
 	case "openrouter":
 		profile.SupportsSearchAuto = true
+		profile.ExposesCitations = true
+		if openRouterSearchesItself(model) {
+			profile.InherentlySearchGrounded = true
+			break
+		}
 		profile.SupportsSearchAllowDomains = true
 		profile.SupportsSearchBlockDomains = true
 		profile.SupportsSearchLocation = true
 		profile.SupportsSearchMaxQueries = true
-		profile.ExposesCitations = true
 	case "openai":
 		profile.SupportsStructuredOutput = true
 		profile.SupportsSearchAuto = true

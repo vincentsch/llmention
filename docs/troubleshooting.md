@@ -60,10 +60,23 @@ would not start". See [AI grader](configuration.md#ai-grader).
 The key is wrong or has no access to that model. Check it on the provider's
 dashboard.
 
-### "answered with status 404"
+### "Check the model id in llmention.yaml"
 
-This usually means the model id is unknown. Copy the id from the provider's
-model list.
+The provider doesn't know the model, or your key can't use it. OpenAI and
+Anthropic answer with status 404 and OpenRouter with status 400 ("is not a
+valid model ID"). Copy the id from the provider's model list.
+
+### "API key not valid"
+
+Google doesn't accept the key in `GEMINI_API_KEY`. It may have been deleted or
+copied incompletely. Create a new key in Google AI Studio and export it again.
+
+### "No endpoints found that support tool use"
+
+The OpenRouter model can't use OpenRouter's web search tool. Turn the web
+search mode off for that engine with
+`capabilities: {supports_search_auto: false}`, as
+[Providers and models](providers.md#openrouter) shows.
 
 ### "answered with status 429"
 

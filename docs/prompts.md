@@ -114,4 +114,6 @@ llmention discover --from chab --seed "invoicing for freelancers" --out prompts.
 The dry run shows how many Chab credits the request uses. The key needs the
 `api:search:read` and `api:seo:read` scopes. `discover` leaves out suggestions
 that name your brand or repeat a prompt you already have. Read the file before
-you use it, and delete the questions a buyer would not ask.
+you use it, and delete the questions a buyer would not ask. So far
+`--from chab` has only been tested against made-up Chab answers, not against
+Chab's live API.

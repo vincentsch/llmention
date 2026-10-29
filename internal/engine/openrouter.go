@@ -15,7 +15,8 @@ const (
 )
 
 // openRouterEngine asks a model through OpenRouter's Chat Completions API,
-// with OpenRouter's own web search tool in the search mode.
+// with OpenRouter's own web search tool in the search mode. Perplexity's
+// models search by themselves instead.
 type openRouterEngine struct {
 	baseEngine
 }
@@ -108,6 +109,12 @@ func (e *openRouterEngine) chatRequest(req Request) (map[string]any, error) {
 			},
 		}
 	}
+	if openRouterSearchesItself(e.model) {
+		if req.Mode == ToolPolicyMemory {
+			body["disable_search"] = true
+		}
+		return body, nil
+	}
 	if req.Mode != ToolPolicySearchAuto {
 		return body, nil
 	}
@@ -141,6 +148,15 @@ func (e *openRouterEngine) chatRequest(req Request) (map[string]any, error) {
 	return body, nil
 }
 
+// openRouterSearchesItself reports whether a model searches the web on its
+// own. Perplexity's models on OpenRouter search before every answer and take
+// no tools, so a request with OpenRouter's search tool fails. OpenRouter
+// passes Perplexity's own disable_search switch on, which llmention sends in
+// the no web search mode.
+func openRouterSearchesItself(model string) bool {
+	return strings.HasPrefix(model, "perplexity/")
+}
+
 func openRouterLocation(location *SearchLocation) map[string]string {
 	out := map[string]string{}
 	if location.CountryCode != "" {
@@ -172,7 +188,21 @@ func openRouterHTTPError(provider string, resp reply, key string) *ProviderError
 	if json.Unmarshal(resp.body, &payload) == nil && payload.Error != nil {
 		message, code = payload.Error.Message, firstNonEmpty(payload.Error.Type, fmt.Sprint(payload.Error.Code))
 	}
-	return httpError(provider, resp, key, message, openRouterErrorClass(resp.status, code, string(resp.body)))
+	return httpError(provider, resp, key, message, openRouterHint(message), openRouterErrorClass(resp.status, code, string(resp.body)))
+}
+
+// openRouterHint says what to do about the OpenRouter errors that a wrong
+// setting in llmention.yaml causes.
+func openRouterHint(message string) string {
+	switch {
+	case strings.Contains(message, "is not a valid model ID"):
+		return unknownModelHint
+	case strings.Contains(message, "support tool use"):
+		// OpenRouter has no endpoint for this model that takes its web
+		// search tool.
+		return "This model cannot use OpenRouter's web search. Leave the web search mode out for this engine with capabilities: {supports_search_auto: false}."
+	}
+	return ""
 }
 
 func openRouterErrorClass(status int, code, body string) ErrorClass {

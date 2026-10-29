@@ -115,7 +115,7 @@ func compatibleHTTPError(provider string, resp reply, key string, hadAuth bool) 
 	case !hadAuth && class == ErrorClassConfig:
 		class = ErrorClassCaller
 	}
-	return httpError(provider, resp, key, embeddedErrorMessage(resp.body), class)
+	return httpError(provider, resp, key, embeddedErrorMessage(resp.body), "", class)
 }
 
 // embeddedErrorMessage finds the server's own explanation in an error body.

@@ -214,13 +214,21 @@ func (e *baseEngine) finish(answer Answer, err error, resp reply) (Answer, error
 	return Answer{}, err
 }
 
+// unknownModelHint follows a provider's message when it says the model does
+// not exist, so you know to fix the model id and not the key.
+const unknownModelHint = "Check the model id in llmention.yaml. The provider's model list shows the ids your key can use."
+
 // httpError builds the error for an HTTP status outside 2xx. message is the
-// provider's own explanation, when the body had one. class lets an adapter
-// sort the error more precisely than statusClass can.
-func httpError(provider string, resp reply, key, message string, class ErrorClass) *ProviderError {
+// provider's own explanation, when the body had one. hint, when not empty,
+// says what to do about it. class lets an adapter sort the error more
+// precisely than statusClass can.
+func httpError(provider string, resp reply, key, message, hint string, class ErrorClass) *ProviderError {
 	text := fmt.Sprintf("%s answered with status %d", providerDisplayName(provider), resp.status)
-	if message != "" {
-		text += ": " + truncateMessage(message)
+	if message = truncateMessage(message); message != "" {
+		text += ": " + message
+	}
+	if hint != "" {
+		text = strings.TrimRight(text, ".") + ". " + hint
 	}
 	return &ProviderError{
 		ProviderID:  provider,

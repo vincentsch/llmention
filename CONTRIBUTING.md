@@ -35,7 +35,9 @@ never shown as zero.
 ## Test without provider keys
 
 Tests use local fake servers and made-up keys. Never add tests that call a
-paid provider. The mock provider (`provider: mock`) writes believable answers
+paid provider. Some tests replay real provider responses from
+`internal/engine/testdata/live`. Before you add one, remove keys and account
+ids and replace encrypted blobs. The mock provider (`provider: mock`) writes believable answers
 for the demo and for end-to-end tests. Test what a user sees, like the
 printed output and the exit code.
 

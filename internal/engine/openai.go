@@ -161,6 +161,11 @@ type openAIResponse struct {
 	IncompleteDetails *openAIIncomplete    `json:"incomplete_details"`
 	Error             *openAIResponseError `json:"error"`
 	ServiceTier       string               `json:"service_tier"`
+	ToolUsage         *struct {
+		WebSearch *struct {
+			NumRequests int `json:"num_requests"`
+		} `json:"web_search"`
+	} `json:"tool_usage"`
 }
 
 type openAIResponseTool struct {
@@ -313,6 +318,10 @@ func openAIAnswerFromResponse(raw []byte, header http.Header, req Request) (Answ
 		setMetadataNumber(metadata, "usage_cache_write_tokens", parsed.Usage.InputTokensDetails["cache_write_tokens"])
 		setMetadataNumber(metadata, "usage_reasoning_tokens", parsed.Usage.OutputTokensDetails["reasoning_tokens"])
 	}
+	// OpenAI bills each search. Opening a page it found is not a search.
+	if parsed.ToolUsage != nil && parsed.ToolUsage.WebSearch != nil {
+		setMetadataInt(metadata, "usage_search_queries", parsed.ToolUsage.WebSearch.NumRequests)
+	}
 
 	answer := Answer{
 		Text:             strings.Join(textParts, ""),
@@ -354,11 +363,14 @@ func openAIHTTPError(provider string, resp reply, key string) *ProviderError {
 	var payload struct {
 		Error *openAIResponseError `json:"error"`
 	}
-	message := ""
+	message, hint := "", ""
 	if json.Unmarshal(resp.body, &payload) == nil && payload.Error != nil {
 		message = payload.Error.Message
+		if stringifyOpenAIValue(payload.Error.Code) == "model_not_found" {
+			hint = unknownModelHint
+		}
 	}
-	return httpError(provider, resp, key, message, statusClass(resp.status))
+	return httpError(provider, resp, key, message, hint, statusClass(resp.status))
 }
 
 func openAIUserLocation(location *SearchLocation) map[string]string {

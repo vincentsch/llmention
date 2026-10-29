@@ -1,0 +1,210 @@
+{
+ "id": "gen_fixture1",
+ "object": "chat.completion",
+ "created": 1793253527,
+ "model": "perplexity/sonar",
+ "provider": "Perplexity",
+ "system_fingerprint": null,
+ "service_tier": null,
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "stop",
+   "message": {
+    "role": "assistant",
+    "content": "The **best tools** for AI API cost tracking depend on what you need to measure: **per-request LLM usage**, **team or feature-level chargeback**, or **broader FinOps visibility across cloud + AI spend**. For most teams, the strongest API-focused options are **Helicone**, **Langfuse**, **Portkey**, **LiteLLM**, and **LangSmith**; for broader spend governance, **nOps**, **Vantage**, **CloudZero**, and **Finout** are the most commonly recommended. [1][2][6][11][13][15]\n\nHere’s the practical breakdown:\n\n| Tool | Best for | What it tracks | Notes |\n|---|---|---|---|\n| **Helicone** | Fast request-level cost tracking and observability | Per-request tokens, cost, latency | Open source; strong for multi-provider logging; one source notes it is now in maintenance mode. [1][7] |\n| **Langfuse** | Self-hosted tracing and cost per trace | Traces, token counts, model, latency, cost | Open source; good for teams wanting full data ownership. [1][11][14] |\n| **Portkey** | Enterprise gateway with controls | Usage, cost, routing, caching, budgets | Useful when you want guardrails plus observability. [2][6][7][15] |\n| **LiteLLM** | Unified gateway across many providers | Request-level usage and cost | Good when you need a proxy layer and vendor-neutral routing. [11][14] |\n| **LangSmith** | LangChain-centric debugging and tracing | Traces and evaluation data, with cost context | Best if your stack is built around LangChain. [2][7][15] |\n| **nOps** | Cross-cloud + AI spend visibility | AI, cloud, and SaaS spend by team/product/feature | Best for broader cost attribution and optimization, not just API logging. [1][17] |\n| **Vantage** | FinOps-style AI spend reporting | API spend reconciled with cloud billing | Better for finance/FinOps teams than pure developer observability. [5][12] |\n| **CloudZero** | Business-level unit economics | AI and cloud spend mapped to outcomes | Strong when you want spend tied to business metrics. [6][17] |\n| **Finout** | Cost allocation and showback/chargeback | Multi-cloud AI spend, allocation, governance | Useful for enterprise finance and platform teams. [14][17] |\n\nIf you want a short recommendation by use case:\n\n- **Best overall for API cost observability:** **Langfuse** or **Helicone**. [1][11][14]\n- **Best for gateways and budget enforcement:** **Portkey** or **LiteLLM**. [11][13][14]\n- **Best for finance/FinOps reporting across AI + cloud:** **nOps**, **Vantage**, **CloudZero**, or **Finout**. [1][5][6][17]\n- **Best if you already use LangChain:** **LangSmith**. [2][7][15]\n\nA useful rule of thumb is this: if you need **per-request token and cost tracking**, choose a **gateway/observability tool** like Helicone, Langfuse, Portkey, or LiteLLM; if you need **team-level chargeback, budgets, and cloud reconciliation**, choose a **FinOps platform** like nOps, Vantage, CloudZero, or Finout. [1][3][13][14]\n\nIf you want, I can also give you a **top 5 ranked list by startup, enterprise, open-source, or cheapest option**.",
+    "refusal": null,
+    "reasoning": null,
+    "annotations": [
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.nops.io/blog/ai-cost-observability/",
+       "title": "Best AI Cost Observability Tools 2026 | nOps",
+       "start_index": 0,
+       "end_index": 0
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://zylo.com/blog/best-ai-cost-management-tools",
+       "title": "Best AI Cost Management Tools: A 2026 Buyer's Guide",
+       "start_index": 0,
+       "end_index": 0
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.nops.io/blog/ai-cost-monitoring-tools/",
+       "title": "AI Cost Monitoring Tools: How to Track and Control AI Spend in 2026",
+       "start_index": 0,
+       "end_index": 0
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.cloudflare.com/perspectives/what-tool-should-i-use-to-manage-ai-api-costs-across-multiple-vendors/",
+       "title": "What Tool Should I Use to Manage AI API Costs Across Multiple Vendors? | Cloudflare Perspectives",
+       "start_index": 0,
+       "end_index": 0
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.cloudquell.com/compare/best-ai-cost-management-tools/",
+       "title": "Best AI cost management tools in 2026 - CloudQuell",
+       "start_index": 0,
+       "end_index": 0
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.cloudzero.com/blog/ai-cost-management-tools/",
+       "title": "Best AI Cost Management Tools [2026] - cloudzero.com",
+       "start_index": 0,
+       "end_index": 0
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.lava.so/blog/best-ai-cost-tracking",
+       "title": "The 5 Best AI Cost Tracking Tools (February 2026)",
+       "start_index": 0,
+       "end_index": 0
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.getmaxim.ai/articles/ai-cost-management-5-tools-to-track-llm-spend-in-2026/",
+       "title": "AI Cost Management: 5 Tools to Track LLM Spend in 2026",
+       "start_index": 0,
+       "end_index": 0
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://laminar.sh/article/best-ai-agent-cost-tracking-tools",
+       "title": "Best AI Agent Cost Tracking Tools in 2026: 10 Platforms Compared",
+       "start_index": 0,
+       "end_index": 0
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://amnic.com/blogs/openai-cost-monitoring-tools",
+       "title": "7 Best OpenAI Cost Monitoring Tools for 2026",
+       "start_index": 0,
+       "end_index": 0
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.nops.io/blog/llm-cost-optimization-tools/",
+       "title": "10 Best LLM Cost Optimization Tools in 2026 | nOps",
+       "start_index": 0,
+       "end_index": 0
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.vantage.sh/blog/best-ai-cost-management-tools",
+       "title": "The Best AI Cost Management Tools - Vantage.sh",
+       "start_index": 0,
+       "end_index": 0
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.pointfive.co/guides/finops-tools-for-managing-ai-costs",
+       "title": "Best Tools to Track AI Spend Across Teams (2026)",
+       "start_index": 0,
+       "end_index": 0
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.finout.io/blog/best-ai-cost-observability-tools-in-2026",
+       "title": "Best AI Cost Observability Tools in 2026 - Finout",
+       "start_index": 0,
+       "end_index": 0
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://zylo.com/blog/ai-cost-management",
+       "title": "How to Manage AI Costs Across Your Software Stack",
+       "start_index": 0,
+       "end_index": 0
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://amnic.com/blogs/ai-cost-tracking-tools",
+       "title": "6 Best AI Cost Tracking Tools for 2026",
+       "start_index": 0,
+       "end_index": 0
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.nops.io/blog/finops-tools-for-ai/",
+       "title": "9 Best FinOps Tools for AI Cost Management 2026 | nOps",
+       "start_index": 0,
+       "end_index": 0
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.moesif.com/blog/monitoring/Monitoring-Cost-and-Consumption-of-AI-APIs-and-Apps/",
+       "title": "Monitoring Cost and Consumption of AI APIs and Apps",
+       "start_index": 0,
+       "end_index": 0
+      }
+     }
+    ]
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 11,
+  "completion_tokens": 815,
+  "total_tokens": 826,
+  "cost": 0.0057717,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00583,
+   "upstream_inference_prompt_cost": 1.1e-05,
+   "upstream_inference_completions_cost": 0.005819
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ }
+}

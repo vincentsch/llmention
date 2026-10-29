@@ -387,7 +387,7 @@ func perplexityHTTPError(provider string, resp reply, key string) *ProviderError
 	if json.Unmarshal(resp.body, &payload) == nil && payload.Error != nil {
 		message, code = payload.Error.Message, firstNonEmpty(payload.Error.Type, fmt.Sprint(payload.Error.Code))
 	}
-	return httpError(provider, resp, key, message, perplexityErrorClass(resp.status, code, string(resp.body)))
+	return httpError(provider, resp, key, message, "", perplexityErrorClass(resp.status, code, string(resp.body)))
 }
 
 func perplexityErrorClass(status int, code, body string) ErrorClass {

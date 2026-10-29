@@ -1,0 +1,46 @@
+{
+ "id": "gen_fixture1",
+ "object": "chat.completion",
+ "created": 1793253527,
+ "model": "perplexity/sonar",
+ "provider": "Perplexity",
+ "system_fingerprint": null,
+ "service_tier": null,
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "stop",
+   "message": {
+    "role": "assistant",
+    "content": "Here are some of the best tools for tracking AI API costs, especially for providers like OpenAI, Anthropic, Azure OpenAI, and similar usage-based APIs.\n\n## Best overall options\n\n### 1. **Helicone**\n- Strong for **LLM observability + cost tracking**\n- Tracks per-request usage, latency, errors, tokens, and estimated spend\n- Good dashboards and filtering by user, model, endpoint, prompt, or app\n- Useful if you want both **analytics and cost control**\n\n### 2. **LangSmith**\n- Best if you already use **LangChain**\n- Tracks traces, token usage, and cost per run\n- Good for debugging, evaluation, and production monitoring\n- More workflow/observability-focused than pure finance tracking\n\n### 3. **OpenAI Usage Dashboard / Provider-native dashboards**\n- The simplest option if you mainly use one provider\n- Good for basic spend visibility, usage by model, and billing reports\n- Limited for cross-provider tracking, team-level attribution, or app-level monitoring\n\n### 4. **LiteLLM**\n- Popular for teams using multiple LLM providers\n- Can act as a proxy/router and track:\n  - token usage\n  - cost by model/provider\n  - per-team or per-key usage\n- Good for centralized billing and governance\n\n### 5. **Portkey**\n- LLM gateway with monitoring, routing, retries, and cost tracking\n- Useful for production teams wanting provider abstraction plus analytics\n- Good for multi-model and multi-provider setups\n\n## Strong enterprise / observability tools\n\n### 6. **Arize Phoenix**\n- More focused on **LLM observability, evaluation, and tracing**\n- Can be paired with cost reporting workflows\n- Better for quality/debugging than finance-first tracking\n\n### 7. **PromptLayer**\n- Tracks prompts, runs, token usage, and cost\n- Helpful for prompt iteration and team collaboration\n- Good for teams that care about prompt/version tracking\n\n### 8. **Langfuse**\n- Open-source observability platform for LLM apps\n- Tracks traces, token usage, latency, and cost\n- Strong choice if you want **self-hosted** or more control\n\n## Best spreadsheet/finance-style tracking\nIf you want simpler cost reporting rather than full observability:\n- **Helicone**\n- **LiteLLM**\n- **Langfuse**\n- Provider-native billing dashboards\n\nThese are the most useful because they can attribute costs to:\n- app\n- user\n- team\n- environment\n- model\n- request\n\n## What to look for\nWhen choosing a tool, check whether it supports:\n- **Cross-provider tracking**\n- **Per-request token and cost attribution**\n- **Team/user/project tagging**\n- **Budget alerts**\n- **Self-hosting**\n- **Dashboards and exports**\n- **Prompt/trace-level breakdowns**\n\n## Quick recommendations\n- **Single provider, simple need:** Provider dashboard\n- **Multi-provider production app:** LiteLLM or Helicone\n- **LangChain-heavy stack:** LangSmith\n- **Open-source/self-hosted:** Langfuse\n- **Prompt experimentation + collaboration:** PromptLayer\n\nIf you want, I can also give you:\n1. a **comparison table**,  \n2. **best tools by use case**, or  \n3. a **recommended setup for your stack**.",
+    "refusal": null,
+    "reasoning": null
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 11,
+  "completion_tokens": 695,
+  "total_tokens": 706,
+  "cost": 0.0056529,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00571,
+   "upstream_inference_prompt_cost": 1.1e-05,
+   "upstream_inference_completions_cost": 0.005699
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ }
+}

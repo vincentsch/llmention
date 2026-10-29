@@ -23,7 +23,7 @@ Two engines can use the same provider with different models.
 | `anthropic` | Anthropic Messages API, with its web search tool | no web search, web search, provider default | `claude-sonnet-5-5` |
 | `google` | Gemini Interactions API, with Google Search | no web search, web search, forced web search, provider default | `gemini-3.8-flash` |
 | `perplexity` | Perplexity Sonar API (see [Perplexity](#perplexity)) | no web search, web search, forced web search, provider default | `sonar` |
-| `openrouter` | OpenRouter, with its web search tool | no web search, web search, provider default | any model on OpenRouter |
+| `openrouter` | OpenRouter, with its web search tool (see [OpenRouter](#openrouter)) | no web search, web search, provider default | any model on OpenRouter |
 | `openai-compatible` | Any Chat Completions API at `base_url` | no web search, provider default | the server's model name |
 | `mock` | Made-up answers for demos and tests, no network | all | `demo` |
 
@@ -40,6 +40,16 @@ For cheaper runs, llmention's price table also knows these smaller models:
 If you want answers close to a consumer app, pick the model the app uses. The
 apps choose their models themselves and don't always say which one answered,
 so this only gets you close. [Modes](modes.md) explains what else differs.
+
+## Which providers were checked with real requests
+
+On October 29, 2026, the starter models of OpenAI and Anthropic and
+Perplexity's `sonar` through OpenRouter answered real requests, with and
+without web search. Their citations, answers cut off at the token limit and
+errors for a wrong model id all came out as these pages describe. The
+Gemini engine has so far only been checked against a rejected key. The
+`perplexity` provider, which talks to Perplexity's own API, is only tested
+against made-up answers.
 
 ## Keys
 
@@ -90,6 +100,28 @@ engines:
 Copy the model id from OpenRouter's model list. Web search goes through
 OpenRouter's search tool. Its results can differ from the search that the
 model's own provider offers.
+
+Perplexity's Sonar models work the same way, with `model: perplexity/sonar`.
+They search the web before every answer and can't use OpenRouter's search
+tool, so llmention sends them the question without it. For the no web search
+mode, llmention sends Perplexity's `disable_search` switch, which OpenRouter
+passes on. Their citations come back as links in the answer, and llmention
+counts them like any other citations. Perplexity charges a fee for every
+request, also when it doesn't search. For `perplexity/sonar` it was $0.005 in
+October 2026.
+
+Some models on OpenRouter can't use tools at all. A request in the web search
+mode then fails with "No endpoints found that support tool use". Turn web
+search off for such an engine:
+
+```yaml
+  - id: small
+    provider: openrouter
+    model: some/model-without-tools
+    key_env: OPENROUTER_API_KEY
+    capabilities:
+      supports_search_auto: false
+```
 
 ## Gateways and other hosts with base_url
 

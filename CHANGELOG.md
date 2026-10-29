@@ -17,7 +17,7 @@ First release of llmention.
 - Save the answers so far when a run is stopped with Ctrl+C.
 - Fail CI jobs with `--fail-under` checks. A check also fails when an engine has no number to check.
 - Send an alert by script or webhook when a check fails.
-- Ask models through OpenRouter or a gateway such as Azure OpenAI.
+- Ask models through OpenRouter or a gateway such as Azure OpenAI. Perplexity's Sonar models on OpenRouter work with and without web search.
 - Ask hosted and local models through Chat Completions services such as DeepSeek or Ollama.
 - Suggest buyer questions from templates or from Chab search data.
 - Check whether models know your brand with `llmention run --suite recognition.basic`, with one row per name and one column per engine.
