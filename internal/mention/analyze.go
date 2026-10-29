@@ -163,8 +163,9 @@ func matchesAny(name string, brands []Brand) bool {
 	return false
 }
 
-// Excerpt returns the sentence around a match without Markdown emphasis,
-// shortened to about maxLen bytes, for showing what an assistant said.
+// Excerpt returns the sentence around a match as plain text, without
+// Markdown emphasis, list markers or table pipes, shortened to about maxLen
+// bytes, for showing what an assistant said.
 func Excerpt(text string, m Match, maxLen int) string {
 	lineStart := strings.LastIndexByte(text[:m.Start], '\n') + 1
 	lineEnd := len(text)
@@ -172,18 +173,51 @@ func Excerpt(text string, m Match, maxLen int) string {
 		lineEnd = m.End + i
 	}
 	start, end := lineStart, lineEnd
-	for _, sep := range []string{". ", "! ", "? "} {
-		if i := strings.LastIndex(text[lineStart:m.Start], sep); i >= 0 {
-			start = max(start, lineStart+i+len(sep))
-		}
-		if i := strings.Index(text[m.End:lineEnd], sep); i >= 0 {
-			end = min(end, m.End+i+1)
+	// A table row is quoted whole, because its cells are not sentences.
+	if !strings.HasPrefix(strings.TrimSpace(text[lineStart:lineEnd]), "|") {
+		for _, sep := range []string{". ", "! ", "? "} {
+			if i := strings.LastIndex(text[lineStart:m.Start], sep); i >= 0 {
+				start = max(start, lineStart+i+len(sep))
+			}
+			if i := strings.Index(text[m.End:lineEnd], sep); i >= 0 {
+				end = min(end, m.End+i+1)
+			}
 		}
 	}
 	sentence := strings.NewReplacer("**", "", "__", "", "`", "").Replace(text[start:end])
-	sentence = strings.TrimSpace(sentence)
+	sentence = plainLine(sentence)
 	focus := max(0, strings.Index(sentence, m.Quote))
 	return Shorten(sentence, focus, maxLen)
+}
+
+// plainLine turns one line of Markdown into text for a quote. It drops
+// heading and list markers, and writes a table row as "first cell: other
+// cells; separated; by semicolons".
+func plainLine(s string) string {
+	s = strings.TrimSpace(s)
+	if strings.HasPrefix(s, "|") {
+		var cells []string
+		for _, cell := range strings.Split(strings.Trim(s, "|"), "|") {
+			if cell = strings.TrimSpace(cell); cell != "" {
+				cells = append(cells, cell)
+			}
+		}
+		if len(cells) < 2 {
+			return strings.Join(cells, "")
+		}
+		return cells[0] + ": " + strings.Join(cells[1:], "; ")
+	}
+	s = strings.TrimSpace(strings.TrimLeft(s, "#>"))
+	for _, marker := range []string{"- ", "* ", "+ "} {
+		if strings.HasPrefix(s, marker) {
+			s = s[len(marker):]
+			break
+		}
+	}
+	if i := strings.Index(s, ". "); i > 0 && i <= 3 && strings.Trim(s[:i], "0123456789") == "" {
+		s = s[i+2:]
+	}
+	return strings.TrimSpace(s)
 }
 
 // Shorten trims s to about maxLen bytes, keeping the part around focus and

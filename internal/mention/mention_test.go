@@ -183,6 +183,21 @@ func TestUnknownIgnoresSectionLabels(t *testing.T) {
 	}
 }
 
+// The lines come from real answers in a live run. The quote of the table row
+// used to keep its pipes, and a list line its dash.
+func TestExcerptQuotesMarkdownLinesAsPlainText(t *testing.T) {
+	for text, want := range map[string]string{
+		"Options:\n| **Helicone** | Quick, dedicated AI API cost tracking. Works as a proxy | Gateway adds a hop |\n": "Helicone: Quick, dedicated AI API cost tracking. Works as a proxy; Gateway adds a hop",
+		"- **Helicone**: Proxy- or SDK-based logging with cost per user. Very quick to set up.":                       "Helicone: Proxy- or SDK-based logging with cost per user.",
+		"### 2. **Helicone** for request logs": "Helicone for request logs",
+	} {
+		m := Find(text, []Brand{{ID: "h", Name: "Helicone"}})[0]
+		if got := Excerpt(text, m, 200); got != want {
+			t.Errorf("excerpt = %q, want %q", got, want)
+		}
+	}
+}
+
 func TestExcerptShowsTheSentenceAroundTheMention(t *testing.T) {
 	text := "Many teams start with logs. 3. **Tabslip** - a local CLI that keeps signed receipts for each call. It is free."
 	m := Find(text, []Brand{{ID: "you", Name: "Tabslip"}})[0]

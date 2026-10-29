@@ -101,7 +101,8 @@ The provider stopped those answers early, usually at the output token limit or
 while it was still searching the web. They are left out of the numbers. The
 run still exits with code 0, because the provider did answer. If it happens
 often, remove `max_output_tokens` from the engine or raise it. Current models
-count their thinking toward that limit.
+count their thinking toward that limit. With a low limit, a model can spend
+all of it thinking, and `report --answers` then says that no text came back.
 
 ### A check is "inconclusive"
 

@@ -98,6 +98,23 @@ func TestAnswersShowUnfinishedAnswersWithTheirReason(t *testing.T) {
 	}
 }
 
+// In a live run, Claude used a 200-token limit for thinking and returned no
+// text. The answer view said why it was unfinished and then showed nothing.
+func TestAnUnfinishedAnswerWithoutTextSaysSo(t *testing.T) {
+	r := Report{Run: RunInfo{ID: "1"}, Answers: []Answer{{Suite: "prompts", PromptID: "p", Prompt: "Best?", Engine: "claude", Mode: "memory", Status: "unfinished", StopReason: "max_tokens"}}}
+	var text, html bytes.Buffer
+	WriteAnswers(&text, r, Style{})
+	if err := WriteHTML(&html, r); err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(text.String(), "reached the output token limit; left out of the numbers)\n    (no text came back before the provider stopped)") {
+		t.Fatalf("answers:\n%s", text.String())
+	}
+	if !strings.Contains(html.String(), "<p>No text came back before the provider stopped.</p>") {
+		t.Fatalf("HTML:\n%s", html.String())
+	}
+}
+
 func TestAnEngineWithoutAnswersKeepsItsRowWithTheReason(t *testing.T) {
 	stopped := answer("p", "")
 	stopped.Engine, stopped.Failed, stopped.Stopped = "slow", true, true

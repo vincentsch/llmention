@@ -241,7 +241,11 @@ func WriteAnswers(w io.Writer, r Report, style Style) {
 			if a.Status == "unfinished" {
 				fmt.Fprintf(w, "    (unfinished: %s; left out of the numbers)\n", UnfinishedReason(a.StopReason))
 			}
-			fmt.Fprintln(w, indent(strings.TrimSpace(cmp.Or(a.readable, a.Text)), "    "))
+			text := strings.TrimSpace(cmp.Or(a.readable, a.Text))
+			if text == "" {
+				text = "(" + noTextYet + ")"
+			}
+			fmt.Fprintln(w, indent(text, "    "))
 			if len(a.Citations) > 0 {
 				fmt.Fprintln(w, "    Cited:")
 				for _, c := range a.Citations {
@@ -336,6 +340,10 @@ func percent(v float64, ok bool) string {
 	}
 	return fmt.Sprintf("%.0f%%", math.Round(v*100))
 }
+
+// noTextYet stands in for an unfinished answer without text. A model that
+// thinks before it writes can use up the whole token limit on thinking.
+const noTextYet = "no text came back before the provider stopped"
 
 // UnfinishedReason says in words why a provider cut an answer off.
 func UnfinishedReason(stopReason string) string {

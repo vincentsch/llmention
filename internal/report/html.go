@@ -225,6 +225,9 @@ func buildPage(r Report) page {
 		case "success":
 		case "unfinished":
 			block.Flag = "Unfinished: " + UnfinishedReason(a.StopReason) + ". Left out of the numbers."
+			if block.Text == "" {
+				block.Note = strings.ToUpper(noTextYet[:1]) + noTextYet[1:] + "."
+			}
 		default:
 			block.Note = "No answer: " + cmp.Or(a.Error, strings.ReplaceAll(a.Status, "_", " "))
 		}
