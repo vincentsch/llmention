@@ -63,7 +63,9 @@ llmention init
 ```
 
 `init` asks about your product and your competitors. It suggests the providers
-whose keys it finds. You can also pass everything as flags:
+whose keys it finds. If you only have an OpenRouter key, export
+`OPENROUTER_API_KEY` instead. llmention then asks ChatGPT and Claude through
+it, and also Gemini and Perplexity. You can also pass everything as flags:
 
 ```sh
 llmention init --brand "Acme Books" --category "invoicing for freelancers" \

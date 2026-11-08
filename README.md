@@ -122,8 +122,10 @@ llmention quick --brand "Acme Books" --category "invoicing for freelancers" \
 the best tools for invoicing for freelancers?". None of them names your
 product. For each of your first two competitors it adds one more question,
 such as "What are good alternatives to Globex Billing?". So this example has
-ten questions. `quick` also adds an engine for each provider key it finds. With
-`--dry-run` it only prints what it would send:
+ten questions. `quick` also adds an engine for each provider key it finds.
+With only `OPENROUTER_API_KEY` set, it asks ChatGPT and Claude through that one
+key, and also Gemini and Perplexity. With `--dry-run` it only prints what it
+would send:
 
 ```text
 Dry run: nothing was sent.

@@ -18,6 +18,7 @@ First release of llmention.
 - Fail CI jobs with `--fail-under` checks. A check also fails when an engine has no number to check.
 - Send an alert by script or webhook when a check fails.
 - Ask models through OpenRouter or a gateway such as Azure OpenAI. Perplexity's Sonar models on OpenRouter work with and without web search.
+- Ask ChatGPT and Claude through one OpenRouter key, and also Gemini and Perplexity. `init` and `quick` set this up when `OPENROUTER_API_KEY` is the only key they find.
 - Ask hosted and local models through Chat Completions services such as DeepSeek or Ollama.
 - Suggest buyer questions from templates or from Chab search data.
 - Check whether models know your brand with `llmention run --suite recognition.basic`, with one row per name and one column per engine.

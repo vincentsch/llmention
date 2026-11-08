@@ -22,7 +22,7 @@ llmention init --dry-run --brand Acme
 - `--category` What it helps with in a few words, used in the starter prompts
 - `--competitors` Competitors, comma-separated; add a site in brackets: "Helicone (helicone.ai), Langfuse"
 - `--domain` Your website domains (optional)
-- `--engines` Providers to ask: openai, anthropic, google, perplexity or mock (default: the ones with a key in your environment)
+- `--engines` Providers to ask: openai, anthropic, google, perplexity, openrouter (all four through one key) or mock (default: the ones with a key in your environment)
 - `--force` Overwrite an existing llmention.yaml
 
 ## Output

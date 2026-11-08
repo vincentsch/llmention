@@ -22,8 +22,18 @@ var StarterEngines = map[string]EngineConfig{
 	"mock":       {ID: "mock", Provider: "mock", Model: "demo"},
 }
 
+// OpenRouterStarterEngines ask the same four assistants through one
+// OpenRouter key. OpenRouter gives OpenAI, Anthropic and Gemini models their
+// own provider's web search, and Perplexity searches by itself.
+var OpenRouterStarterEngines = []EngineConfig{
+	{ID: "chatgpt", Provider: "openrouter", Model: "openai/gpt-6.1-sol", KeyEnv: "OPENROUTER_API_KEY"},
+	{ID: "claude", Provider: "openrouter", Model: "anthropic/claude-sonnet-5.5", KeyEnv: "OPENROUTER_API_KEY"},
+	{ID: "gemini", Provider: "openrouter", Model: "google/gemini-3.8-flash", KeyEnv: "OPENROUTER_API_KEY"},
+	{ID: "perplexity", Provider: "openrouter", Model: "perplexity/sonar", KeyEnv: "OPENROUTER_API_KEY"},
+}
+
 // StarterProviders is the order in which init offers providers.
-var StarterProviders = []string{"openai", "anthropic", "google", "perplexity", "mock"}
+var StarterProviders = []string{"openai", "anthropic", "google", "perplexity", "openrouter", "mock"}
 
 // providerNames maps what people type to a starter provider, so "chatgpt,
 // claude" works as well as "openai, anthropic".
@@ -32,7 +42,8 @@ var providerNames = map[string]string{
 	"anthropic": "anthropic", "claude": "anthropic",
 	"google": "google", "gemini": "google",
 	"perplexity": "perplexity", "sonar": "perplexity",
-	"mock": "mock", "demo": "mock",
+	"openrouter": "openrouter",
+	"mock":       "mock", "demo": "mock",
 }
 
 // StarterProvider returns the provider for a name such as "claude".
@@ -116,6 +127,15 @@ func StarterProject(s Starter) (*Project, error) {
 		provider, ok := StarterProvider(name)
 		if !ok {
 			return nil, fmt.Errorf("unknown provider %q; choose from %s", name, strings.Join(StarterProviders, ", "))
+		}
+		if provider == "openrouter" {
+			// Through OpenRouter, add the assistants no direct key covers yet.
+			for _, e := range OpenRouterStarterEngines {
+				if !slices.ContainsFunc(p.Engines, func(have EngineConfig) bool { return have.ID == e.ID }) {
+					p.Engines = append(p.Engines, e)
+				}
+			}
+			continue
 		}
 		if !slices.ContainsFunc(p.Engines, func(e EngineConfig) bool { return e.Provider == provider }) {
 			p.Engines = append(p.Engines, StarterEngines[provider])

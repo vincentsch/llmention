@@ -24,7 +24,7 @@ Flags:
       --category string      What it helps with in a few words, used in the starter prompts
       --competitors string   Competitors, comma-separated; add a site in brackets: "Helicone (helicone.ai), Langfuse"
       --domain strings       Your website domains (optional)
-      --engines strings      Providers to ask: openai, anthropic, google, perplexity or mock (default: the ones with a key in your environment)
+      --engines strings      Providers to ask: openai, anthropic, google, perplexity, openrouter (all four through one key) or mock (default: the ones with a key in your environment)
       --force                Replace an existing llmention.yaml
   -h, --help                 help for quick
 

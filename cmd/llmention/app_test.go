@@ -605,6 +605,32 @@ func TestInitWritesARunnableProject(t *testing.T) {
 	}
 }
 
+func TestInitWithOnlyAnOpenRouterKeyAsksAllFourThroughIt(t *testing.T) {
+	inTempProject(t, "")
+	res := testutil.RunWith(newApp(), testutil.Options{LookupEnv: func(name string) (string, bool) {
+		if name == "OPENROUTER_API_KEY" {
+			return "test-openrouter-key", true
+		}
+		return "", false
+	}}, "init", "--no-prompt", "--brand", "Tabslip", "--category", "AI API cost tracking")
+	if res.Exit != 0 {
+		t.Fatalf("exit %d: %s", res.Exit, res.Stderr)
+	}
+	project, err := config.Load("llmention.yaml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(project.Engines) != 4 {
+		t.Fatalf("engines = %+v", project.Engines)
+	}
+	for _, e := range project.Engines {
+		if e.Provider != "openrouter" || e.KeyEnv != "OPENROUTER_API_KEY" {
+			t.Fatalf("engine = %+v", e)
+		}
+	}
+	testutil.AssertRedacted(t, res, "test-openrouter-key")
+}
+
 func TestInitAsksQuestionsInATerminal(t *testing.T) {
 	inTempProject(t, "")
 	answers := "Acme Books\ninvoicing for freelancers\nacme-books.example\nGlobex Billing (globex.example)\nmock\n"

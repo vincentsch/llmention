@@ -46,10 +46,16 @@ so this only gets you close. [Modes](modes.md) explains what else differs.
 On October 29, 2026, the starter models of OpenAI and Anthropic and
 Perplexity's `sonar` through OpenRouter answered real requests, with and
 without web search. Their citations, answers cut off at the token limit and
-errors for a wrong model id all came out as these pages describe. The
-Gemini engine has so far only been checked against a rejected key. The
-`perplexity` provider, which talks to Perplexity's own API, is only tested
-against made-up answers.
+errors for a wrong model id all came out as these pages describe.
+
+On November 8, 2026, Gemini (`google/gemini-3.8-flash`) answered real
+requests through OpenRouter, and so did `openai/gpt-6.1-sol` and
+`anthropic/claude-sonnet-5.5` with web search. All three searched with their
+own provider's search there.
+
+The `google` provider, which talks to Google's own API, has so far only been
+checked against a rejected key. The `perplexity` provider, which talks to
+Perplexity's own API, is only tested against made-up answers.
 
 ## Keys
 
@@ -98,8 +104,47 @@ engines:
 ```
 
 Copy the model id from OpenRouter's model list. Web search goes through
-OpenRouter's search tool. Its results can differ from the search that the
-model's own provider offers.
+OpenRouter's search tool. OpenAI and Anthropic models get their provider's own
+search there, and Gemini gets Google Search. Other models get a search service
+that OpenRouter picks, so their results can differ from what the model's own
+provider would find.
+
+### One OpenRouter key for all four assistants
+
+If you don't have a key from each provider, one OpenRouter key is enough.
+`llmention init --engines openrouter` writes these engines, and `init` and
+`quick` do the same on their own when `OPENROUTER_API_KEY` is the only key
+they find:
+
+```yaml
+engines:
+  - id: chatgpt
+    provider: openrouter
+    model: openai/gpt-6.1-sol
+    key_env: OPENROUTER_API_KEY
+  - id: claude
+    provider: openrouter
+    model: anthropic/claude-sonnet-5.5
+    key_env: OPENROUTER_API_KEY
+  - id: gemini
+    provider: openrouter
+    model: google/gemini-3.8-flash
+    key_env: OPENROUTER_API_KEY
+  - id: perplexity
+    provider: openrouter
+    model: perplexity/sonar
+    key_env: OPENROUTER_API_KEY
+```
+
+In the web search mode the model decides whether to search. In the live
+check, Gemini answered two general questions from memory and searched for
+two questions about recent releases and prices. Gemini's citations link
+through a Google redirect (`vertexaisearch.cloud.google.com`), and llmention
+counts each one for the site named in its title.
+
+If your OpenRouter account has its own provider keys stored (OpenRouter calls
+this BYOK), OpenRouter sends those requests with your key, and the provider
+bills you directly.
 
 Perplexity's Sonar models work the same way, with `model: perplexity/sonar`.
 They search the web before every answer and can't use OpenRouter's search

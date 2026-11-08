@@ -29,8 +29,8 @@ also when they don't search.
 The prices come from a table inside llmention. It was copied from the
 providers' pricing pages on the date shown. When a model is not in that table,
 the estimate names it and leaves it out. It also says when it leaves out
-Perplexity's fee per request. The price for Perplexity's Sonar on OpenRouter
-comes from OpenRouter's model list.
+Perplexity's fee per request. The prices for models on OpenRouter come from
+OpenRouter's model list.
 
 What you pay in the end depends on how long the answers are and how many
 searches a model runs, and both change from question to question. Answers

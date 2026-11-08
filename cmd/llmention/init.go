@@ -44,7 +44,7 @@ func addStarterFlags(cmd *cobra.Command) {
 	cmd.Flags().String("category", "", "What it helps with in a few words, used in the starter prompts")
 	cmd.Flags().StringSlice("domain", nil, "Your website domains (optional)")
 	cmd.Flags().String("competitors", "", "Competitors, comma-separated; add a site in brackets: \"Helicone (helicone.ai), Langfuse\"")
-	cmd.Flags().StringSlice("engines", nil, "Providers to ask: openai, anthropic, google, perplexity or mock (default: the ones with a key in your environment)")
+	cmd.Flags().StringSlice("engines", nil, "Providers to ask: openai, anthropic, google, perplexity, openrouter (all four through one key) or mock (default: the ones with a key in your environment)")
 }
 
 type initResult struct {
@@ -198,7 +198,7 @@ func askStarter(f *rungrad.Factory, s *config.Starter) error {
 	}
 	providerDefault := strings.Join(s.Providers, ", ")
 	for {
-		providers, err := ask("Providers you have API keys for (openai, anthropic, google, perplexity), or mock to try it without keys", providerDefault)
+		providers, err := ask("Providers you have API keys for (openai, anthropic, google, perplexity, or openrouter for all four through one key), or mock to try it without keys", providerDefault)
 		if err != nil {
 			return err
 		}
@@ -226,6 +226,10 @@ func defaultProviders(f *rungrad.Factory) []string {
 		}
 	}
 	if len(out) == 0 {
+		// With only an OpenRouter key, ask all four assistants through it.
+		if v, ok := lookupEnv(f)("OPENROUTER_API_KEY"); ok && v != "" {
+			return []string{"openrouter"}
+		}
 		return []string{"openai", "anthropic"}
 	}
 	return out

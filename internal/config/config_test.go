@@ -375,3 +375,30 @@ func TestJoinAndReadsLikeASentence(t *testing.T) {
 		}
 	}
 }
+
+func TestStarterOpenRouterAsksTheFourAssistantsThroughOneKey(t *testing.T) {
+	p, err := StarterProject(Starter{Brand: "Acme", Category: "invoicing", Providers: []string{"openrouter"}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var got []string
+	for _, e := range p.Engines {
+		if e.Provider != "openrouter" || e.KeyEnv != "OPENROUTER_API_KEY" {
+			t.Fatalf("engine = %#v", e)
+		}
+		got = append(got, e.ID+"="+e.Model)
+	}
+	want := "chatgpt=openai/gpt-6.1-sol claude=anthropic/claude-sonnet-5.5 gemini=google/gemini-3.8-flash perplexity=perplexity/sonar"
+	if strings.Join(got, " ") != want {
+		t.Fatalf("engines = %v", got)
+	}
+
+	// A direct key wins; OpenRouter fills in the rest.
+	p, err = StarterProject(Starter{Brand: "Acme", Category: "invoicing", Providers: []string{"openai", "openrouter"}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(p.Engines) != 4 || p.Engines[0].Provider != "openai" || p.Engines[1].ID != "claude" || p.Engines[1].Provider != "openrouter" {
+		t.Fatalf("engines = %#v", p.Engines)
+	}
+}
