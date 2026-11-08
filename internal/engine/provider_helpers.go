@@ -103,7 +103,7 @@ func (m *evidenceMapper) citation(rawURL, title string, metadata map[string]stri
 	if !ok {
 		return Citation{}, false
 	}
-	citation := Citation{URL: cleanURL, Title: title, Domain: observedDomain}
+	citation := Citation{URL: cleanURL, Title: title, Domain: googleSiteDomain(observedDomain, title)}
 	if len(metadata) > 0 {
 		citation.Metadata = cloneStringMap(metadata)
 	}
@@ -115,7 +115,7 @@ func (m *evidenceMapper) source(rawURL, title, kind string, metadata map[string]
 	if !ok {
 		return Source{}, false
 	}
-	source := Source{URL: cleanURL, Title: title, Domain: observedDomain, Kind: kind}
+	source := Source{URL: cleanURL, Title: title, Domain: googleSiteDomain(observedDomain, title), Kind: kind}
 	if len(metadata) > 0 {
 		source.Metadata = cloneStringMap(metadata)
 	}

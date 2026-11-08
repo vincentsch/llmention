@@ -49,6 +49,13 @@ var prices = map[string]Price{
 	// From OpenRouter's model list. OpenRouter bills Perplexity's fee on
 	// every request, also with search turned off.
 	"openrouter/perplexity/sonar": {1.00, 1.00, 0, 0.005, false},
+	// From OpenRouter's model list on 2026-11-08. Gemini searches with
+	// Google's own search there, and OpenRouter passes Google's price on.
+	"openrouter/google/gemini-3.8-flash":      {0.825, 4.125, 0.014, 0, false},
+	"openrouter/google/gemini-3.5-flash-lite": {0.30, 2.50, 0.014, 0, false},
+	"openrouter/google/gemini-4-argon":        {2.00, 10.00, 0.014, 0, false},
+	"openrouter/openai/gpt-6.1-sol":           {2.00, 10.00, 0.010, 0, false},
+	"openrouter/anthropic/claude-sonnet-5.5":  {2.00, 10.00, 0.010, 0, false},
 }
 
 // answerTokens is a typical answer to a buyer question, thinking included.
@@ -66,9 +73,9 @@ const (
 // paid for by its fee per request.
 func typicalSearch(provider, model string) (tokens int, searches float64) {
 	switch {
-	case provider == "openai":
+	case provider == "openai", provider == "openrouter" && strings.HasPrefix(model, "openai/"):
 		return 32000, 3
-	case provider == "anthropic":
+	case provider == "anthropic", provider == "openrouter" && strings.HasPrefix(model, "anthropic/"):
 		return 14000, 1
 	case provider == "perplexity", provider == "openrouter" && strings.HasPrefix(model, "perplexity/"):
 		return 0, 0

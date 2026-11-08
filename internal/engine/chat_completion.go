@@ -81,7 +81,25 @@ type chatCompletionUsage struct {
 	CompletionTokens int                          `json:"completion_tokens"`
 	TotalTokens      int                          `json:"total_tokens"`
 	ServerToolUse    *chatCompletionServerToolUse `json:"server_tool_use"`
-	Cost             any                          `json:"cost"`
+	// OpenRouter reports the searches of a provider's own search tool here,
+	// as seen live on 2026-11-08.
+	ServerToolUseDetails *chatCompletionServerToolUse `json:"server_tool_use_details"`
+	Cost                 any                          `json:"cost"`
+}
+
+// webSearches is the number of searches the usage reports, or -1 when it
+// reports none.
+func (u *chatCompletionUsage) webSearches() int {
+	if u == nil {
+		return -1
+	}
+	n := -1
+	for _, use := range []*chatCompletionServerToolUse{u.ServerToolUse, u.ServerToolUseDetails} {
+		if use != nil && use.WebSearchRequests > n {
+			n = use.WebSearchRequests
+		}
+	}
+	return n
 }
 
 type chatCompletionServerToolUse struct {
@@ -129,7 +147,7 @@ func chatCompletionAnswerFromResponse(input chatCompletionParseInput) (Answer, e
 		SourcesConsulted: sources,
 		ToolCalls:        toolCalls,
 		ToolsAvailable:   chatCompletionToolsAvailable(input.Provider, input.Request.Mode),
-		ToolsUsed:        chatCompletionToolsUsed(input.Provider, parsed.Usage),
+		ToolsUsed:        chatCompletionToolsUsed(input.Provider, parsed.Usage, len(citations)),
 		StopReason:       choice.FinishReason,
 		Unfinished:       unfinished,
 		ProviderMetadata: metadata,
@@ -224,8 +242,15 @@ func chatCompletionToolsAvailable(provider string, mode ToolPolicy) []string {
 	return nil
 }
 
-func chatCompletionToolsUsed(provider string, usage *chatCompletionUsage) []string {
-	if provider != "openrouter" || usage == nil || usage.ServerToolUse == nil || usage.ServerToolUse.WebSearchRequests <= 0 {
+// chatCompletionToolsUsed says whether an OpenRouter answer searched the web.
+// OpenRouter counts its own searches in usage. Native searches, like
+// Gemini's Google Search, leave no count there, so cited pages count too.
+func chatCompletionToolsUsed(provider string, usage *chatCompletionUsage, citations int) []string {
+	if provider != "openrouter" {
+		return nil
+	}
+	counted := usage.webSearches() > 0
+	if !counted && citations == 0 {
 		return nil
 	}
 	return []string{webSearchToolName}
@@ -246,8 +271,8 @@ func chatCompletionMetadata(input chatCompletionParseInput, parsed chatCompletio
 		setProviderMetadataInt(metadata, "usage_input_tokens", parsed.Usage.PromptTokens)
 		setProviderMetadataInt(metadata, "usage_output_tokens", parsed.Usage.CompletionTokens)
 		setProviderMetadataInt(metadata, "usage_total_tokens", parsed.Usage.TotalTokens)
-		if parsed.Usage.ServerToolUse != nil {
-			setProviderMetadataInt(metadata, "usage_search_queries", parsed.Usage.ServerToolUse.WebSearchRequests)
+		if n := parsed.Usage.webSearches(); n >= 0 {
+			setProviderMetadataInt(metadata, "usage_search_queries", n)
 		}
 		setProviderMetadataAny(metadata, "usage_cost", firstNonNil(parsed.Usage.Cost, parsed.Cost))
 	} else {

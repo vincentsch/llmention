@@ -1,0 +1,182 @@
+{
+ "id": "gen_fixture1",
+ "object": "chat.completion",
+ "created": 1794124121,
+ "model": "google/gemini-3.8-flash",
+ "provider": "Google",
+ "system_fingerprint": null,
+ "service_tier": "provisioned",
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "STOP",
+   "message": {
+    "role": "assistant",
+    "content": "The landscape of AI API cost tracking tools is split between **inline proxy gateways** (which meter and enforce budgets in real time), **observability/tracing platforms** (which record token costs inside agent execution steps), and **AI FinOps platforms** (which ingest provider invoices for business unit economics). \n\nSeveral tools launched or announced major releases specifically addressing LLM API cost unpredictability:\n\n---\n\n### 1. New & Purpose-Built Cost-First Tools\n\n* **Alephant (AI FinOps Gateway)**  \n  * **Focus:** Launched as a dedicated, open-source AI FinOps gateway built explicitly for cost intelligence rather than generic observability.\n  * **Key Features:** Sits inline as a proxy to enforce hard budget guardrails before API calls reach providers (OpenAI, Anthropic, Bedrock, etc.). It outputs telemetry aligned with the FinOps Foundation's **FOCUS** standard to integrate with downstream accounting systems.\n* **Bifrost (by Maxim AI)**  \n  * **Focus:** An open-source, Go-based AI gateway that received major releases centering on enterprise multi-provider cost governance and budgeting.\n  * **Key Features:** Attributes spend per virtual key, team, and customer across 25+ model providers. It deducts costs against granular budgets in the request path and introduced *Bifrost Edge* to track costs originating from developer coding agents and internal tools.\n* **Tokonomics**  \n  * **Focus:** A budget-first proxy designed for teams experiencing \"bill shock\" who want cost controls without heavy instrumentation.\n  * **Key Features:** Requires only a URL change (no SDK). Offers sub-millisecond, Redis-backed hard budget caps that block requests when monthly thresholds are reached, along with custom JSON-tag cost allocation by feature or team.\n* **Paygent**  \n  * **Focus:** A margin-focused AI cost management tool.\n  * **Key Features:** Bridges the gap between cost tracking and unit economics. Rather than merely reporting token consumption, it joins real-time model API invocation costs directly to customer revenue and outcome margins.\n\n---\n\n### 2. Major Releases in AI Gateways & Observability\n\n* **LiteLLM**  \n  * **Recent Upgrades:** Has rapidly expanded its unified proxy spend controls. Recent releases brought dynamic price-table sync across 100+ providers, automated rate-limiting based on dollar-spend instead of just token counts, and granular per-user/per-team virtual key budgeting.\n* **Langfuse**  \n  * **Recent Upgrades:** Following its acquisition by ClickHouse, Langfuse rolled out major performance upgrades to its open-source telemetry engine. Beyond per-span token pricing, recent releases introduced hooks to track the costs of developer coding agents (such as Claude Code and Copilot) and deeper step-by-step cost tracking inside multi-turn agent loops.\n* **Datadog Agent & LLM Observability**  \n  * **Recent Upgrades:** Rebranded and overhauled its capabilities under *Agent Observability*. It introduced automated cost-facet attribution for more than 800 models and previewed an AI Gateway module with built-in spend budgets alongside native invoice reconciliation via Datadog Cloud Cost Management.\n* **Portkey & Helicone**  \n  * **Recent Upgrades:** Helicone expanded its cache analytics (showing exact dollar savings from semantic caching), while Portkey introduced advanced spend governance rules, enterprise guardrails, and automated provider fallback to cheaper tier models when latency or cost budgets trigger.\n\n---\n\n### 3. Cloud FinOps Platforms Adding Native AI Modules\n\n* **CloudZero (MegaBill AI)**  \n  * **Recent Upgrades:** Enhanced its agentless billing-API ingestion for OpenAI, Anthropic, Google Gemini, and Azure OpenAI. Rather than requiring request proxies, it pulls from provider billing APIs directly and correlates token spend with cloud infrastructure (Kubernetes, AWS/GCP compute) for true unit cost per customer.\n* **Vantage**  \n  * **Recent Upgrades:** Upgraded its multi-cloud FinOps suite with automated AI provider cost tracking, supporting unified dashboard views, cost anomaly detection, and spend forecasts across major LLM APIs.\n\n---\n\n### Choosing Between Them\n* **For real-time hard caps & preventing overages:** Look at **Alephant**, **Bifrost**, or **LiteLLM** (inline proxies).\n* **For step-by-step agent and prompt debugging:** Look at **Langfuse** or **Helicone**.\n* **For finance reconciliation and customer margin tracking:** Look at **Paygent** or **CloudZero**.",
+    "refusal": null,
+    "reasoning": "**Tracking API Spending**\n\nI'm currently researching various tools designed to monitor and optimize AI API costs. My focus is on understanding their features for tracking spend across different LLM providers, identifying key players in this emerging market, and evaluating their potential for cost-saving.\n\n**Analyzing AI FinOps Tools**\n\nI'm now focusing on synthesizing recent developments in AI FinOps, specifically looking at tools like Alephant, which recently launched as a dedicated AI FinOps Gateway.\n\n**Researching New AI FinOps Solutions**\n\nI'm currently investigating newly released AI FinOps tools. My focus is on understanding their capabilities in cost intelligence and real-time budget guardrails, especially for LLM gateways like Bifrost and Tokonomics, which offer unique approaches to cost management and per-request pricing.\n\n**Tracking Cost Management Innovations**\n\nMy current focus is on integrating recent advancements in AI FinOps. I'm analyzing how tools like LiteLLM are implementing granular budget enforcement and automatic pricing sync, and how Datadog's Agent Observability now offers cost facets and AI gateway previews. I'm also looking at how CloudZero and Vantage are deepening their direct billing API integrations for better unit economics.\n\n",
+    "reasoning_details": [
+     {
+      "type": "reasoning.text",
+      "text": "**Tracking API Spending**\n\nI'm currently researching various tools designed to monitor and optimize AI API costs. My focus is on understanding their features for tracking spend across different LLM providers, identifying key players in this emerging market, and evaluating their potential for cost-saving.\n\n**Analyzing AI FinOps Tools**\n\nI'm now focusing on synthesizing recent developments in AI FinOps, specifically looking at tools like Alephant, which recently launched as a dedicated AI FinOps Gateway.\n\n**Researching New AI FinOps Solutions**\n\nI'm currently investigating newly released AI FinOps tools. My focus is on understanding their capabilities in cost intelligence and real-time budget guardrails, especially for LLM gateways like Bifrost and Tokonomics, which offer unique approaches to cost management and per-request pricing.\n\n**Tracking Cost Management Innovations**\n\nMy current focus is on integrating recent advancements in AI FinOps. I'm analyzing how tools like LiteLLM are implementing granular budget enforcement and automatic pricing sync, and how Datadog's Agent Observability now offers cost facets and AI gateway previews. I'm also looking at how CloudZero and Vantage are deepening their direct billing API integrations for better unit economics.\n\n",
+      "format": "google-gemini-v1",
+      "index": 0
+     },
+     {
+      "type": "reasoning.encrypted",
+      "data": "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",
+      "format": "google-gemini-v1",
+      "index": 1
+     }
+    ],
+    "annotations": [
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGqIGKKl3Aa5YqSq9Jp2fEzDjEtRQu7OIIrbEsh-7DVncd0G60ZCrHjiy0kmfet3p9_n8SThqyNpTl-TQiHd25O3XDM4MGpNwoezcMPlrLsUMo6G9oiGM_tDT_RMjvJnqaQuz-V_WEg9vd5XPPovXrYek24hmH6LfSc2fUbiHiHTgXF-u4hbhEDrHE=",
+       "title": "alephant.io",
+       "start_index": 0,
+       "end_index": 133
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGk1QcKNyzXdbz1kjS2gd4SQAvLxRQR-r4dkMimf1Xna7uxkQyN_MBG9knCbDYg1DdPWToiSmoyk4ks9UPXWWXBGuufbRQVb9L7IZs17cYHgiGNV5q76HDlWATCrUCwAfq5HL4gyfAg8RZUP8isIn2jhNt2Vg==",
+       "title": "superpenguin.ai",
+       "start_index": 0,
+       "end_index": 226
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE-G1HiPJaD2Dq1U_U44F_GX0k-ezE8mk7TU4gmj2qfB5PH_IXYZaP29Md5jt7WcHn1SkoCSt0Xk33uo5gjiEOmP9h-9rcC0hV-Nds5IadAF0rEee2ItVvtmqfO4I-IT37lDBJ-2uAUJl0PS-GSVcJ9QsR8SeZI4BR9R9VNX48tQBCe6kGQQWm1OQoNa94s4ay0z7kPNaM51vcoDqzkkzmz6WjemQE=",
+       "title": "withpaygent.com",
+       "start_index": 0,
+       "end_index": 226
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEiF-S-Youk71kiHkB68CcQcEkZBX3nLK9RcfVrRXLYMWNnSjGq18UPXgG7M3mQjaBqlv4273TBrxi003Wzp7lR4u9BjwCv-VITOi1XeIX3-QYCJYML3JU7Q80e00CinoYA7tVbsvs5Eb5a8rHYClgp3K9a",
+       "title": "cloudzero.com",
+       "start_index": 0,
+       "end_index": 316
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH-T1qI5iy0ZH1Yt6IUfbcUMkhvbonwtlF-tZmeej0FG9OPBN0yk0Lh8cuiq508RoTR3C7mYi5evGud2ik5-zqv6l7f8q_OV8E8IBQW9qMBlQI5Wm8JRsiYVfNLhMvCrMa_b2MpZ3dFFYqMRH_Q2QwiNzGj",
+       "title": "tokonomics.ca",
+       "start_index": 320,
+       "end_index": 424
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGWJ77DjnwoEgQN1MTEllMBXXbgSydjCACb78gfMncInSjWJuMhO5kYL9hy41l4yXFGWuebe7SsEE7pY8Tj7qYlpuyk9jZ8AjqVkMDE4TXm9D0DjWPvEEwlN3mHRKHmx3ndAalFfrATS6etdrVDYh6JLKOnJCuHG6FDkcdPyHJiO5puvGazq-YZ2y5wKXFFvzQZdw==",
+       "title": "getmaxim.ai",
+       "start_index": 966,
+       "end_index": 1110
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF37SIiUFkMfT_UQGmBunsMma8VFU3dkJxHpqHd0pCFoMC0lWBf0HigQ_7s3_4P4VHfQVXmtLSMmS7UlAxg9hmcd1-yyJ_ekJ_E6pxjzcjaOzWBvaKMk2XDQhTMt1VtYTMbLGwgW4xMJR0=",
+       "title": "amnic.com",
+       "start_index": 2147,
+       "end_index": 2221
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFAzzUu5AOnjjF2dRJGMxUBghWuaBZx0586tQZEwKn0BmSQVd3t7ohuo8Qdu9dJgjvWdinowWLC1MWUcuesVEv_oB4PR3j8SRCWsby191aDTIuivxzLkgHzSArfz2y3Vyb1_imAVRkYr6uj4Fk=",
+       "title": "logz.io",
+       "start_index": 2446,
+       "end_index": 2590
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHzhtfsNjtWoEAvTlxaZga22YDnzwNZdTYaLoBi-E7HERVMBBvVf6FdKl1y9LpF6RQxZ0YMumd1Qo4gJreCU8gySe60yUreK8IFzITCZPz2JHOcl1-Crl1yUqgLzkyBgAsDISO0ocsIF3plFk4xFIX9bJC7z1su3H_sKCX-FSBl9wqkrhcG0Al3aAr-",
+       "title": "langwatch.ai",
+       "start_index": 2592,
+       "end_index": 2803
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH4-Y-gulmDA_B6YhxOzsSjt1Il8yKmC5BuFmBirz2R6UtYZRqeTu8UkrmfezV_gHChrz1lZTe7AVG1ItXPnxtvcPw7QSqQJcroLd3gWCo6KNyFirwxah-s4R-lnjFWa-bseNB8KsbMBH8XsDbUndTcACbIr4YUHDVUM-Nzf9iM4KpIXD27MThI5D5c7g==",
+       "title": "braintrust.dev",
+       "start_index": 2943,
+       "end_index": 3151
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFl5n1IIntWxSNwLAwfjGEi_kBy04L7hYUb334kNFF8BJ0TirTbvXbpO5-9E3Vx-BmsWpiodt5_R-zH_77VO61hl8mLdOQ6CYk82VUIjDiksRkcNt_-vYw3QiQR4TmbwlEFTzNngjMDxS0p3DbO9r6H4CV2kcb5zg==",
+       "title": "stackpulsar.com",
+       "start_index": 3184,
+       "end_index": 3295
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE3RvRdFHCQZdyafT46ck7l8M99En2lT22ZyuautQBWvlgc2PITXnlxUnKZIRlMWDbN4yu-R76iGlf8v2b-qPsuEFCiy4JfdmQvPC5PdW3TUM9ITIjgjbmKJkBDtvGd0bwOqWeJHwZSN0DvRy2xqLJ1eftb",
+       "title": "trysight.ai",
+       "start_index": 3184,
+       "end_index": 3469
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGLe1q0tve79YSstIeVBFUmai4YfRFyyIw3lEodg8C1QAA3uC5C_MQep289pThnhKnb3NN0Ky3WuTRMxSgWQ8GbUREufevLcMW1xtecKS0PNajR-c_vsIAXhjG67Egx5N8J1j3FL3a8bMRunA==",
+       "title": "lava.so",
+       "start_index": 3184,
+       "end_index": 3469
+      }
+     }
+    ]
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 40,
+  "completion_tokens": 2310,
+  "total_tokens": 2350,
+  "cost": 0.050185575,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0506925,
+   "upstream_inference_prompt_cost": 3e-05,
+   "upstream_inference_completions_cost": 0.0086625
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 1017,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  },
+  "server_tool_use_details": {
+   "web_search_requests": 3
+  }
+ }
+}

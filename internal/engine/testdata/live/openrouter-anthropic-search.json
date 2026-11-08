@@ -1,0 +1,230 @@
+{
+ "id": "gen_fixture1",
+ "object": "chat.completion",
+ "created": 1794124418,
+ "model": "anthropic/claude-sonnet-5.5",
+ "provider": "Anthropic",
+ "system_fingerprint": null,
+ "service_tier": "default",
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "end_turn",
+   "message": {
+    "role": "assistant",
+    "content": "I found a few relevant releases, but most results were roundups, not launch announcements. Treat the dates below as approximate.\n\n**Recent releases (roughly the last 1–3 months)**\n- **Agentgateway (Agentic AI Foundation project):** v1.3.0 was released with an \"AI Cost & Analysis\" feature. It shows token and dollar cost, attributed, in logs, traces, metrics, and the UI. A newer release (about 8 days ago) adds costs that reflect the service tier that served each request. It also adds an `agctl` standalone CLI that summarizes tokens, cost, cache hit rate, and latency by model, user, or any logged attribute. Another release adds zero-configuration cost tracking for common public models. It also has breaking changes, so review USD budgets and expressions that use llm.cost.\n- **LLM Gateway (llmgateway.io):** Its changelog lists organization-wide analytics that roll up cost, requests, and tokens across every project. It also lists a custom model catalog for bringing OpenAI-compatible models under cost tracking. The dates weren't clear in the results.\n- **LiteLLM:** It keeps shipping frequent releases. Recent ones include fixes for spend on failed requests and batch cost, and v1.108.x LTS builds. These are incremental updates, not a major launch.\n- **Manifest (LLM gateway):** A recent change makes it prefer the cost a provider reports over any catalogue estimate.\n- **Newer entrants:** A comparison post checked in October covers PromptUnit, a proxy that tracks cost per request and per feature through a header.\n\n**Older 2026 news that still matters**\n- **CloudZero:** It launched a dedicated AI financial control plane in May 2026.\n- **Portkey:** Its core gateway went open-source under Apache 2.0 in March 2026. Palo Alto Networks completed its acquisition in May 2026.\n- **Helicone:** Mintlify acquired it in March 2026, and it is now in maintenance mode. If you use it, you may want to plan a migration.\n- **Datadog:** LLM Observability is now called Agent Observability.\n- **Mavvrik:** Its 2026 product release covers token-level cost tracking and agent/session-level tracking.\n- **LogicMonitor:** It expanded its data platform with OpenTelemetry and cost tracking on Oct 15. The result only gave a headline, so I can't say whether it covers LLM API spend specifically.\n\nMost of these are gateways or observability platforms that added cost features. Few are new standalone cost trackers. If you tell me which kind you care about (gateway, observability, or FinOps), I can look further into specific changelogs.",
+    "refusal": null,
+    "reasoning": "I'm composing the answer from the search results, keeping the dates straight against today, Nov 8, 2026. I'm treating \"the last few months\" as roughly August through November. Agentgateway v1.3.0 came out about 44 days ago, around late September, and it added AI cost and analysis. Later release notes from 8 days ago brought a model catalog, service-tier costs, and an agctl CLI. There's also an undated release that added zero-config cost tracking.\n\nI'm going through the remaining candidates: LLM Gateway's org-wide analytics with an undated custom model catalog, CloudZero's AI financial control plane from May, and the Portkey and Helicone acquisitions, which are older. I'm also noting LiteLLM's changelog, which has ambiguous dating, and LogicMonitor's cost tracking from October that may not cover AI APIs specifically. I'll keep the answer concise and add caveats where the dates are unclear.\n\n",
+    "reasoning_details": [
+     {
+      "type": "reasoning.text",
+      "text": "I'm composing the answer from the search results, keeping the dates straight against today, Nov 8, 2026. I'm treating \"the last few months\" as roughly August through November. Agentgateway v1.3.0 came out about 44 days ago, around late September, and it added AI cost and analysis. Later release notes from 8 days ago brought a model catalog, service-tier costs, and an agctl CLI. There's also an undated release that added zero-config cost tracking.\n\nI'm going through the remaining candidates: LLM Gateway's org-wide analytics with an undated custom model catalog, CloudZero's AI financial control plane from May, and the Portkey and Helicone acquisitions, which are older. I'm also noting LiteLLM's changelog, which has ambiguous dating, and LogicMonitor's cost tracking from October that may not cover AI APIs specifically. I'll keep the answer concise and add caveats where the dates are unclear.\n\n",
+      "format": "anthropic-claude-v1",
+      "index": 0,
+      "signature": "redacted"
+     }
+    ],
+    "annotations": [
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://aaif.io/blog/agentgateway-v1-3-0-llm-consumption-reimagined",
+       "title": "Agentgateway v1.3.0: LLM Consumption, Reimagined - Agentic AI Foundation (AAIF)",
+       "start_index": 0,
+       "end_index": 0,
+       "content": "Agentgateway, an open gateway project for agentic AI infrastructure that joined the Agentic AI Foundation, has released v1.3.0. "
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://aaif.io/blog/agentgateway-v1-3-0-llm-consumption-reimagined",
+       "title": "Agentgateway v1.3.0: LLM Consumption, Reimagined - Agentic AI Foundation (AAIF)",
+       "start_index": 0,
+       "end_index": 0,
+       "content": "Here’s what landed:\n\n- A brand-new, purpose-built UI — native LLM, MCP, and Traffic views\n- AI Cost & Analysis — token and dollar cost, fully attribut..."
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://agentgateway.dev/docs/standalone/latest/release-notes/release-notes/",
+       "title": "Release notes",
+       "start_index": 0,
+       "end_index": 0,
+       "content": "Costs reflect the service tier that served each request.\n\n"
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://agentgateway.dev/docs/standalone/latest/release-notes/release-notes/",
+       "title": "Release notes",
+       "start_index": 0,
+       "end_index": 0,
+       "content": "- **Agent sessions and analytics**: Agentgateway detects agent sessions automatically, and the new agctl standalone CLI summarizes tokens, cost, cache..."
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://github.com/agentgateway/agentgateway/releases",
+       "title": "Releases · agentgateway/agentgateway · GitHub",
+       "start_index": 0,
+       "end_index": 0,
+       "content": "# Choose a tag to compare\n## No results found\n\nThis release makes LLM routing more resilient, turns on the Kubernetes AgentgatewayModel API by default..."
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://github.com/agentgateway/agentgateway/releases",
+       "title": "Releases · agentgateway/agentgateway · GitHub",
+       "start_index": 0,
+       "end_index": 0,
+       "content": "## 🔥 Breaking changes\n\nReview USD budgets and expressions that use llm.cost.\n\n"
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://llmgateway.io/changelog",
+       "title": "Changelog — New Features, Improvements, and Fixes",
+       "start_index": 0,
+       "end_index": 0,
+       "content": "## Organization-Wide Analytics\nRoll cost, requests, and tokens up across every project in your organization, then break the spend down by model, proje..."
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://docs.litellm.ai/release_notes/",
+       "title": "Changelog",
+       "start_index": 0,
+       "end_index": 0,
+       "content": "## LiteLLM v1.106.2, v1.105.3 and v1.103.7 fix spend on failed requests and batch cost\n\n{\"itemListElement\":[{\"item\":{\"headline\":\"LiteLLM v1.108.2 (LTS..."
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://manifest.build/llm-gateway/changelog/",
+       "title": "LLM Gateway Changelog: releases and updates",
+       "start_index": 0,
+       "end_index": 0,
+       "content": "# LLM Gateway Changelog\n\n- ba1d7b6: Prefer the cost a provider reports over any catalogue estimate.\n\n"
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://dev.to/scorpion4ik26lang/llm-cost-tracking-per-request-feature-and-user-2026-4kdb",
+       "title": "LLM Cost Tracking: Per Request, Feature and User (2026) - DEV Community",
+       "start_index": 0,
+       "end_index": 0,
+       "content": "| Tool | Per user | Per feature or tag | Budget enforcement | How it captures data |\n\n| Langfuse | userId on traces; cost aggregated per user | Tags a..."
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://leanlm.ai/blog/llm-cost-tracking-tools",
+       "title": "Best LLM Cost Tracking Tools (2026) - Loupe by LeanLM",
+       "start_index": 0,
+       "end_index": 0,
+       "content": "CloudZero is an established cloud cost intelligence platform ($119M raised across 7 rounds) that launched a dedicated AI financial control plane in Ma..."
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.cloudzero.com/blog/ai-cost-management-tools/",
+       "title": "Best AI cost management tools [2026]",
+       "start_index": 0,
+       "end_index": 0,
+       "content": "In March 2026, the core gateway went open-source under Apache 2.0, so teams can self-host without the platform cost.\n\n"
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://superpenguin.ai/blog/best-llm-cost-tracking-tools",
+       "title": "Best LLM Cost Tracking Tools in 2026: Gateways, Observability, and Cost Management",
+       "start_index": 0,
+       "end_index": 0,
+       "content": "The best LLM cost tracking tool depends on your question: gateways control spend, observability tools surface it, and cost management platforms attrib..."
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://superpenguin.ai/blog/best-llm-cost-tracking-tools",
+       "title": "Best LLM Cost Tracking Tools in 2026: Gateways, Observability, and Cost Management",
+       "start_index": 0,
+       "end_index": 0,
+       "content": "One caveat for a tool comparison: Mintlify acquired Helicone in March 2026, and the project is now in maintenance mode (security and bug fixes only), ..."
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.finout.io/blog/best-ai-cost-observability-tools-in-2026",
+       "title": "8 Best AI Cost Observability Tools in 2026",
+       "start_index": 0,
+       "end_index": 0,
+       "content": "Datadog Agent Observability, formerly LLM Observability, traces agent steps and monitors latency, token usage, and cost across AI agents.\n\n"
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.mavvrik.ai/blog/best-ai-cost-visibility-tools/",
+       "title": "Best AI Cost Visibility Tools in 2026",
+       "start_index": 0,
+       "end_index": 0,
+       "content": "Its 2026 product release covers token-level cost tracking, agent/session-level tracking, infrastructure across AWS, Azure, GCP, and private environmen..."
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.developer-tech.com/news/observability-budgets-rise-as-ai-adds-systems-and-cost-pressure/",
+       "title": "Observability budgets rise as AI adds systems and cost pressure",
+       "start_index": 0,
+       "end_index": 0,
+       "content": "### LogicMonitor expands data platform with OpenTelemetry and cost tracking\n\n# LogicMonitor expands data platform with OpenTelemetry and cost tracking..."
+      }
+     }
+    ]
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 29244,
+  "completion_tokens": 1847,
+  "total_tokens": 31091,
+  "cost": 0,
+  "is_byok": true,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.106958,
+   "upstream_inference_prompt_cost": 0.058488,
+   "upstream_inference_completions_cost": 0.01847
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 436,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  },
+  "server_tool_use_details": {
+   "web_search_requests": 3
+  }
+ }
+}

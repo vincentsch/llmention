@@ -277,7 +277,6 @@ func googleCitations(mapper *evidenceMapper, annotations []googleAnnotation) []C
 			metadata["end_index"] = strconv.Itoa(*annotation.EndIndex)
 		}
 		if citation, ok := mapper.citation(annotation.URL, annotation.Title, metadata); ok {
-			citation.Domain = googleSiteDomain(citation.Domain, annotation.Title)
 			out = append(out, citation)
 		}
 	}
@@ -301,17 +300,17 @@ func googleAppendStepSources(mapper *evidenceMapper, sources *[]Source, step goo
 			continue
 		}
 		if source, ok := mapper.source(result.URL, result.Title, "web", nil); ok {
-			source.Domain = googleSiteDomain(source.Domain, result.Title)
 			*sources = append(*sources, source)
 		}
 	}
 }
 
-// googleSiteDomain names the cited site. Answers that searched the web can
-// link through a Google redirect
+// googleSiteDomain names the cited site. Gemini answers that searched the
+// web can link through a Google redirect
 // (vertexaisearch.cloud.google.com/grounding-api-redirect/...) and put the
 // site's domain in the title. Without this, all those citations would count
-// for one Google site.
+// for one Google site. The evidence mapper applies it to every provider,
+// because OpenRouter and gateways pass these links on unchanged.
 func googleSiteDomain(observed, title string) string {
 	if observed != "vertexaisearch.cloud.google.com" {
 		return observed

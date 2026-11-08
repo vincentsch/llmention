@@ -1,0 +1,121 @@
+{
+ "id": "gen_fixture1",
+ "object": "chat.completion",
+ "created": 1794124418,
+ "model": "openai/gpt-6.1-sol",
+ "provider": "OpenAI",
+ "system_fingerprint": null,
+ "service_tier": "default",
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "completed",
+   "message": {
+    "role": "assistant",
+    "content": "Taking “the last few months” as **August–November 8, 2026**, these are the clearest recent launches and substantial updates I could verify. They cover different needs: API spend attribution, broader AI FinOps, and cost-aware observability.\n\n| Tool | Launch or major-release date | What’s new and relevant | Important distinction |\n|---|---|---|---|\n| **Anthropic Usage and Cost Analytics API** | **October 29, 2026 — beta launch** | New endpoints report token usage and costs, with filtering/grouping by model, workspace, API key, and user or service account. | **Claude-only, API-first**, rather than a cross-provider dashboard. The older Usage and Cost API remains supported but is now legacy. ([platform.claude.com](https://platform.claude.com/docs/en/release-notes/overview?entry=september-28-2026&utm_source=openai)) |\n| **CloudKeeper — Full Stack FinOps for AI** | **October 27, 2026 — launch** | Unified tracking of model/inference spend, token usage, AI licenses, cloud infrastructure, and GPU costs/utilization; consolidates AWS, Azure, and Google Cloud data. | Broader **enterprise AI cost management**, not just per-request API tracking. The announcement offers a 30-day trial. ([cloudkeeper.com](https://www.cloudkeeper.com/newsroom/press-release/cloudkeeper-makes-aillm-cost-tracking-easier-businesses-full-stack-finops-ai)) |\n| **FiscaLLM** | **Mid-October 2026 — initial release, according to its developer** | Connects AI usage costs to subscription revenue to show **margin per user and plan**, with budget alerts and optional spend caps. Open-source, self-hostable, with TypeScript and Python SDKs. | An early-stage independent project. On October 23, the developer said it had shipped “a week ago”; that establishes an approximate release window, not an exact launch day. ([reddit.com](https://www.reddit.com/r/buildinpublic/comments/1xd00qd/week_1_building_in_public_shipped_an_opensource/?utm_source=openai)) |\n| **Honeycomb — AI Ecosystem** | **September 29, 2026 — early-access announcement** | Introduces **LLM Cost Tracking**, Agent Fleet Performance, and Agent Conversations, connecting fleet-wide token usage/cost signals to individual conversations. | Primarily **production observability with cost tracking**. The announcement described early access, with general availability anticipated at year-end or early the following year—not a confirmed GA launch. ([prnewswire.com](https://www.prnewswire.com/news-releases/honeycomb-unveils-new-ai-observability-features-to-close-the-gap-between-shipping-agents-and-understanding-them-302892466.html)) |\n| **Mizan — Router, Analyst, and optimization update** | **September 1, 2026 — major-update announcement** | Expanded routing across 150+ models and 10+ providers; project-scoped keys, separate budgets, and per-call cost telemetry. Analyst adds direct-provider usage syncing and subscription-receipt ingestion. | Combines **gateway-based tracking and broader spend aggregation**, including spend that never passes through its router. This is an expansion of an existing product, not a first launch. ([try-mizan.com](https://www.try-mizan.com/blog/major-mizan-updates)) |\n\n**The most useful distinction:** FiscaLLM focuses on whether individual customers are profitable; Mizan on cross-provider routing and spend attribution; CloudKeeper on the overall organizational AI bill; Honeycomb on connecting costs to agent behavior; and Anthropic’s new API on extracting Claude-native usage and cost data. ([github.com](https://github.com/magna56/fiscallm))\n\nThis is a **verified shortlist, not an exhaustive market census**. I’ve separated first launches, major updates, and beta/early-access announcements so they aren’t mistaken for equivalent release milestones.",
+    "refusal": null,
+    "reasoning": null,
+    "reasoning_details": [
+     {
+      "type": "reasoning.encrypted",
+      "data": "gAAAAABq8CqKz5cyH2B59PPmpIjQchOSYAxedUdTUqY9fkfFgNbHKWYA4LIsIKCl6oJ27Oe8-XTZa1EI0EA4MyKZijsvCwbIgtpq_HH1gmGXbhSL2wU8ceYrksXL7KI8lswXuBJH3I64oJsYwGHYX0Zf2WIzj5-HlmQXSbzLyMuvLGVomHoVC2CK9reincTsdBHy6nmtPoVfRDR1SlDwbDQsBRLdBECZoAtjQyVOaJTLL-XFpsul3eWWaR24_H1fdkYj_TsQsR60-G3AuzZTgCRODsvMVViVDemQqG9Wr3FxxvG1JXY0AuUjTu2GTkspZdYuh4IqSF5v1oFCKxvtWVZEYInhXhfORhQQ0d3CEBAQvOCmWHFYfVSqU86F7PyrBXmtbNLJPoh1sTNH6Cd12PYMz-nT4VbtrshOECXmdJwaLK_sucMfpxqd8cwiL7v5ZkbcBayOKIN0v4VwMMmSFq8UEWd7SvumoeBbjw5MHZBERbsixrgyEtiy91n4imyzVVvVoOOWHe3KjOPY1v84aubog5SpT6gaCCh2GTAhiVYjx1q0pEOdJjuHG2YfbC3RsH_xqG8i96sCMo2O5S8bMkIAs-UPUWsDHo4llrToLx6FskEYsLoPLQD8lARmwyAaY9SqUKptM4cIsO1WucmbZ1XKQLRpyw5hb2fUpfvWu-Nr2lv_u55cgMleEHUkzRkAPzr2naue0DZ_-Oc4a2HUNEUXNx8ENNJieLTxBh20cewVeuQrFLKqBu5Qht_G8puLp74ysHK5flar8OZFKxcVRLxjsmFdWYcp5mqiRQISxPRogTeSrch4PE7IVTn7BlSi4E-dzFI-ZI3o2E93jAuPN1q0gYBkn7qjRNLMLMih2XiAGYtbnAeynusUpfGtGutC7AGjBbORqNWyYwXueXJ7bDS_JGHkQakgOXG1zyRLCzReVK1zaGArSjaOcgxS5KlytGnV-K5ohoaUX583TqwXm--H4NPL2Jso3Avm75x4ac2EKF1j9VNs8xiv67mP2HR-6cchSA_XscQzz6Zfk2VchP-BvWZ144M9FfVSE2e2KRc67pP_PeiNkI3NmAc33seW-UCCOhMLacMOgY2_izg6wBxcWuSYwMLUbaL2-_qTztXgkcZNq4w2W66eZhQF1GC2kGjmIH8hpUXL3_oHASN8NqUPMFPYYdX-aBTUiMvz8JCFDj9IwnWIzbFWCqXnUOFr-3rge00oZOYAXYiQ0uUG1jNW7hb3xf4CtV9EaMfvpaavp-u4YAd1SRcj9Fi9PcIKZnFDa-Cyamst8EtNaSOE_CjpoemE86O0X1bC3ZIjRtvIWLtjfcQICRNRTmTsRBt2p1kDzg1wpiEwJcLIk8NgNF223IhCrEpNqta9mWAL1VoTEQI6amLE31F-2GmYl6JByXAmIUrJfHiuvU7aQhhENGLku-y_vPJ5pj-7Yrc-CEzWUyRi2Y7uUWeHKarrrHNrdn4daKl65MGJhcsppqHLfGY6U0O-AbpMoYgLs1QctCZWIITbjM0L_qKu7bsaMiwIqli6UVO7A9AIdfRbCqae9mOs_P6VkMUoEnqGZPhpc0ElNPhwsiHmTtwNgH4EDVcNRlkhEarIn71T1X65f0jiWZF1yHCxuuycNJ_KAEmmZM-ChVpE_bokrzrZaKJkk6T0FcxjNDtML_eQ7dp-vV0NYfFF5g5obm98trGasprT-hoIiLKYqK-50CWJdr1u610K6EBYiS2TKSm5GpTITyWdMHBkjwsO9bWK-lBu1Sy_vvkyMxt3BCWjZiHsRFFrkrIZ37HYFzSty_dxeeBWBhUV84EuYPb726tYZtMpoIVtfsydLkBI19C6tDgts52ijkc6AkT-fLdwpDbbVuEI_LfTbxGR0r5B8rrRMQyDrT4UxDGVq6BASfdBFzJkkBtLl-zPXMD7loTH1MhIbkUbKk8MXwIbnlO5jJjdQP-mfdXgbJKgxIS38N29E-dF4DeFpR1lsZNVap19rJ-6Jrdi--dF_u25Tn4YzLVJPvuRtQ7hkkC46oWGhAdIvrzmbTpzhkI0hGqBRaevLTbBoCo-f5l6C9ijkiwDgH4Zww==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC02LjEtc29sLTIwMjYwOTI5fG9wZW5haSJ9",
+      "format": "openai-responses-v1",
+      "id": "rs_fixture2",
+      "index": 0
+     },
+     {
+      "type": "reasoning.encrypted",
+      "data": "gAAAAABq8CqPA1YEPmd_7qUWzpdVR4JYHnf17j4f2OBlNirnkzkJ42kWxiEf9ydlFIXTFXUNtYznaJlT2T7ZLf32sl7OhA_cxB3Ot9MaAhHDErvBiQqhQUFFIQXuUc59Ahlr9mZFOI5xH2b1h5RMW_gTJVIyEA1VfZqcDLpg8ijWzrX9Mah3qRtoiYzacuyI8CRvLKBt834X-kym4XyNwX63yWvomU5Njq0fKoT9k0mF0zMUmOnjOzEVaJ5VNIfUTLyLncS3vFwQc7JX8cmOXMcGG-NLzeYJvQp4FjyNqFmoJFWiTvjLf4pJXfRdb21henYgow8DQ1V9tFxJFJBjZmiwwMO8YkfUkghQdstDtfTS81zh9djXNRlkkL-ZWHcnTo7YGdZ12WRU6hlMbfqJLJxMsHPSA5P8aIZwBmTH4iiFL1gxg9mx-XGgXRH8yFTE4QOQcVrzsDtlkFgX6_-DAljmu43_yUsBv-isNtYMl6K5mBssSipZE7RIDZ8lv4m_J_iKzbyprKyQ4uBmBVAIEZKf87MlaT2p2nSmWUr8xwd1C8dZX7qheTvy0PIMHQJQ55YOBv_yq42cgKFjTdedyeMFcfeq6gwLYanR98kXUh6l5Iq73MQalaVHonr_7dyVJt_iHCM5FTu8iCQc6iFrIOSf7uMyR0fhIOrYWVFuaY2cDl080Ai0_9j3Y9UYzxEIfk1RsZqc0SKBJLRCOuSYyG__6_OG2ScFkLHCL33hpIoLy1QjYluNECjdRXknqFG7VqTPmaaijRQM3uFZq2bCxThWy9QeXYVec85kVgsw_bGQSPcCXruIk8mDMOknOdFKjpTaRqbMG1KQtrLDIZyCMlkvc_7AHSrFAXbSnlkcggRM0-BF1KlERsMwnyE5bsHj0hfKVVkqR15TRbXzNQ88aXaU3jA4RdN2nFSGb6pzps7OrHJqYQp_Ku_DDZdiAxpPA3tOIvuwmsaFZfy0Fh8uVHIl5vffjkSOUWEUTOPIjY-93tzuMfdt_Sq_pdIqd-EAt5qOAIpR9b-EEpzSkqEPswWS8_LT2dFxa0CJfU-wV3D4vf32WTYLWU4Qbje_AB0TjjNdeCoEIIlbdof1KfsXIZh-wrmFmuLEqERTQz9tS_sQy0-9der0TUh3BBjJVd3TSy7TgReXrdRv1WvY12bVM2-Wa7AH5iXOmhuJxzCxcnJvjNGKUUUfGQ7VIcf37r0lTiweudMsI8D2_aEFsyT1wVx0GaIHBI2CetBVqA9DhXMCErFmc15SW5oCRhxVxBpCSD_QhwGxX5vm9eeJm8RAebI5hNOabO0osqqADq8gNp4etcBem8JSRQR1ncjDV1A4uYnKxCPhyDw5pSYv6GKP3sIorrBJLZCXqQbc0rWxtgjTNpBmJojsGtSu8borjXdybomSINMs2pGD7qyS77Yb6-Nw5Y3f7Ltxrrs6ejStLk8B7YWebjQoudo21g69HPcnaB783m4PyqWaUct1xQfYBYMVrGm6qhJp_gDTMEVYl4RO5tO0R2qH35EoOnuhaNigzUuAR05Huk8vzjiOEQdmq17GF3zBPsB34IsK0JMNv8XoO2ojLxMR19UburFFaTykH_Z4WuL_wZeWdT2mdFFGjMGQbulTMbtysokXR88pNNc9I0hkGol_YUbgUpYuQOj2pHfA5wRLdSysTumQ26skbB-DKcMXnJ7dS7ZVPeEjOgNT668_CwBLV6MVVbbR6gD4SgJ6R8t-vgEbbXDFv-R8NxenNEJQOUWODEmtLvZWiFePCj78M3Mgi2iIAwOdLoesYFCvnbgWZkzaVwDTp-tFEtSrPqvb6AqyLJRwcLxX4uuB032meNO6jtz-OKHiJppJSEQzNNHykaxnr8OD5ueWjO9EdLP9ArA061UCs3TdrEwT3_0L9rmcZe9JrXQCUBh2LwMCNJ7mR414QP-k9LesksJ9_NnL4Z9GaA==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC02LjEtc29sLTIwMjYwOTI5fG9wZW5haSJ9",
+      "format": "openai-responses-v1",
+      "id": "rs_fixture3",
+      "index": 1
+     }
+    ],
+    "annotations": [
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://platform.claude.com/docs/en/release-notes/overview?entry=september-28-2026&utm_source=openai",
+       "title": "Claude Platform release notes - Claude Platform Docs",
+       "start_index": 696,
+       "end_index": 821
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.cloudkeeper.com/newsroom/press-release/cloudkeeper-makes-aillm-cost-tracking-easier-businesses-full-stack-finops-ai",
+       "title": "CloudKeeper Launches Full Stack FinOps for AI",
+       "start_index": 1189,
+       "end_index": 1337
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.reddit.com/r/buildinpublic/comments/1xd00qd/week_1_building_in_public_shipped_an_opensource/?utm_source=openai",
+       "title": "Week 1 building in public: shipped an open-source AI cost tracker, 0 customers, here's what happened",
+       "start_index": 1791,
+       "end_index": 1929
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.prnewswire.com/news-releases/honeycomb-unveils-new-ai-observability-features-to-close-the-gap-between-shipping-agents-and-understanding-them-302892466.html",
+       "title": "Honeycomb Unveils New AI Observability Features to Close the Gap Between Shipping Agents and Understanding Them",
+       "start_index": 2385,
+       "end_index": 2572
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://www.try-mizan.com/blog/major-mizan-updates",
+       "title": "Major Mizan Platform Updates — Router, Analyst and AI Cost Optimization",
+       "start_index": 3074,
+       "end_index": 3143
+      }
+     },
+     {
+      "type": "url_citation",
+      "url_citation": {
+       "url": "https://github.com/magna56/fiscallm",
+       "title": "GitHub - magna56/fiscallm: Open-source AI cost and margin per user. Matches each user's OpenAI, Claude and Gemini cost to what they pay you (RevenueCat, Stripe, CSV). Self-hostable. TypeScript and Python SDKs. · GitHub",
+       "start_index": 3473,
+       "end_index": 3524
+      }
+     }
+    ]
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 37923,
+  "completion_tokens": 1189,
+  "total_tokens": 39112,
+  "cost": 0.12866436,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 4456,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.129964,
+   "upstream_inference_prompt_cost": 0.078074,
+   "upstream_inference_completions_cost": 0.01189
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 406,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  },
+  "server_tool_use_details": {
+   "web_search_requests": 4
+  }
+ }
+}

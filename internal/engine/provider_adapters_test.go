@@ -535,6 +535,28 @@ func TestOpenRouterAdapterRequestAndResponseMapping(t *testing.T) {
 	}
 }
 
+// Gemini on OpenRouter searches with Google, and its citations link through
+// Google's redirect with the site in the title, as seen live on 2026-11-08.
+func TestOpenRouterGeminiCitationsCountForTheSiteInTheTitle(t *testing.T) {
+	eng := newHostedEngineForTest(t, "openrouter", "OPENROUTER_API_KEY", "https://api.test/api/v1", "or-key", roundTripFunc(func(req *http.Request) (*http.Response, error) {
+		return jsonResponse(http.StatusOK, `{
+			"id":"gen_2","model":"google/gemini-3.8-flash","object":"chat.completion",
+			"choices":[{"message":{"content":"Answer","annotations":[
+				{"type":"url_citation","url_citation":{"url":"https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQabc","title":"cloudzero.com","start_index":0,"end_index":10}},
+				{"type":"url_citation","url_citation":{"url":"https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQdef","title":"A page title, not a site","start_index":0,"end_index":10}}
+			]},"finish_reason":"stop"}],
+			"usage":{"prompt_tokens":5,"completion_tokens":5,"total_tokens":10}
+		}`), nil
+	}), nil)
+	answer, err := eng.Ask(context.Background(), validRequest(ToolPolicySearchAuto))
+	if err != nil {
+		t.Fatalf("Ask() error = %v", err)
+	}
+	if len(answer.Citations) != 2 || answer.Citations[0].Domain != "cloudzero.com" || answer.Citations[1].Domain != "vertexaisearch.cloud.google.com" {
+		t.Fatalf("citations = %#v", answer.Citations)
+	}
+}
+
 func TestOpenRouterEmbeddedErrorReturnsNoPartialAnswer(t *testing.T) {
 	eng := newHostedEngineForTest(t, "openrouter", "OPENROUTER_API_KEY", "https://api.test/api/v1", "or-key", roundTripFunc(func(*http.Request) (*http.Response, error) {
 		return jsonResponse(http.StatusOK, `{"choices":[{"message":{"content":"partial"},"finish_reason":"error","error":{"code":"provider_unavailable","message":"upstream failed"}}]}`), nil

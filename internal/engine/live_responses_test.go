@@ -12,9 +12,10 @@ import (
 	"github.com/vincentsch/llmention/internal/config"
 )
 
-// The files in testdata/live are real provider responses from a live run on
-// 2026-10-29. Encrypted blobs and ids were replaced and account ids removed;
-// the rest is what the provider sent.
+// The files in testdata/live are real provider responses from live runs on
+// 2026-10-29 and 2026-11-08 (openrouter-gemini-*, openrouter-openai-*,
+// openrouter-anthropic-*). Encrypted blobs and ids
+// were replaced and account ids removed; the rest is what the provider sent.
 func liveResponse(t *testing.T, name string) string {
 	t.Helper()
 	raw, err := os.ReadFile(filepath.Join("testdata", "live", name))
@@ -54,9 +55,12 @@ func TestLiveSearchAnswersKeepTheirCitationsAndSearches(t *testing.T) {
 		// Three searches and one opened page. OpenAI bills the searches only.
 		{"openai", "gpt-6.1-sol", "openai-search.json", 6, 0, 4, "3"},
 		{"anthropic", "claude-sonnet-5-5", "anthropic-search.json", 13, 9, 1, "1"},
+		// Through OpenRouter, with OpenAI's and Anthropic's own search.
+		{"openrouter", "openai/gpt-6.1-sol", "openrouter-openai-search.json", 6, 0, 0, "4"},
+		{"openrouter", "anthropic/claude-sonnet-5.5", "openrouter-anthropic-search.json", 17, 0, 0, "3"},
 	}
 	for _, tt := range tests {
-		t.Run(tt.provider, func(t *testing.T) {
+		t.Run(tt.file, func(t *testing.T) {
 			eng := liveEngine(t, tt.provider, tt.model, http.StatusOK, liveResponse(t, tt.file), nil)
 			answer, err := eng.Ask(context.Background(), validRequest(ToolPolicySearchAuto))
 			if err != nil {
@@ -142,6 +146,40 @@ func TestLivePerplexityOnOpenRouterSearchesWithoutATool(t *testing.T) {
 		t.Fatal(err)
 	}
 	assertField(t, onlyTool(t, sent), "type", openRouterSearchTool)
+}
+
+// Gemini on OpenRouter searches with Google when it decides to. Its citations
+// link through Google's redirect and name the site in the title.
+func TestLiveGeminiOnOpenRouterCitesTheSitesGoogleFound(t *testing.T) {
+	eng := liveEngine(t, "openrouter", "google/gemini-3.8-flash", http.StatusOK, liveResponse(t, "openrouter-gemini-search.json"), nil)
+	answer, err := eng.Ask(context.Background(), validRequest(ToolPolicySearchAuto))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(answer.Citations) != 13 || answer.Citations[0].Domain != "alephant.io" {
+		t.Fatalf("citations = %d %#v", len(answer.Citations), answer.Citations)
+	}
+	for _, c := range answer.Citations {
+		if c.Domain == "vertexaisearch.cloud.google.com" {
+			t.Fatalf("citation counted for Google's redirect: %#v", c)
+		}
+	}
+	if len(answer.ToolsUsed) != 1 || answer.ToolsUsed[0] != webSearchToolName {
+		t.Fatalf("tools used = %v", answer.ToolsUsed)
+	}
+
+	// Offered the search tool, Gemini answered this prompt from memory.
+	eng = liveEngine(t, "openrouter", "google/gemini-3.8-flash", http.StatusOK, liveResponse(t, "openrouter-gemini-search-not-used.json"), nil)
+	answer, err = eng.Ask(context.Background(), validRequest(ToolPolicySearchAuto))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(answer.Citations) != 0 || len(answer.Text) < 1000 {
+		t.Fatalf("citations=%d text %d bytes", len(answer.Citations), len(answer.Text))
+	}
+	if len(answer.ToolsUsed) != 0 {
+		t.Fatalf("tools used without a search = %v", answer.ToolsUsed)
+	}
 }
 
 func TestLiveProviderErrorsSayWhatToDo(t *testing.T) {
