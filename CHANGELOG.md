@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- A llmention from `go install ...@v0.1.0` reports its version instead of dev.
+
 ## 0.1.0 - 2026-11-09
 
 First release of llmention.
