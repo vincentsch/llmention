@@ -102,7 +102,9 @@ type Summary struct {
 	// PromptsNamingYou lists prompt ids left out of your numbers because they
 	// already contain your name.
 	PromptsNamingYou []string `json:"prompts_naming_you"`
-	Highlights       []string `json:"highlights"`
+	// Highlights are set by the caller with Highlights, which needs to know
+	// whether the answers are made up.
+	Highlights []string `json:"highlights"`
 }
 
 // Cell holds the numbers for one engine in one mode. A cell whose requests
@@ -436,7 +438,6 @@ func Summarize(brands Brands, answers []Answer) Summary {
 	}
 	slices.SortStableFunc(s.Unknown, func(a, b UnknownBrand) int { return cmp.Compare(b.Answers, a.Answers) })
 	s.Excerpts = pickExcerpts(youExcerpts, missExcerpts)
-	s.Highlights = Highlights(s)
 	return s
 }
 

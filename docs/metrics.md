@@ -122,7 +122,9 @@ is still a mention of Bonsai.
 
 Capitals don't solve everything. A sentence that starts with "Bonsai trees
 need light" still counts, and so does another product that is also called
-Bonsai. So check it after the first run. Search the output of
+Bonsai. German writes every noun with a capital letter, so the tree, "ein
+Bonsai", also counts there. For German prompts, `match_case` doesn't help at
+all. So check it after the first run. Search the output of
 `llmention report --answers` for the word and read the lines that contain it.
 
 If many of them are about something else, change the name to a longer form,

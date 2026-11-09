@@ -15,6 +15,12 @@ the steps. Write llmention.yaml with our competitors, show me the dry run
 and its cost, then run it once and show me the report.
 ```
 
+The prompt asks for one real run, which costs money. If the user wants to
+spend nothing yet, or no key is set, follow that instead of the prompt. Do
+steps 1 to 5, which end with the dry run. Then follow
+[Show the report without a key](#show-the-report-without-a-key) instead of
+step 6. Do not start the real run.
+
 ## 1. Learn about the product
 
 Read the repository's README and its package metadata. Also read the website
@@ -105,7 +111,9 @@ Then open `llmention.yaml`:
   under `brand.products`. Names match without regard to capitals and only as
   whole words. If the product or a competitor has a name that is also an
   everyday word, like Bonsai, set `match_case: true` on it. Then only "Bonsai"
-  with a capital B counts.
+  with a capital B counts. This doesn't help for prompts in German, because
+  German writes every noun with a capital. Tell the user to check the answers
+  for the word after the first run.
   [Names that are also everyday words](docs/metrics.md#names-that-are-also-everyday-words)
   explains it.
 - Rewrite the starter prompts so they sound like this product's buyers. Use
@@ -138,7 +146,7 @@ These count as problems:
 - a line that starts with "The run would not start"
 
 Fix them in `llmention.yaml`, or ask the user to export a missing key. Then run
-the dry run again. If a note says that the budget leaves little room for
+the dry run again. If a note says that the budget leaves room for only some
 retries, set `execution.max_requests` to the number the note gives.
 
 The dry run exits with code 0 even when it finds a problem. In the output of
@@ -146,7 +154,12 @@ The dry run exits with code 0 even when it finds a problem. In the output of
 
 - `keys_missing` is an empty list
 - `fits_budget` is `true`
-- there is no `problems` list
+- `problems` is an empty list
+
+`keys_missing` and `problems` are always there, also when they are empty.
+
+If the user wants to spend nothing, do not start the real run. Go on with
+[Show the report without a key](#show-the-report-without-a-key) instead.
 
 ## Show the report without a key
 

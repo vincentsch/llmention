@@ -173,25 +173,32 @@ func TestDryRunShowsTheCostOfEachEngine(t *testing.T) {
 }
 
 // A run of 96 requests under the old default budget of 100 had room for
-// four retries, and only --json showed it.
-func TestDryRunWarnsWhenTheBudgetLeavesLittleRoomForRetries(t *testing.T) {
-	inTempProject(t, mockProject+"execution: {max_requests: 13}\n")
-	res := runApp(t, "run", "--dry-run")
-	want := "Note: the budget of 13 requests leaves room for only 1 retry. If more requests than that fail, the last requests of the run are not sent. " +
-		"To allow every retry, set execution.max_requests to 36 or pass --max-requests 36.\n"
-	if res.Exit != 0 || !strings.Contains(res.Stdout, want) {
-		t.Fatalf("exit %d:\n%s", res.Exit, res.Stdout)
+// four retries, and only --json showed it. Later a budget that could retry
+// each request once, but not twice, got no note at all, so you had to work
+// out the number yourself.
+func TestDryRunGivesTheBudgetThatCoversEveryRetry(t *testing.T) {
+	for _, tc := range []struct{ budget, left string }{
+		{"13", "room for only 1 retry"},
+		{"24", "room for only 12 retries"},
+		{"35", "room for only 23 retries"},
+	} {
+		inTempProject(t, mockProject+"execution: {max_requests: "+tc.budget+"}\n")
+		res := runApp(t, "run", "--dry-run")
+		want := "Note: the budget of " + tc.budget + " requests leaves " + tc.left + ". If the run needs more retries than that, the last requests of the run are not sent. " +
+			"To allow every retry, set execution.max_requests to 36 or pass --max-requests 36.\n"
+		if res.Exit != 0 || !strings.Contains(res.Stdout, want) {
+			t.Fatalf("budget %s: exit %d:\n%s", tc.budget, res.Exit, res.Stdout)
+		}
+		res = runApp(t, "run", "--dry-run", "--json")
+		var plan planPreview
+		if err := json.Unmarshal([]byte(res.Stdout), &plan); err != nil || len(plan.Warnings) != 1 || !strings.Contains(plan.Warnings[0], "--max-requests 36") {
+			t.Fatalf("budget %s: warnings = %q (%v)", tc.budget, plan.Warnings, err)
+		}
 	}
-	res = runApp(t, "run", "--dry-run", "--json")
-	var plan planPreview
-	if err := json.Unmarshal([]byte(res.Stdout), &plan); err != nil || len(plan.Warnings) != 1 || !strings.Contains(plan.Warnings[0], "room for only 1 retry") {
-		t.Fatalf("warnings = %q (%v)", plan.Warnings, err)
-	}
-	// Room for one retry of each request is enough, and without retries
-	// there is nothing to warn about.
-	for _, execution := range []string{"{max_requests: 24}", "{max_requests: 12, retries: 0}"} {
+	// A budget for every retry, or no retries at all, needs no note.
+	for _, execution := range []string{"{max_requests: 36}", "{max_requests: 12, retries: 0}"} {
 		inTempProject(t, mockProject+"execution: "+execution+"\n")
-		if res := runApp(t, "run", "--dry-run"); res.Exit != 0 || strings.Contains(res.Stdout, "retries.") || strings.Contains(res.Stdout, "room for") {
+		if res := runApp(t, "run", "--dry-run"); res.Exit != 0 || strings.Contains(res.Stdout, "Note:") || strings.Contains(res.Stdout, "room for") {
 			t.Fatalf("%s: exit %d:\n%s", execution, res.Exit, res.Stdout)
 		}
 	}
@@ -247,6 +254,28 @@ func TestRunSavesAndReportsTheSummary(t *testing.T) {
 	page, err := os.ReadFile("report.html")
 	if err != nil || !strings.Contains(string(page), "Acme Books in AI answers") || strings.Contains(string(page), "<script src") {
 		t.Fatalf("html report: %v", err)
+	}
+}
+
+// The run id uses UTC and the report header used local time without saying
+// so, which looked like two different times for the same run.
+func TestRunTimesNameTheirTimeZone(t *testing.T) {
+	saved := time.Local
+	time.Local = time.FixedZone("CET", 3600)
+	t.Cleanup(func() { time.Local = saved })
+	inTempProject(t, mockProject)
+	if res := runApp(t, "run"); res.Exit != 0 {
+		t.Fatalf("run: %s", res.Stderr)
+	}
+	var r report.Report
+	if err := json.Unmarshal([]byte(runApp(t, "report", "--json").Stdout), &r); err != nil {
+		t.Fatal(err)
+	}
+	want := r.Run.CreatedAt.In(time.Local).Format("2 Jan 2006 15:04") + " CET"
+	for _, args := range []string{"report", "report --format markdown", "history list"} {
+		if res := runApp(t, strings.Fields(args)...); !strings.Contains(res.Stdout, want) {
+			t.Fatalf("%s misses %q:\n%s", args, want, res.Stdout)
+		}
 	}
 }
 
@@ -845,6 +874,10 @@ func TestDemoNeedsNothing(t *testing.T) {
 	if strings.Contains(res.Stdout, "llmention report ") {
 		t.Fatalf("demo suggests a command that cannot work:\n%s", res.Stdout)
 	}
+	// The demo makes up the other names, so it must not tell you to track them.
+	if !strings.Contains(res.Stdout, "Names you don't track came up") || strings.Contains(res.Stdout, "add them to competitors") {
+		t.Fatalf("demo advice about made-up names:\n%s", res.Stdout)
+	}
 	if res := runApp(t, "demo", "--keep", "demo"); res.Exit != 0 {
 		t.Fatalf("demo --keep: %s", res.Stderr)
 	}
@@ -1149,6 +1182,10 @@ func TestDryRunJSONSaysWhichKeysAreMissing(t *testing.T) {
 	res = testutil.RunWith(newApp(), withKey, "run", "--dry-run", "--json")
 	if !strings.Contains(res.Stdout, `"keys_missing": []`) || !strings.Contains(res.Stdout, `"keys_found": [`+"\n"+`    "ANTHROPIC_API_KEY"`) {
 		t.Fatalf("with the key set:\n%s", res.Stdout)
+	}
+	// problems is always a list, so a script can test for an empty one.
+	if !strings.Contains(res.Stdout, `"problems": []`) {
+		t.Fatalf("problems is not an empty list:\n%s", res.Stdout)
 	}
 	testutil.AssertRedacted(t, res, "test-anthropic-key")
 

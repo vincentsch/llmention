@@ -9,8 +9,10 @@ import (
 
 // Highlights picks out a few things in the numbers worth a closer look, most
 // useful first. Each one says what was observed in these answers. None of
-// them claims to know why an assistant answered the way it did.
-func Highlights(s Summary) []string {
+// them claims to know why an assistant answered the way it did. madeUp is
+// true when the mock engine wrote the answers. Its other names are invented,
+// so the advice to track them is left out.
+func Highlights(s Summary, madeUp bool) []string {
 	var out []string
 	byEngine := map[string][]Cell{}
 	var engines []string
@@ -130,7 +132,11 @@ func Highlights(s Summary) []string {
 		unknown = append(unknown, fmt.Sprintf("%s (%s)", u.Name, plural(u.Answers, "answer")))
 	}
 	if len(unknown) > 0 {
-		out = append(out, fmt.Sprintf("Names you don't track came up in several answers: %s. If they compete with you, add them to competitors in llmention.yaml.", config.JoinAnd(unknown)))
+		line := fmt.Sprintf("Names you don't track came up in several answers: %s.", config.JoinAnd(unknown))
+		if !madeUp {
+			line += " If they compete with you, add them to competitors in llmention.yaml."
+		}
+		out = append(out, line)
 	}
 	if len(out) > 5 {
 		out = out[:5]

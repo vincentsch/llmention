@@ -89,15 +89,28 @@ func TestHighlightsNameTheGaps(t *testing.T) {
 		{PromptID: "best", Prompt: "Best trackers?", Engine: "claude", Mode: "memory", Text: "1. **Helicone**\n2. **Portkey**"},
 		{PromptID: "cheap", Prompt: "Cheap trackers?", Engine: "claude", Mode: "memory", Text: "1. **Helicone**\n2. **Portkey**"},
 	}
-	steps := strings.Join(Highlights(Summarize(brands, answers)), "\n")
-	for _, want := range []string{"claude never mentioned Tabslip in 2 answers. It named Helicone 2 times.", "On 2 of 2 prompts, no assistant named Tabslip", "Portkey (2 answers)"} {
+	steps := strings.Join(Highlights(Summarize(brands, answers), false), "\n")
+	for _, want := range []string{"claude never mentioned Tabslip in 2 answers. It named Helicone 2 times.", "On 2 of 2 prompts, no assistant named Tabslip", "Portkey (2 answers). If they compete with you, add them to competitors"} {
 		if !strings.Contains(steps, want) {
 			t.Fatalf("next steps miss %q:\n%s", want, steps)
 		}
 	}
-	one := strings.Join(Highlights(Summarize(brands, answers[:1])), "\n")
+	one := strings.Join(Highlights(Summarize(brands, answers[:1]), false), "\n")
 	if !strings.Contains(one, "claude did not mention Tabslip in its only answer. It named Helicone once.") {
 		t.Fatalf("highlight for a single answer:\n%s", one)
+	}
+}
+
+// A mock run told you to add Contoso and Fabrikam to your competitors, but
+// the mock engine made those names up.
+func TestMadeUpAnswersGetNoAdviceAboutOtherNames(t *testing.T) {
+	answers := []Answer{
+		{PromptID: "best", Prompt: "Best trackers?", Engine: "claude", Mode: "memory", Text: "1. **Helicone**\n2. **Portkey**"},
+		{PromptID: "cheap", Prompt: "Cheap trackers?", Engine: "claude", Mode: "memory", Text: "1. **Helicone**\n2. **Portkey**"},
+	}
+	steps := strings.Join(Highlights(Summarize(brands, answers), true), "\n")
+	if !strings.Contains(steps, "Names you don't track came up in several answers: Portkey (2 answers).") || strings.Contains(steps, "add them to competitors") {
+		t.Fatalf("highlights for made-up answers:\n%s", steps)
 	}
 }
 

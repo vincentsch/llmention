@@ -11,10 +11,10 @@ First release of llmention.
 - List the sites the answers cite and the names you do not track yet.
 - List what stands out in the numbers, without guessing at the causes.
 - Compare a run with the one before it on answers both runs have, and show the mention rate across recent runs. A full run is never compared with a run made with `--engine` or `--mode`.
-- Write the report as text or Markdown, or as a single HTML file with charts. Every command also has JSON output.
+- Write the report as text or Markdown, or as a single HTML file with charts. Every command also has JSON output. The report shows the time of a run in your time zone and names the zone, because run ids use UTC.
 - Count the mentions in saved runs again with the current brand names, so a new alias also fixes old runs.
 - Count a name that is also an everyday word, like Bonsai, only with the same capital letters when you set `match_case: true` on it.
-- Estimate the cost before a run, in total and for each engine, and stop at a request budget that includes retries. The dry run warns when the budget leaves little room for retries, and `init` sets a budget that fits a full run with all its retries. It also gives the cost of a year of weekly runs, and its JSON lists missing keys under `keys_missing`.
+- Estimate the cost before a run, in total and for each engine, and stop at a request budget that includes retries. When the budget can't cover every retry, the dry run gives the number that does, and `init` sets a budget that fits a full run with all its retries. The dry run also gives the cost of a year of weekly runs, and its JSON lists missing keys under `keys_missing` and anything else that stops the run under `problems`.
 - Save the answers so far when a run is stopped with Ctrl+C.
 - Fail CI jobs with `--fail-under` checks. A check also fails when an engine has no number to check.
 - Send an alert by script or webhook when a check fails.

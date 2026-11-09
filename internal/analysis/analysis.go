@@ -67,6 +67,7 @@ func Analyze(card *scorecard.Scorecard, opts Options) (*Analysis, error) {
 
 	if answers := VisibilityAnswers(card); len(answers) > 0 && project.Brand != nil {
 		summary := visibility.Summarize(out.Brands, answers)
+		summary.Highlights = visibility.Highlights(summary, card.Demo())
 		out.Visibility = &summary
 	}
 

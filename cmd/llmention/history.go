@@ -77,7 +77,7 @@ func runHistoryList(f *rungrad.Factory, cmd *cobra.Command, _ []string) error {
 			tw := newTable(w)
 			fmt.Fprintln(tw, "Run\tDate\tSuites\tEngines\tAnswers\tMention rate")
 			for _, e := range entries {
-				date := e.CreatedAt.Local().Format("2 Jan 2006 15:04")
+				date := e.CreatedAt.Local().Format("2 Jan 2006 15:04 MST")
 				answers := fmt.Sprintf("%d of %d", e.Answers, e.Planned)
 				fmt.Fprintf(tw, "%s\t%s\t%s\t%s\t%s\t%s\n", e.ID, date, strings.Join(e.Suites, ", "), strings.Join(e.Engines, ", "), answers, headlineRate(e))
 			}

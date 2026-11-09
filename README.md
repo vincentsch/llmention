@@ -34,6 +34,12 @@ requests and the estimated cost. Ten questions on two providers come to about
 $1.70 at October 2026 list prices. [AGENTS.md](AGENTS.md) lists each step the
 agent takes.
 
+If you don't want to spend anything yet, say so in the prompt. The agent then
+shows you the dry run but doesn't start the real run. Instead it runs
+`llmention run --mock`, which makes up answers to your own questions, and shows
+you that report. So you see what the real report will look like before you pay
+for one.
+
 ## Try it without an API key
 
 ```sh
@@ -49,7 +55,7 @@ are made up, but the report looks the same as the one you get for your own
 product:
 
 ```text
-Acme Books · run 20261026-193142-6edf67 · 26 Oct 2026 20:31
+Acme Books · run 20261026-193142-6edf67 · 26 Oct 2026 20:31 CET
 Engines: chatgpt-demo (demo), claude-demo (demo)
 Competitors: Globex Billing, Initech Invoices
 10 prompts, 40 answers
@@ -203,8 +209,9 @@ jobs:
 ```
 
 `--fail-under` makes the job fail when your mention rate in any engine and mode
-is below 30%. The saved runs hold the full answers, so use a private repository
-for this.
+is below 30%. If you ask all four assistants through one OpenRouter key, the
+run step only needs `OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}`.
+The saved runs hold the full answers, so use a private repository for this.
 [Scheduled runs](docs/ci.md) shows how to run it with cron and how to get an
 alert. It also explains how to store the history somewhere else.
 

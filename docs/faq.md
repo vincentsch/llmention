@@ -17,7 +17,8 @@ See [API answers differ from the app](modes.md#api-answers-differ-from-the-app).
 Only to the providers in your `llmention.yaml`. If you set up an AI grader or
 an alert, those also get data. llmention collects no usage data, and there is
 no account. `llmention update --check` asks GitHub for the latest release, but
-only when you run it.
+only when you run it. `llmention run --dry-run` and `llmention run --mock` make
+no network connection at all.
 
 ## Why don't answers to some of my prompts count?
 
@@ -47,6 +48,12 @@ each run is compared with answers from the same model.
 Yes. Write the prompts in the language your buyers use. Name matching works
 with accented letters and other writing systems. It ignores upper and lower
 case unless you set [`match_case`](metrics.md#names-that-are-also-everyday-words).
+
+`match_case` doesn't help in a language that writes every noun with a capital
+letter, like German. A competitor called Bonsai then also counts in "ein
+Bonsai", the tree. Check the answers for such a name after the first run.
+[Names that are also everyday words](metrics.md#names-that-are-also-everyday-words)
+says what to do when many of them are about something else.
 
 The starter questions from `init` and `quick` are English templates. They stay
 English when your category is in another language, so replace them with

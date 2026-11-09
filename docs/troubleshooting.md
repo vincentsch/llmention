@@ -48,9 +48,9 @@ with `--engine`. [Costs](costs.md) explains the budget.
 
 ### "the budget of 100 requests leaves room for only 4 retries"
 
-The run fits the budget, but retries count against it too. If more requests
-fail than the note says, the last requests of the run are not sent. Set
-`execution.max_requests` to the number in the note, which leaves room for
+The run fits the budget, but retries count against it too. If the run needs
+more retries than the note says, the last requests of the run are not sent.
+Set `execution.max_requests` to the number in the note, which leaves room for
 every retry.
 
 ### "The total leaves out the fee per request for perplexity"

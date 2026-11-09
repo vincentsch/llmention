@@ -62,7 +62,7 @@ runs_dir: ./.llmention/runs
 | `domains` | Your sites. Citations of these count as citations of you. |
 | `products` | Product names that count as a mention of you. |
 | `people` | Founders or authors. Only the recognition suite uses them. |
-| `match_case` | `true` counts your names only when an answer writes them with the same capital letters. Use it for a name that is also an everyday word. |
+| `match_case` | `true` counts your names only when an answer writes them with the same capital letters. Use it for a name that is also an everyday word. It doesn't help in German, where every noun starts with a capital. |
 
 Names match without regard to capitals, unless you set `match_case`, and only
 as whole words. [How a mention is found](metrics.md#how-a-mention-is-found)
@@ -124,8 +124,8 @@ on four engines in two modes make 80 requests. Each request may be sent
 1 + `retries` times, so with 2 retries `init` writes 240. It never writes less
 than the default of 100.
 
-If you add prompts or engines later, check the dry run. It warns when the
-budget can't retry each request once, and it says which number to use. See
+If you add prompts or engines later, check the dry run. When the budget
+can't cover every retry, it says which number to use. See
 [Costs and the request budget](costs.md).
 
 ## runs_dir

@@ -162,8 +162,10 @@ type planPreview struct {
 	Checks        []string `json:"checks,omitempty"`
 	JudgeRequests int      `json:"judge_requests,omitempty"`
 	Warnings      []string `json:"warnings,omitempty"`
-	Problems      []string `json:"problems,omitempty"`
-	FitsBudget    bool     `json:"fits_budget"`
+	// Problems stop the real run. It is always a list, empty when there are
+	// none.
+	Problems   []string `json:"problems"`
+	FitsBudget bool     `json:"fits_budget"`
 }
 
 type enginePreview struct {
@@ -184,6 +186,7 @@ func writePlan(f *rungrad.Factory, p *prepared) error {
 		FitsBudget:      len(p.plan.WorkUnits) <= p.plan.MaxRequests,
 		KeysFound:       []string{},
 		KeysMissing:     []string{},
+		Problems:        []string{},
 	}
 	prompts := map[string]bool{}
 	for _, u := range p.plan.WorkUnits {
@@ -252,19 +255,19 @@ func writePlan(f *rungrad.Factory, p *prepared) error {
 	return f.WriteOutput(rungrad.Output{Model: pv, Human: func(w io.Writer) { writePlanText(w, pv) }})
 }
 
-// retryRoomNote warns when the budget can't retry each request once. Retries
-// use the same budget as first attempts, so with too little room a few
-// failures early in the run mean the last requests are never sent.
+// retryRoomNote gives the budget that covers every retry when the current
+// one doesn't. Retries use the same budget as first attempts, so when many
+// requests fail, the last requests of the run are never sent.
 func retryRoomNote(pv planPreview) string {
-	room := pv.MaxRequests - pv.Requests
-	if !pv.FitsBudget || pv.WorstCase <= pv.MaxRequests || room >= pv.Requests {
+	if !pv.FitsBudget || pv.WorstCase <= pv.MaxRequests {
 		return ""
 	}
+	room := pv.MaxRequests - pv.Requests
 	left := "no room for retries"
 	if room > 0 {
 		left = fmt.Sprintf("room for only %d %s", room, pluralWord(room, "retry", "retries"))
 	}
-	return fmt.Sprintf("the budget of %d requests leaves %s. If more requests than that fail, the last requests of the run are not sent. "+
+	return fmt.Sprintf("the budget of %d requests leaves %s. If the run needs more retries than that, the last requests of the run are not sent. "+
 		"To allow every retry, set execution.max_requests to %d or pass --max-requests %d.", pv.MaxRequests, left, pv.WorstCase, pv.WorstCase)
 }
 

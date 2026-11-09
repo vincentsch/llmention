@@ -64,6 +64,21 @@ run's summary page. It works for the summary and also with `--trend` and
 commit, and the step ends without an error. To use a fixed llmention version,
 set `LLMENTION_VERSION=v0.1.0` in the environment of the install step.
 
+### With one OpenRouter key
+
+`llmention init --engines openrouter` sets up all four assistants through
+OpenRouter, so the job needs only one secret. Add your key as the repository
+secret `OPENROUTER_API_KEY`, and give the run step only that variable:
+
+```yaml
+      - name: Ask the assistants
+        run: llmention run --fail-under mention-rate=30%
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+```
+
+The rest of the job stays the same.
+
 ### Without committing the runs
 
 If you don't want the runs in your repository, store them in a separate
@@ -79,8 +94,9 @@ runs.
 0 6 * * 1  cd /home/me/acme-marketing && . ./.keys && /home/me/.local/bin/llmention run --fail-under mention-rate=30% >> llmention.log 2>&1
 ```
 
-`.keys` holds the `export OPENAI_API_KEY=...` lines. Make it readable only by
-you (`chmod 600 .keys`), and don't commit it.
+`.keys` holds the `export OPENAI_API_KEY=...` lines. With one OpenRouter key,
+it is the single line `export OPENROUTER_API_KEY=...`. Make it readable only
+by you (`chmod 600 .keys`), and don't commit it.
 
 ## Fail when the rate drops
 
@@ -164,5 +180,8 @@ run, check the JSON of the dry run. This line fails when anything would stop
 the run:
 
 ```sh
-llmention run --dry-run --json | jq -e '.keys_missing == [] and .fits_budget and (.problems // []) == []'
+llmention run --dry-run --json | jq -e '.keys_missing == [] and .fits_budget and .problems == []'
 ```
+
+`keys_missing` and `problems` are always in the JSON. They are empty lists
+when nothing is missing and nothing would stop the run.

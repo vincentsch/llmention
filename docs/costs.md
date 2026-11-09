@@ -36,9 +36,10 @@ and 10,000 tokens. Perplexity's models charge a fee for each request instead,
 also when they don't search.
 
 The prices come from a table inside llmention. It was copied from the
-providers' pricing pages on the date shown. When a model is not in that table,
-the estimate names it and leaves it out. The prices for models on OpenRouter
-come from OpenRouter's model list.
+providers' pricing pages on the date shown, and for models on OpenRouter from
+OpenRouter's model list. When a model is not in that table, the estimate names
+it and leaves it out. The dry run downloads nothing. It makes no network
+connection at all, so it also works offline.
 
 The table has no fee per request for Perplexity's own API, so for the
 `perplexity` provider the estimate counts the tokens only. The dry run then
@@ -81,11 +82,11 @@ During the run, each retry also counts against the budget. When the budget is
 used up, the run stops and saves the answers it has. The requests that were
 still waiting are not sent.
 
-The dry run warns when the budget leaves little room for retries, which means
-that it can't retry each request once:
+When the budget can't cover every retry the run may need, the dry run says so
+and gives the budget that does:
 
 ```text
-Note: the budget of 100 requests leaves room for only 4 retries. If more requests than that fail, the last requests of the run are not sent. To allow every retry, set execution.max_requests to 288 or pass --max-requests 288.
+Note: the budget of 100 requests leaves room for only 4 retries. If the run needs more retries than that, the last requests of the run are not sent. To allow every retry, set execution.max_requests to 288 or pass --max-requests 288.
 ```
 
 ## Retries and timeouts

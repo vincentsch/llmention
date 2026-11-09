@@ -312,11 +312,13 @@ func levelOrder(level string) int {
 
 func table(w io.Writer) *tabwriter.Writer { return tabwriter.NewWriter(w, 0, 2, 2, ' ', 0) }
 
+// localTime names the time zone, because run ids use UTC and the time next
+// to them is local.
 func localTime(t time.Time) string {
 	if t.IsZero() {
 		return "unknown time"
 	}
-	return t.Local().Format("2 Jan 2006 15:04")
+	return t.Local().Format("2 Jan 2006 15:04 MST")
 }
 
 func plural(n int, word string) string {
