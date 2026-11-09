@@ -65,7 +65,9 @@ llmention init
 `init` asks about your product and your competitors. It suggests the providers
 whose keys it finds. If you only have an OpenRouter key, export
 `OPENROUTER_API_KEY` instead. llmention then asks ChatGPT and Claude through
-it, and also Gemini and Perplexity. You can also pass everything as flags:
+it, and also Gemini and Perplexity. llmention's direct connections to Gemini
+and Perplexity are less tested than OpenRouter, and `init` says so when you
+pick them. You can also pass everything as flags:
 
 ```sh
 llmention init --brand "Acme Books" --category "invoicing for freelancers" \
@@ -90,7 +92,7 @@ competitors above, that makes ten questions, such as:
 ```yaml
 prompts:
   - What are the best tools for invoicing for freelancers?
-  - I run a small company. What would you recommend for invoicing for freelancers?
+  - What would you recommend for invoicing for freelancers?
   - What are good alternatives to Globex Billing?
 ```
 
@@ -110,11 +112,12 @@ llmention run --dry-run
 ```text
 Dry run: nothing was sent.
 Would send 40 requests: 10 prompts to 2 engines, in no web search and web search modes.
-Failed requests are retried. The run stops at 100 requests, its budget.
+Failed requests are retried, so the run sends at most 120 requests.
 Estimated cost: about $1.72, from list prices checked on 2026-10-26. Longer answers and extra web searches can make it higher.
 
-  chatgpt      openai gpt-6.1-sol, 20 requests
-  claude       anthropic claude-sonnet-5-5, 20 requests
+  Engine   Model                        Requests  Estimated cost
+  chatgpt  openai gpt-6.1-sol           20        about $1.14
+  claude   anthropic claude-sonnet-5-5  20        about $0.58
 
 Keys found: OPENAI_API_KEY, ANTHROPIC_API_KEY
 ```

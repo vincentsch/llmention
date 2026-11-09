@@ -2,15 +2,18 @@ package config
 
 import (
 	"fmt"
+	"maps"
 	"os"
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"slices"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
 )
 
 const validProjectYAML = `
@@ -218,13 +221,68 @@ func TestStarterProjectRoundTripsThroughYAML(t *testing.T) {
 			t.Fatalf("starter prompt reads badly: %q", prompt.Text)
 		}
 	}
-	// The default project fits the default request budget with every retry.
-	firstAttempts := len(loaded.Prompts) * len(loaded.Engines) * len(loaded.Modes)
-	if firstAttempts > loaded.Execution.MaxRequests {
-		t.Fatalf("starter project needs %d requests, budget is %d", firstAttempts, loaded.Execution.MaxRequests)
+	// The budget fits a full run with every retry.
+	requests := len(loaded.Prompts) * len(loaded.Engines) * len(loaded.Modes)
+	if worst := requests * (1 + loaded.Execution.Retries); worst > loaded.Execution.MaxRequests {
+		t.Fatalf("a run with every retry needs %d requests, budget is %d", worst, loaded.Execution.MaxRequests)
 	}
 	if !strings.Contains(string(data), "can use any model your key has access to") {
 		t.Fatalf("starter YAML should say models are easy to change:\n%s", data)
+	}
+}
+
+func TestStarterBudgetNeverGoesBelowTheDefault(t *testing.T) {
+	p, err := StarterProject(Starter{Brand: "Acme", Category: "invoicing", Providers: []string{"mock"}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if p.Execution.MaxRequests != DefaultMaxRequests {
+		t.Fatalf("8 prompts on one engine: max_requests = %d", p.Execution.MaxRequests)
+	}
+}
+
+// The starter questions used to say "I run a small company" and "most
+// teams", which reads oddly for freelancers and consumers.
+func TestStarterPromptsDoNotSayWhoIsAsking(t *testing.T) {
+	for _, prompt := range StarterPrompts("TOPIC", []string{"Globex"}) {
+		words := strings.ToLower(strings.ReplaceAll(prompt, "TOPIC", ""))
+		for _, who := range []string{"company", "team", "business", "freelancer", "startup", "enterprise", "i run", "i'm a", "i am a"} {
+			if strings.Contains(words, who) {
+				t.Errorf("starter prompt says who is asking (%q): %q", who, prompt)
+			}
+		}
+	}
+}
+
+// The file init wrote had no concurrency, although the reference lists it.
+func TestStarterYAMLHasTheExecutionSettingsOfTheReference(t *testing.T) {
+	doc, err := os.ReadFile(filepath.Join("..", "..", "docs", "configuration.md"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, example, ok := strings.Cut(string(doc), "```yaml\n")
+	example, _, _ = strings.Cut(example, "```")
+	if !ok {
+		t.Fatal("docs/configuration.md has no yaml example")
+	}
+	p, err := StarterProject(Starter{Brand: "Acme", Category: "invoicing", Providers: []string{"openai"}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	executionKeys := func(text string) []string {
+		var file struct {
+			Execution map[string]any `yaml:"execution"`
+		}
+		if err := yaml.Unmarshal([]byte(text), &file); err != nil {
+			t.Fatalf("%v\n%s", err, text)
+		}
+		keys := slices.Collect(maps.Keys(file.Execution))
+		slices.Sort(keys)
+		return keys
+	}
+	reference, starter := executionKeys(example), executionKeys(string(StarterYAML(p)))
+	if !reflect.DeepEqual(reference, starter) {
+		t.Fatalf("execution keys: reference %v, starter file %v", reference, starter)
 	}
 }
 

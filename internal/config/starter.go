@@ -64,7 +64,9 @@ type Starter struct {
 
 // StarterPrompts writes buyer questions for a topic such as "LLM cost
 // tracking". None of them names your brand, because a question that names you
-// says nothing about whether an assistant would bring you up on its own.
+// says nothing about whether an assistant would bring you up on its own. The
+// questions don't say who is asking, so they fit a freelancer, a company and
+// a consumer alike.
 func StarterPrompts(category string, competitors []string) []string {
 	topic := topicPhrase(category)
 	if topic == "" {
@@ -72,9 +74,9 @@ func StarterPrompts(category string, competitors []string) []string {
 	}
 	prompts := []string{
 		"What are the best tools for " + topic + "?",
-		"I run a small company. What would you recommend for " + topic + "?",
+		"What would you recommend for " + topic + "?",
 		"I need something for " + topic + ". What are my options?",
-		"What do most teams use for " + topic + "?",
+		"What do most people use for " + topic + "?",
 		"Which options for " + topic + " are worth paying for?",
 		"What are good free or open-source options for " + topic + "?",
 		"What should I look for when choosing a tool for " + topic + "?",
@@ -152,10 +154,17 @@ func StarterProject(s Starter) (*Project, error) {
 	for _, text := range prompts {
 		p.Prompts = append(p.Prompts, Prompt{Text: text})
 	}
+	p.Execution.MaxRequests = starterBudget(len(p.Prompts)*len(p.Engines)*len(p.Modes)*p.Repetitions, p.Execution.Retries)
 	if err := p.ValidateShape(); err != nil {
 		return nil, err
 	}
 	return p, nil
+}
+
+// starterBudget is the max_requests that init writes: enough for every
+// request and all its retries, and never less than the default.
+func starterBudget(requests, retries int) int {
+	return max(DefaultMaxRequests, requests*(1+retries))
 }
 
 // StarterYAML writes a project as a commented llmention.yaml. The comments
@@ -227,10 +236,13 @@ func StarterYAML(p *Project) []byte {
 	w("# memory: the assistant answers from what it learned in training.\n")
 	w("# search_auto: the assistant may search the web before it answers.\n")
 	w("modes: %s\n\n", flow(p.Modes))
+	w("# max_requests leaves room for every request and all its retries. When you\n")
+	w("# add prompts or engines, the dry run tells you if it gets too low.\n")
 	w("execution:\n")
 	w("  max_requests: %d  # a run stops after this many requests, retries included\n", p.Execution.MaxRequests)
 	w("  retries: %d  # how often a failed request is tried again\n", p.Execution.Retries)
-	w("  timeout: %s  # how long to wait for one answer\n\n", durationText(p.Execution.Timeout))
+	w("  timeout: %s  # how long to wait for one answer\n", durationText(p.Execution.Timeout))
+	w("  concurrency: %d  # how many requests run at the same time\n\n", p.Execution.Concurrency)
 	w("# Where llmention saves each run. The files hold the full answers.\n")
 	w("runs_dir: %s\n", scalar(p.RunsDir))
 	return b.Bytes()

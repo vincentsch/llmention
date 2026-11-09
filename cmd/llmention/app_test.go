@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"math"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -86,7 +87,7 @@ func TestDryRunExplainsThePlanWithoutSending(t *testing.T) {
 func TestDryRunNotesStandApartFromTheEngineList(t *testing.T) {
 	inTempProject(t, strings.Replace(mockProject, ", domains: [acme-books.example]}", "}", 1))
 	res := runApp(t, "run", "--dry-run")
-	if res.Exit != 0 || !strings.Contains(res.Stdout, "6 requests\n\nNote: add brand.domains") {
+	if res.Exit != 0 || !strings.Contains(res.Stdout, "no cost\n\nNote: add brand.domains") {
 		t.Fatalf("exit %d:\n%s", res.Exit, res.Stdout)
 	}
 }
@@ -94,7 +95,7 @@ func TestDryRunNotesStandApartFromTheEngineList(t *testing.T) {
 func TestDryRunEngineListStaysAlignedWithLongIDs(t *testing.T) {
 	inTempProject(t, strings.Replace(mockProject, "{id: claude-demo,", "{id: perplexity-typo-demo,", 1))
 	res := runApp(t, "run", "--dry-run")
-	if res.Exit != 0 || !strings.Contains(res.Stdout, "  chatgpt-demo         mock demo") || !strings.Contains(res.Stdout, "  perplexity-typo-demo mock demo") {
+	if res.Exit != 0 || !strings.Contains(res.Stdout, "  chatgpt-demo          mock demo  6") || !strings.Contains(res.Stdout, "  perplexity-typo-demo  mock demo  6") {
 		t.Fatalf("exit %d:\n%s", res.Exit, res.Stdout)
 	}
 }
@@ -131,6 +132,66 @@ func TestDryRunShowsCostAndMissingKeys(t *testing.T) {
 	}
 	if !strings.Contains(res.Stdout, "Estimated cost: about $") || !strings.Contains(res.Stdout, "Keys missing: ANTHROPIC_API_KEY") {
 		t.Fatalf("dry run:\n%s", res.Stdout)
+	}
+}
+
+// The dry run used to give one total and only say that Perplexity's fee was
+// missing, so pricing a smaller run took a second dry run.
+func TestDryRunShowsTheCostOfEachEngine(t *testing.T) {
+	inTempProject(t, strings.Replace(mockProject, "  - {id: claude-demo, provider: mock, model: demo}\n",
+		"  - {id: chatgpt, provider: openai, model: gpt-6.1-sol, key_env: OPENAI_API_KEY}\n"+
+			"  - {id: perplexity, provider: perplexity, model: sonar, key_env: PERPLEXITY_API_KEY}\n", 1))
+	res := runApp(t, "run", "--dry-run")
+	if res.Exit != 0 {
+		t.Fatalf("exit %d: %s", res.Exit, res.Stderr)
+	}
+	for _, want := range []string{
+		"The total leaves out the fee per request for perplexity, because llmention's price table doesn't have it.",
+		"  Engine        Model               Requests  Estimated cost\n",
+		"  chatgpt-demo  mock demo           6         no cost\n",
+		"  chatgpt       openai gpt-6.1-sol  6         about $0.",
+		"  perplexity    perplexity sonar    6         about $0.02 plus a fee per request\n",
+	} {
+		if !strings.Contains(res.Stdout, want) {
+			t.Fatalf("dry run misses %q:\n%s", want, res.Stdout)
+		}
+	}
+	res = runApp(t, "run", "--dry-run", "--json")
+	var plan planPreview
+	if err := json.Unmarshal([]byte(res.Stdout), &plan); err != nil {
+		t.Fatal(err)
+	}
+	engines := plan.EstimatedCost.Engines
+	if len(engines) != 3 || !engines[0].Free || engines[1].Dollars <= 0 || !engines[2].FeeMissing {
+		t.Fatalf("engines = %+v", engines)
+	}
+	if sum := engines[1].Dollars + engines[2].Dollars; math.Abs(sum-plan.EstimatedCost.Dollars) > 1e-9 {
+		t.Fatalf("engines add up to %f, total is %f", sum, plan.EstimatedCost.Dollars)
+	}
+}
+
+// A run of 96 requests under the old default budget of 100 had room for
+// four retries, and only --json showed it.
+func TestDryRunWarnsWhenTheBudgetLeavesLittleRoomForRetries(t *testing.T) {
+	inTempProject(t, mockProject+"execution: {max_requests: 13}\n")
+	res := runApp(t, "run", "--dry-run")
+	want := "Note: the budget of 13 requests leaves room for only 1 retry. If more requests than that fail, the last requests of the run are not sent. " +
+		"To allow every retry, set execution.max_requests to 36 or pass --max-requests 36.\n"
+	if res.Exit != 0 || !strings.Contains(res.Stdout, want) {
+		t.Fatalf("exit %d:\n%s", res.Exit, res.Stdout)
+	}
+	res = runApp(t, "run", "--dry-run", "--json")
+	var plan planPreview
+	if err := json.Unmarshal([]byte(res.Stdout), &plan); err != nil || len(plan.Warnings) != 1 || !strings.Contains(plan.Warnings[0], "room for only 1 retry") {
+		t.Fatalf("warnings = %q (%v)", plan.Warnings, err)
+	}
+	// Room for one retry of each request is enough, and without retries
+	// there is nothing to warn about.
+	for _, execution := range []string{"{max_requests: 24}", "{max_requests: 12, retries: 0}"} {
+		inTempProject(t, mockProject+"execution: "+execution+"\n")
+		if res := runApp(t, "run", "--dry-run"); res.Exit != 0 || strings.Contains(res.Stdout, "retries.") || strings.Contains(res.Stdout, "room for") {
+			t.Fatalf("%s: exit %d:\n%s", execution, res.Exit, res.Stdout)
+		}
 	}
 }
 
@@ -605,6 +666,53 @@ func TestInitWritesARunnableProject(t *testing.T) {
 	}
 }
 
+// init kept the default budget of 100, so four engines with ten prompts had
+// room for 20 retries instead of 160.
+func TestInitSetsABudgetThatFitsEveryRetry(t *testing.T) {
+	inTempProject(t, "")
+	res := runApp(t, "init", "--brand", "Acme", "--category", "invoicing", "--competitors", "Globex, Initech", "--engines", "openai,anthropic,google,perplexity")
+	if res.Exit != 0 {
+		t.Fatalf("exit %d: %s", res.Exit, res.Stderr)
+	}
+	project, err := config.Load("llmention.yaml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if project.Execution.MaxRequests != 10*4*2*3 {
+		t.Fatalf("max_requests = %d", project.Execution.MaxRequests)
+	}
+	res = runApp(t, "run", "--dry-run")
+	if res.Exit != 0 || !strings.Contains(res.Stdout, "so the run sends at most 240 requests") || strings.Contains(res.Stdout, "room for") {
+		t.Fatalf("exit %d:\n%s", res.Exit, res.Stdout)
+	}
+}
+
+// init set up the direct Gemini and Perplexity engines without a word,
+// while the docs say they had the fewest checks with real requests.
+func TestInitSaysWhenAConnectionIsLessTested(t *testing.T) {
+	inTempProject(t, "")
+	res := runApp(t, "init", "--brand", "Acme", "--category", "invoicing", "--engines", "openai,google,perplexity")
+	want := "Note: the direct connections to Gemini and Perplexity are less tested than OpenRouter, which reaches all four assistants with one key (OPENROUTER_API_KEY)."
+	if res.Exit != 0 || !strings.Contains(res.Stdout, want) || !strings.Contains(res.Stdout, "--engines openrouter --force") {
+		t.Fatalf("exit %d:\n%s", res.Exit, res.Stdout)
+	}
+	res = runApp(t, "init", "--brand", "Acme", "--category", "invoicing", "--engines", "perplexity", "--force", "--json")
+	var result initResult
+	if err := json.Unmarshal([]byte(res.Stdout), &result); err != nil || len(result.Warnings) != 1 || !strings.HasPrefix(result.Warnings[0], "the direct connection to Perplexity is less tested") {
+		t.Fatalf("warnings = %q (%v)", result.Warnings, err)
+	}
+	for _, engines := range []string{"openai,anthropic", "openrouter"} {
+		if res := runApp(t, "init", "--brand", "Acme", "--category", "invoicing", "--engines", engines, "--force"); res.Exit != 0 || strings.Contains(res.Stdout, "less tested") {
+			t.Fatalf("%s: exit %d:\n%s", engines, res.Exit, res.Stdout)
+		}
+	}
+	inTempProject(t, "")
+	res = runApp(t, "quick", "--brand", "Acme", "--category", "invoicing", "--engines", "google", "--dry-run")
+	if res.Exit != 0 || !strings.Contains(res.Stderr, "Note: the direct connection to Gemini is less tested than OpenRouter") {
+		t.Fatalf("quick: exit %d:\n%s", res.Exit, res.Stderr)
+	}
+}
+
 func TestInitWithOnlyAnOpenRouterKeyAsksAllFourThroughIt(t *testing.T) {
 	inTempProject(t, "")
 	res := testutil.RunWith(newApp(), testutil.Options{LookupEnv: func(name string) (string, bool) {
@@ -755,7 +863,7 @@ func TestReportWithoutHistoryExplains(t *testing.T) {
 func TestDiscoverSuggestsPromptsWithoutAnAccount(t *testing.T) {
 	inTempProject(t, mockProject)
 	res := runApp(t, "discover", "--out", "prompts.txt")
-	if res.Exit != 0 || !strings.Contains(res.Stdout, "What do most teams use for invoicing for freelancers?") {
+	if res.Exit != 0 || !strings.Contains(res.Stdout, "What do most people use for invoicing for freelancers?") {
 		t.Fatalf("exit %d:\n%s%s", res.Exit, res.Stdout, res.Stderr)
 	}
 	data, err := os.ReadFile("prompts.txt")

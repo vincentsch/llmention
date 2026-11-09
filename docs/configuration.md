@@ -63,6 +63,10 @@ runs_dir: ./.llmention/runs
 | `products` | Product names that count as a mention of you. |
 | `people` | Founders or authors. Only the recognition suite uses them. |
 
+Names match without regard to capitals, and only as whole words.
+[How a mention is found](metrics.md#how-a-mention-is-found) has the details,
+and what to do when a name is also an everyday word.
+
 ## competitors
 
 The brands to compare yourself with. Each one has a `name`. It can also have
@@ -112,7 +116,15 @@ default is 1.
 | `concurrency` | 4 | Requests sent at the same time |
 | `max_judge_requests` | 100 | The most requests the AI grader may get in one run |
 
-See [Costs and the request budget](costs.md).
+`init` and `quick` set `max_requests` so that a full run fits with all its
+retries. A full run asks each prompt once per engine and mode, so ten prompts
+on four engines in two modes make 80 requests. Each request may be sent
+1 + `retries` times, so with 2 retries `init` writes 240. It never writes less
+than the default of 100.
+
+If you add prompts or engines later, check the dry run. It warns when the
+budget can't retry each request once, and it says which number to use. See
+[Costs and the request budget](costs.md).
 
 ## runs_dir
 

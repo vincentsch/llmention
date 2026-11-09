@@ -57,31 +57,31 @@ Demo data: the mock engine made up these answers. To measure real assistants, se
 
 How often assistants mention Acme Books
   Engine        Mode           Mentioned  Rate  Share of voice  Avg. rank
-  chatgpt-demo  no web search  9 of 10    90%   37%             2.4
-  chatgpt-demo  web search     9 of 10    90%   37%             2.2
-  claude-demo   no web search  1 of 10    10%   7%              1.0
-  claude-demo   web search     5 of 10    50%   19%             1.6
+  chatgpt-demo  no web search  9 of 10    90%   39%             2.4
+  chatgpt-demo  web search     9 of 10    90%   39%             1.9
+  claude-demo   no web search  0 of 10    0%    0%              –
+  claude-demo   web search     6 of 10    60%   24%             1.7
   Rate is the share of counted answers that name Acme Books. Share of voice is its part of all mentions of the brands you track.
   Avg. rank is its average place in the answers that name it, where 1 means first. A dash means there was nothing to count.
 
 Mention rate next to your competitors
   Engine · mode                 Acme Books (you)  Globex Billing  Initech Invoices
-  chatgpt-demo · no web search  90%               89%             56%
-  chatgpt-demo · web search     90%               89%             67%
-  claude-demo · no web search   10%               89%             67%
-  claude-demo · web search      50%               100%            67%
+  chatgpt-demo · no web search  90%               89%             44%
+  chatgpt-demo · web search     90%               89%             56%
+  claude-demo · no web search   0%                89%             67%
+  claude-demo · web search      60%               100%            67%
 
 Sites the answers cited
   Site                Citations  In answers  Whose
   acme-books.example  11         11          yours
-  youtube.com         11         11
-  globex.example      9          9           Globex Billing
-  g2.com              8          8
+  globex.example      10         10          Globex Billing
+  youtube.com         10         10
+  reddit.com          9          9
   ...
 
 What stands out
-  - claude-demo mentioned Acme Books more often with web search on (50%) than off (10%).
-  - The most cited sites outside the brands you track were youtube.com (11) and g2.com (8).
+  - claude-demo mentioned Acme Books more often with web search on (60%) than off (0%).
+  - The most cited sites outside the brands you track were youtube.com (10) and reddit.com (9).
   ...
 ```
 
@@ -130,8 +130,12 @@ would send:
 ```text
 Dry run: nothing was sent.
 Would send 40 requests: 10 prompts to 2 engines, in no web search and web search modes.
-Failed requests are retried. The run stops at 100 requests, its budget.
+Failed requests are retried, so the run sends at most 120 requests.
 Estimated cost: about $1.72, from list prices checked on 2026-10-26. Longer answers and extra web searches can make it higher.
+
+  Engine   Model                        Requests  Estimated cost
+  chatgpt  openai gpt-6.1-sol           20        about $1.14
+  claude   anthropic claude-sonnet-5-5  20        about $0.58
 ```
 
 Run the same command without `--dry-run` to write `llmention.yaml` and ask the

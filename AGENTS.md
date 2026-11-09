@@ -56,22 +56,38 @@ env | cut -d= -f1 | grep -E '^(OPENAI|ANTHROPIC|GEMINI|PERPLEXITY|OPENROUTER)_AP
 ```
 
 Never copy a key into a file and never use keys from another project.
-`init` does not set up OpenRouter. For an OpenRouter key, add the engine by
-hand as shown in [Providers and models](docs/providers.md#openrouter). If no
-key is set, run `llmention demo` and show the user its output. Then explain
-which variables to export and stop the real setup there.
+
+Only a real run needs keys. These commands work without any key:
+
+- `llmention demo`, which shows a report for a made-up market
+- `llmention init`, which writes `llmention.yaml`
+- `llmention run --dry-run`, which shows the requests and the cost
+
+If no key is set, run `llmention demo` and show the user its output. Then go
+on with steps 4 and 5, and pass the providers the user wants to `--engines`.
+If the user has no preference, use `--engines openrouter`, because one
+OpenRouter key covers all four assistants. Tell the user which variables to
+export, and stop before step 6 until they have.
 
 ## 4. Write llmention.yaml
 
 Work in the directory the user picked, or the repository root. Pass the
 providers that have keys to `--engines`:
 
-| Key | `--engines` name |
-| --- | --- |
-| `OPENAI_API_KEY` | `openai` |
-| `ANTHROPIC_API_KEY` | `anthropic` |
-| `GEMINI_API_KEY` | `google` |
-| `PERPLEXITY_API_KEY` | `perplexity` |
+| Key | `--engines` name | Tested with real requests |
+| --- | --- | --- |
+| `OPENAI_API_KEY` | `openai` | yes |
+| `ANTHROPIC_API_KEY` | `anthropic` | yes |
+| `GEMINI_API_KEY` | `google` | less than OpenRouter |
+| `PERPLEXITY_API_KEY` | `perplexity` | less than OpenRouter |
+| `OPENROUTER_API_KEY` | `openrouter` | yes, for all four assistants |
+
+The direct `google` and `perplexity` connections are less tested than
+OpenRouter, which covers all four assistants with one key.
+[Providers and models](docs/providers.md#which-providers-were-checked-with-real-requests)
+says what was checked. If the user has an OpenRouter key, use it for Gemini and
+Perplexity. For example, `--engines openai,anthropic,openrouter` asks ChatGPT
+and Claude directly and the other two through OpenRouter.
 
 ```sh
 llmention init --brand "Acme Books" --category "invoicing for freelancers" \
@@ -83,7 +99,9 @@ llmention init --brand "Acme Books" --category "invoicing for freelancers" \
 Then open `llmention.yaml`:
 
 - Add other names for the product under `brand.aliases` and product names
-  under `brand.products`.
+  under `brand.products`. Names match without regard to capitals and only as
+  whole words. If a name is also an everyday word, read
+  [How a mention is found](docs/metrics.md#how-a-mention-is-found).
 - Rewrite the starter prompts so they sound like this product's buyers. Use
   eight to fifteen. Leave the product's own name out of every prompt, because
   answers to a prompt that names the product do not count toward its mention
@@ -110,7 +128,8 @@ These count as problems:
 - a line that starts with "The run would not start"
 
 Fix them in `llmention.yaml`, or ask the user to export a missing key. Then run
-the dry run again.
+the dry run again. If a note says that the budget leaves little room for
+retries, set `execution.max_requests` to the number the note gives.
 
 ## 6. Run once and show the report
 

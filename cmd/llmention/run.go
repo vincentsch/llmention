@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
+	"text/tabwriter"
 
 	"github.com/spf13/cobra"
 	rungrad "github.com/vincentsch/rungrad"
@@ -24,7 +25,7 @@ func runCommand() *rungrad.Command {
 		Use:   "run",
 		Short: "Ask the assistants your prompts and save the answers",
 		Long: "Send the prompts in llmention.yaml to each engine in each mode, then save the answers as a run and print the summary. " +
-			"Use --dry-run first. It sends nothing and shows how many requests the run would send and roughly what they cost. It also says which API keys are set. " +
+			"Use --dry-run first. It sends nothing and shows how many requests the run would send and roughly what they cost, in total and for each engine. It also says which API keys are set. " +
 			"Ctrl+C stops the run and saves the answers that already came back.",
 		Examples: []string{
 			"llmention run --dry-run",
@@ -223,11 +224,30 @@ func writePlan(f *rungrad.Factory, p *prepared) error {
 			pv.Warnings = append(pv.Warnings, issue.Message)
 		}
 	}
+	if note := retryRoomNote(pv); note != "" {
+		pv.Warnings = append(pv.Warnings, note)
+	}
 	slices.Sort(pv.Warnings)
 	pv.Warnings = slices.Compact(pv.Warnings)
 	slices.Sort(pv.Problems)
 	pv.Problems = slices.Compact(pv.Problems)
 	return f.WriteOutput(rungrad.Output{Model: pv, Human: func(w io.Writer) { writePlanText(w, pv) }})
+}
+
+// retryRoomNote warns when the budget can't retry each request once. Retries
+// use the same budget as first attempts, so with too little room a few
+// failures early in the run mean the last requests are never sent.
+func retryRoomNote(pv planPreview) string {
+	room := pv.MaxRequests - pv.Requests
+	if !pv.FitsBudget || pv.WorstCase <= pv.MaxRequests || room >= pv.Requests {
+		return ""
+	}
+	left := "no room for retries"
+	if room > 0 {
+		left = fmt.Sprintf("room for only %d %s", room, pluralWord(room, "retry", "retries"))
+	}
+	return fmt.Sprintf("the budget of %d requests leaves %s. If more requests than that fail, the last requests of the run are not sent. "+
+		"To allow every retry, set execution.max_requests to %d or pass --max-requests %d.", pv.MaxRequests, left, pv.WorstCase, pv.WorstCase)
 }
 
 func writePlanText(w io.Writer, pv planPreview) {
@@ -254,14 +274,24 @@ func writePlanText(w io.Writer, pv planPreview) {
 	default:
 		fmt.Fprintf(w, "Estimated cost: %s, from list prices checked on %s. Longer answers and extra web searches can make it higher.\n", pv.EstimatedCost, pv.PricesCheckedOn)
 	}
+	for _, line := range pv.EstimatedCost.LeftOut() {
+		fmt.Fprintln(w, line)
+	}
 	fmt.Fprintln(w)
-	width := 12
-	for _, e := range pv.Engines {
-		width = max(width, len(e.ID))
+	costs := map[string]cost.EngineEstimate{}
+	for _, e := range pv.EstimatedCost.Engines {
+		costs[e.ID] = e
 	}
+	tw := tabwriter.NewWriter(w, 0, 2, 2, ' ', 0)
+	fmt.Fprintln(tw, "  Engine\tModel\tRequests\tEstimated cost")
 	for _, e := range pv.Engines {
-		fmt.Fprintf(w, "  %-*s %s %s, %d %s\n", width, e.ID, e.Provider, e.Model, e.Requests, pluralWord(e.Requests, "request", "requests"))
+		estimate := "nothing"
+		if c, ok := costs[e.ID]; ok {
+			estimate = c.String()
+		}
+		fmt.Fprintf(tw, "  %s\t%s %s\t%d\t%s\n", e.ID, e.Provider, e.Model, e.Requests, estimate)
 	}
+	tw.Flush()
 	if len(pv.Keys) > 0 || len(pv.Skipped) > 0 || len(pv.Checks) > 0 || pv.JudgeRequests > 0 || len(pv.Warnings) > 0 {
 		fmt.Fprintln(w)
 	}
@@ -278,7 +308,7 @@ func writePlanText(w io.Writer, pv planPreview) {
 			fmt.Fprintf(w, "Keys found: %s\n", strings.Join(set, ", "))
 		}
 		if len(missing) > 0 {
-			fmt.Fprintf(w, "Keys missing: %s. Export them before you run, for example `export %s=...`.\n", strings.Join(missing, ", "), missing[0])
+			fmt.Fprintf(w, "Keys missing: %s. Export %s before you run, for example `export %s=...`.\n", strings.Join(missing, ", "), pluralWord(len(missing), "it", "them"), missing[0])
 		}
 	}
 	for _, s := range pv.Skipped {
@@ -291,7 +321,7 @@ func writePlanText(w io.Writer, pv planPreview) {
 		fmt.Fprintf(w, "The AI grader would get up to %d %s.\n", pv.JudgeRequests, pluralWord(pv.JudgeRequests, "request", "requests"))
 	}
 	for _, warn := range pv.Warnings {
-		fmt.Fprintf(w, "Note: %s\n", warn)
+		fmt.Fprintf(w, "Note: %s.\n", strings.TrimSuffix(warn, "."))
 	}
 	if !pv.FitsBudget {
 		fmt.Fprintf(w, "\nThis run needs %d requests but the budget is %d. Raise execution.max_requests or pass --max-requests %d.\n", pv.Requests, pv.MaxRequests, pv.Requests)

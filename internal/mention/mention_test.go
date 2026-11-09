@@ -30,6 +30,36 @@ func TestFindRespectsWordBoundariesAndNormalization(t *testing.T) {
 	}
 }
 
+// These are the examples in docs/metrics.md under "How a mention is found".
+func TestFindMatchesTheWayTheDocsSay(t *testing.T) {
+	acme := Brand{ID: "acme", Name: "Acme Books", Aliases: []string{"acme-books.example"}}
+	globex := Brand{ID: "globex", Name: "Globex Billing"}
+	bonsai := Brand{ID: "bonsai", Name: "Bonsai", Aliases: []string{"hellobonsai.com"}}
+	cases := []struct {
+		brand Brand
+		text  string
+		want  bool
+	}{
+		{acme, "Try ACME BOOKS for invoices.", true},
+		{acme, "Acme Books's pricing is fair.", true},
+		{acme, "1. **Acme Books**: simple.", true},
+		{acme, "Acme Bookstore sells paper.", false},
+		{acme, "AcmeBooks and Acme-Books are spelled differently.", false},
+		{acme, "See www.acme-books.example for docs.", true},
+		{acme, "Go to https://app.acme-books.example/pricing now.", true},
+		{globex, "There are two Globex Billings in town.", false},
+		{Brand{ID: "cafe", Name: "Café"}, "Cafe is spelled without the accent.", false},
+		{bonsai, "Bonsai sends reminders.", true},
+		{bonsai, "Water a bonsai tree once a week.", true},
+		{bonsai, "Prices are on hellobonsai.com.", true},
+	}
+	for _, tc := range cases {
+		if got := Contains(tc.text, tc.brand); got != tc.want {
+			t.Errorf("%s in %q = %v, want %v", tc.brand.Name, tc.text, got, tc.want)
+		}
+	}
+}
+
 func TestFindPrefersTheLongerBrandAtTheSameStart(t *testing.T) {
 	brands := []Brand{{ID: "acme", Name: "Acme"}, {ID: "pro", Name: "Acme Pro"}}
 	got := Find("Acme Pro is mentioned. Later Acme alone.", brands)

@@ -62,6 +62,9 @@ func quickCommand() *rungrad.Command {
 				if project, err = config.StarterProject(starter); err != nil {
 					return usageError(err)
 				}
+				if note := lessTestedNote(project.Engines); note != "" {
+					f.Infof("Note: %s", note)
+				}
 				// Check the keys before writing anything, so the same quick
 				// command works once they are exported.
 				if !f.DryRun() {

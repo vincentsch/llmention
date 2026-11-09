@@ -53,7 +53,10 @@ type initResult struct {
 	Engines []string `json:"engines"`
 	Prompts int      `json:"prompts"`
 	Keys    []string `json:"keys_needed"`
-	YAML    string   `json:"yaml,omitempty"`
+	// Warnings are short notes about the setup, such as engines that have
+	// had fewer checks with real requests.
+	Warnings []string `json:"warnings,omitempty"`
+	YAML     string   `json:"yaml,omitempty"`
 }
 
 func runInit(f *rungrad.Factory, cmd *cobra.Command, _ []string) error {
@@ -89,6 +92,9 @@ func runInit(f *rungrad.Factory, cmd *cobra.Command, _ []string) error {
 			result.Keys = append(result.Keys, e.KeyEnv)
 		}
 	}
+	if note := lessTestedNote(project.Engines); note != "" {
+		result.Warnings = append(result.Warnings, note)
+	}
 	if f.DryRun() {
 		result.YAML = string(data)
 	} else if err := config.WriteFileAtomic(path, data, 0o644); err != nil {
@@ -97,9 +103,15 @@ func runInit(f *rungrad.Factory, cmd *cobra.Command, _ []string) error {
 	return f.WriteResult(result, func(w io.Writer) {
 		if result.DryRun {
 			fmt.Fprintf(w, "Dry run: would write %s:\n\n%s\n", path, data)
+			for _, note := range result.Warnings {
+				fmt.Fprintf(w, "Note: %s\n", note)
+			}
 			return
 		}
 		fmt.Fprintf(w, "Wrote %s with %d prompts. Engines: %s.\n", path, result.Prompts, strings.Join(result.Engines, ", "))
+		for _, note := range result.Warnings {
+			fmt.Fprintf(w, "\nNote: %s\n", note)
+		}
 		writeNextSteps(w, f, result.Keys, result.Prompts)
 	})
 }
@@ -210,6 +222,27 @@ func askStarter(f *rungrad.Factory, s *config.Starter) error {
 		}
 		fmt.Fprintf(out, "Please name providers llmention knows: %s.\n", strings.Join(config.StarterProviders, ", "))
 	}
+}
+
+// lessTestedNote speaks up when init or quick set up the direct Gemini or
+// Perplexity provider. Those connections have had fewer checks with real
+// requests than OpenRouter, which reaches the same assistants.
+func lessTestedNote(engines []config.EngineConfig) string {
+	var names []string
+	for _, e := range engines {
+		switch e.Provider {
+		case "google":
+			names = append(names, "Gemini")
+		case "perplexity":
+			names = append(names, "Perplexity")
+		}
+	}
+	if len(names) == 0 {
+		return ""
+	}
+	return fmt.Sprintf("the direct %s to %s %s less tested than OpenRouter, which reaches all four assistants with one key (OPENROUTER_API_KEY). "+
+		"To use OpenRouter instead, run the command again with --engines openrouter --force.",
+		pluralWord(len(names), "connection", "connections"), config.JoinAnd(names), pluralWord(len(names), "is", "are"))
 }
 
 // defaultProviders picks the providers whose usual key variable is set. It

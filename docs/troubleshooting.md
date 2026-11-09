@@ -46,6 +46,20 @@ The run would send more requests than `execution.max_requests` allows. Raise
 it, or pass `--max-requests 160` for this run. You can also ask fewer engines
 with `--engine`. [Costs](costs.md) explains the budget.
 
+### "the budget of 100 requests leaves room for only 4 retries"
+
+The run fits the budget, but retries count against it too. If more requests
+fail than the note says, the last requests of the run are not sent. Set
+`execution.max_requests` to the number in the note, which leaves room for
+every retry.
+
+### "The total leaves out the fee per request for perplexity"
+
+llmention's price table has no fee per request for Perplexity's own API, so
+the estimate only counts the tokens there. Check the fee on Perplexity's
+pricing page. Through OpenRouter the estimate includes the fee.
+[Costs](costs.md#the-estimate) has the details.
+
 ### "nothing was sent, because the answers could not be scored"
 
 The AI grader is turned on, with `analysis.model_assisted_enabled` or

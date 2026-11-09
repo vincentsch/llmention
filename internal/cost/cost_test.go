@@ -2,6 +2,7 @@ package cost
 
 import (
 	"math"
+	"slices"
 	"testing"
 
 	"github.com/vincentsch/llmention/internal/config"
@@ -79,5 +80,59 @@ func TestEstimateNamesModelsWithoutAPrice(t *testing.T) {
 	est := ForPlan(plan, []config.EngineConfig{{ID: "x", Provider: "openrouter", Model: "meta-llama/llama-4-maverick"}})
 	if est.Dollars != 0 || len(est.UnknownModels) != 1 {
 		t.Fatalf("estimate = %#v", est)
+	}
+}
+
+func TestEstimateSplitsByEngine(t *testing.T) {
+	engines := []config.EngineConfig{
+		{ID: "mock", Provider: "mock", Model: "demo"},
+		{ID: "chatgpt", Provider: "openai", Model: "gpt-6.1-sol"},
+		{ID: "perplexity", Provider: "perplexity", Model: "sonar"},
+		{ID: "sonar", Provider: "openrouter", Model: "perplexity/sonar"},
+		{ID: "llama", Provider: "openrouter", Model: "meta-llama/llama-4-maverick"},
+	}
+	plan := &run.Plan{}
+	for _, e := range engines {
+		for _, mode := range []engine.ToolPolicy{engine.ToolPolicyMemory, engine.ToolPolicySearchAuto} {
+			plan.WorkUnits = append(plan.WorkUnits, run.WorkUnit{EngineID: e.ID, Mode: mode, Prompt: bestTools})
+		}
+	}
+	est := ForPlan(plan, engines)
+	if len(est.Engines) != len(engines) {
+		t.Fatalf("engines = %+v", est.Engines)
+	}
+	sum := 0.0
+	for i, e := range est.Engines {
+		if e.ID != engines[i].ID {
+			t.Fatalf("engine %d is %s, want %s", i, e.ID, engines[i].ID)
+		}
+		sum += e.Dollars
+	}
+	if math.Abs(sum-est.Dollars) > 1e-12 {
+		t.Fatalf("engines add up to %f, total is %f", sum, est.Dollars)
+	}
+	mock, chatgpt, perplexity, sonar, llama := est.Engines[0], est.Engines[1], est.Engines[2], est.Engines[3], est.Engines[4]
+	if !mock.Free || mock.String() != "no cost" {
+		t.Errorf("mock = %+v %q", mock, mock)
+	}
+	if chatgpt.Free || chatgpt.FeeMissing || chatgpt.Dollars <= 0 {
+		t.Errorf("chatgpt = %+v", chatgpt)
+	}
+	if !perplexity.FeeMissing || perplexity.String() != dollarsText(perplexity.Dollars)+" plus a fee per request" {
+		t.Errorf("perplexity = %+v %q", perplexity, perplexity)
+	}
+	// Through OpenRouter the fee is known: $0.005 on each of the two requests.
+	if sonar.FeeMissing || sonar.Dollars < 0.01 {
+		t.Errorf("sonar on OpenRouter = %+v", sonar)
+	}
+	if !llama.PriceUnknown || llama.String() != "unknown" {
+		t.Errorf("llama = %+v %q", llama, llama)
+	}
+	want := []string{
+		"The total leaves out llama, because llmention's price table has no price for its model.",
+		"The total leaves out the fee per request for perplexity, because llmention's price table doesn't have it.",
+	}
+	if got := est.LeftOut(); !slices.Equal(got, want) {
+		t.Fatalf("LeftOut() = %q", got)
 	}
 }

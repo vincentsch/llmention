@@ -1,4 +1,4 @@
-Send the prompts in llmention.yaml to each engine in each mode, then save the answers as a run and print the summary. Use --dry-run first. It sends nothing and shows how many requests the run would send and roughly what they cost. It also says which API keys are set. Ctrl+C stops the run and saves the answers that already came back.
+Send the prompts in llmention.yaml to each engine in each mode, then save the answers as a run and print the summary. Use --dry-run first. It sends nothing and shows how many requests the run would send and roughly what they cost, in total and for each engine. It also says which API keys are set. Ctrl+C stops the run and saves the answers that already came back.
 
 Related commands:
   llmention report

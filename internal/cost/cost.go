@@ -5,7 +5,6 @@ package cost
 
 import (
 	"fmt"
-	"slices"
 	"strings"
 
 	"github.com/vincentsch/llmention/internal/config"
@@ -92,6 +91,20 @@ type Estimate struct {
 	// out.
 	FeesMissing []string `json:"fees_missing,omitempty"`
 	Free        bool     `json:"free"` // only mock or local engines
+	// Engines splits the estimate by engine, in the order of the plan.
+	Engines []EngineEstimate `json:"engines,omitempty"`
+}
+
+// EngineEstimate is the expected cost of one engine's requests.
+type EngineEstimate struct {
+	ID      string  `json:"id"`
+	Dollars float64 `json:"dollars"`
+	Free    bool    `json:"free"`
+	// PriceUnknown is true when the model is not in the price table.
+	PriceUnknown bool `json:"price_unknown,omitempty"`
+	// FeeMissing is true when the provider charges a fee per request that
+	// the price table does not know, so Dollars leaves it out.
+	FeeMissing bool `json:"fee_missing,omitempty"`
 }
 
 // ForPlan estimates the cost of sending every work unit once.
@@ -101,17 +114,25 @@ func ForPlan(plan *run.Plan, engines []config.EngineConfig) Estimate {
 		byID[e.ID] = e
 	}
 	est := Estimate{Free: true}
-	seenUnknown := map[string]bool{}
+	index := map[string]int{}
 	for _, unit := range plan.WorkUnits {
 		e := byID[unit.EngineID]
+		i, seen := index[e.ID]
+		if !seen {
+			i = len(est.Engines)
+			index[e.ID] = i
+			est.Engines = append(est.Engines, EngineEstimate{ID: e.ID, Free: true})
+		}
+		share := &est.Engines[i]
 		if e.Provider == "mock" || (e.Provider == "openai-compatible" && isLocal(e.BaseURL)) {
 			continue
 		}
 		est.Free = false
+		share.Free = false
 		price, ok := prices[e.Provider+"/"+e.Model]
 		if !ok {
-			if !seenUnknown[e.ID] {
-				seenUnknown[e.ID] = true
+			if !share.PriceUnknown {
+				share.PriceUnknown = true
 				est.UnknownModels = append(est.UnknownModels, e.ID)
 			}
 			continue
@@ -129,34 +150,66 @@ func ForPlan(plan *run.Plan, engines []config.EngineConfig) Estimate {
 		}
 		dollars += float64(input)/1e6*price.InputPerM + float64(output)/1e6*price.OutputPerM
 		est.Dollars += dollars
-		if price.FeesMissing && !slices.Contains(est.FeesMissing, e.ID) {
+		share.Dollars += dollars
+		if price.FeesMissing && !share.FeeMissing {
+			share.FeeMissing = true
 			est.FeesMissing = append(est.FeesMissing, e.ID)
 		}
 	}
 	return est
 }
 
-// String says the estimate in words, for example "about $0.42".
+// String says the estimate in words, for example "about $0.42". LeftOut
+// says what the number does not include.
 func (e Estimate) String() string {
-	if e.Free {
-		return "no provider cost"
-	}
-	var parts []string
 	switch {
+	case e.Free:
+		return "no provider cost"
 	case e.Dollars == 0 && len(e.UnknownModels) > 0:
 		return "unknown, because llmention has no price for the model of " + config.JoinAnd(e.UnknownModels)
-	case e.Dollars < 0.01:
-		parts = append(parts, "under $0.01")
-	default:
-		parts = append(parts, fmt.Sprintf("about $%.2f", e.Dollars))
 	}
+	return dollarsText(e.Dollars)
+}
+
+// LeftOut lists, as sentences, the costs that the total does not include.
+func (e Estimate) LeftOut() []string {
+	var out []string
 	if len(e.UnknownModels) > 0 && e.Dollars > 0 {
-		parts = append(parts, "plus the cost of "+config.JoinAnd(e.UnknownModels)+", which is not in llmention's price table")
+		out = append(out, fmt.Sprintf("The total leaves out %s, because llmention's price table has no price for %s.",
+			config.JoinAnd(e.UnknownModels), pluralWord(len(e.UnknownModels), "its model", "their models")))
 	}
 	if len(e.FeesMissing) > 0 {
-		parts = append(parts, "plus the fee per request for "+config.JoinAnd(e.FeesMissing))
+		out = append(out, fmt.Sprintf("The total leaves out the fee per request for %s, because llmention's price table doesn't have it.",
+			config.JoinAnd(e.FeesMissing)))
 	}
-	return strings.Join(parts, ", ")
+	return out
+}
+
+// String says one engine's share in a few words, for a table cell.
+func (e EngineEstimate) String() string {
+	switch {
+	case e.Free:
+		return "no cost"
+	case e.PriceUnknown:
+		return "unknown"
+	case e.FeeMissing:
+		return dollarsText(e.Dollars) + " plus a fee per request"
+	}
+	return dollarsText(e.Dollars)
+}
+
+func dollarsText(dollars float64) string {
+	if dollars < 0.01 {
+		return "under $0.01"
+	}
+	return fmt.Sprintf("about $%.2f", dollars)
+}
+
+func pluralWord(n int, one, many string) string {
+	if n == 1 {
+		return one
+	}
+	return many
 }
 
 func isLocal(baseURL string) bool {

@@ -55,7 +55,10 @@ own provider's search there.
 
 The `google` provider, which talks to Google's own API, has so far only been
 checked against a rejected key. The `perplexity` provider, which talks to
-Perplexity's own API, is only tested against made-up answers.
+Perplexity's own API, is only tested against made-up answers. So when `init`
+or `quick` set up either one, they say that OpenRouter is better tested. One
+OpenRouter key reaches all four assistants, as shown under
+[One OpenRouter key for all four assistants](#one-openrouter-key-for-all-four-assistants).
 
 ## Keys
 
@@ -232,8 +235,10 @@ machine.
   which every current Claude model accepts.
 - Anthropic's and OpenRouter's search tools may run up to five searches per
   answer. The provider bills each search.
-- Perplexity charges a fee per request on top of the tokens. The cost estimate
-  says when it leaves such fees out.
+- Perplexity charges a fee per request on top of the tokens. llmention's price
+  table has this fee for `perplexity/sonar` on OpenRouter, but not for
+  Perplexity's own API. For the `perplexity` provider the estimate leaves the
+  fee out and says so.
 - An engine's `max_output_tokens` limits the length of each answer, including
   the model's thinking. If you don't set it, llmention sends no limit. The
   exception is Anthropic, which requires one, so llmention sends 16,000 tokens

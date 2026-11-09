@@ -26,8 +26,8 @@ unfinished answers with a label.
 
 ```text
   Engine        Mode           Mentioned  Rate  Share of voice  Avg. rank
-  chatgpt-demo  no web search  9 of 10    90%   37%             2.4
-  claude-demo   web search     5 of 10    50%   19%             1.6
+  chatgpt-demo  no web search  9 of 10    90%   39%             2.4
+  claude-demo   web search     6 of 10    60%   24%             1.7
 ```
 
 There is one row for each engine and [mode](modes.md). When none of an
@@ -63,18 +63,29 @@ outside the list.
 llmention looks for your `brand.name` and your `brand.domains` in each answer.
 It also looks for each entry in `brand.aliases` and `brand.products`.
 Competitors work the same way with their name, aliases and domains, so
-"globex.example" in an answer counts as a mention of Globex Billing. Upper and
-lower case don't matter, and a name only matches as whole words. "Acme Books"
-matches "acme books's pricing" but not "Acme Bookstore".
+"globex.example" in an answer counts as a mention of Globex Billing.
+
+Upper and lower case don't matter, so "acme books" and "ACME BOOKS" both
+count for Acme Books. Accents do matter, so "Café" doesn't match "Cafe". Add the
+other spelling as an alias if answers use it.
+
+A name only matches as whole words. llmention checks the character right
+before and right after the name. If that character is a letter or a digit, the
+name is part of a longer word and doesn't count. Any other character ends a
+word, such as a space or an apostrophe. So "Acme Books" matches "Acme Books's
+pricing" and "**Acme Books**", but not "Acme Bookstore". A plural
+doesn't match either, so "two Globex Billings" doesn't count for Globex
+Billing.
+
+The characters inside a name have to match as you wrote them, apart from
+case. "Acme Books" doesn't match "AcmeBooks" or "Acme-Books", so add those as
+aliases. A domain matches wherever it appears in the text, also as part of a
+link. "acme-books.example" also matches "www.acme-books.example" and
+"app.acme-books.example/pricing", because a dot ends a word.
 
 When one tracked name contains another, the longer one wins. Say you also track
 a competitor called Acme. An answer that says "Acme Books" then counts only for
 Acme Books, and a prompt about Acme Books doesn't count as naming Acme.
-
-A name that is also an everyday word matches that word in normal text. A
-competitor called "Linear" matches "costs grow linear with tokens". In that
-case, use a longer form as the name, such as "Linear app", and read through
-`llmention report --answers` once.
 
 Add the spellings people use:
 
@@ -85,6 +96,25 @@ brand:
   products: [Acme Invoice Scanner]
 ```
 
+### Names that are also everyday words
+
+Some product names are also normal words, like Bonsai or Linear. llmention
+can't tell the product from the word. "Bonsai" matches "Bonsai sends
+reminders", but also "a bonsai tree" and another product that is called
+Bonsai. There is no setting for a name that only matches with a capital
+letter.
+
+Whether this matters depends on your questions. In answers about invoicing
+apps, "Bonsai" most likely means the product. Check it after the first run.
+Search the output of `llmention report --answers` for the word and read the
+lines that contain it.
+
+If many of them are about something else, change the name to a longer form,
+such as "Bonsai invoicing", and put the competitor's site under `domains`.
+That stops the wrong matches. But an answer that only says "Bonsai" then no
+longer counts as a mention, so the rate can come out lower than it is. The
+domain always counts, so "hellobonsai.com" in an answer is still a mention.
+
 Each time you open a saved run, the report counts the mentions again with the
 brand and competitors in your current `llmention.yaml`. So a new alias also
 fixes old runs, and `report --diff` compares two runs with the same names.
@@ -93,7 +123,7 @@ fixes old runs, and `report --diff` compares two runs with the same names.
 
 ```text
   Engine · mode                 Acme Books (you)  Globex Billing  Initech Invoices
-  claude-demo · no web search   10%               89%             67%
+  claude-demo · no web search   0%                89%             67%
 ```
 
 This table shows the mention rate of each tracked brand. Each competitor's rate
@@ -104,8 +134,8 @@ leaves out the prompts that name that competitor.
 ```text
   Site                Citations  In answers  Whose
   acme-books.example  11         11          yours
-  globex.example      9          9           Globex Billing
-  reddit.com          8          8
+  globex.example      10         10          Globex Billing
+  reddit.com          9          9
 ```
 
 Answers with web search come with sources. The Citations column counts each
@@ -158,11 +188,11 @@ across recent runs, with a small chart per column:
 
 ```text
   Run                chatgpt-demo · no web search  claude-demo · web search
-  5 Oct 2026 18:58   50%                           20%
-  12 Oct 2026 18:58  60%                           20%
-  19 Oct 2026 18:58  70%                           20%
-  26 Oct 2026 18:58  90%                           50%
-  Trend              ▅▅▆▇                          ▂▂▂▅
+  5 Oct 2026 18:58   50%                           10%
+  12 Oct 2026 18:58  60%                           30%
+  19 Oct 2026 18:58  80%                           30%
+  26 Oct 2026 18:58  90%                           60%
+  Trend              ▅▅▇▇                          ▂▃▃▅
 ```
 
 `llmention report --diff` compares the latest run with the one before it, on
