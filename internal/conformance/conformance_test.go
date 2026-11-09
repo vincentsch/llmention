@@ -63,7 +63,11 @@ func TestCLIRequiredRunGradConformance(t *testing.T) {
 	}
 }
 
+// quoteYAML writes value as a YAML double-quoted string. Backslashes are
+// escaped too, because Windows paths like C:\Users would otherwise read as
+// YAML escape sequences.
 func quoteYAML(value string) string {
+	value = strings.ReplaceAll(value, `\`, `\\`)
 	return `"` + strings.ReplaceAll(value, `"`, `\"`) + `"`
 }
 
