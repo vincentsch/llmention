@@ -108,6 +108,8 @@ type Entity struct {
 	Category string   `json:"category,omitempty" yaml:"category,omitempty"`
 	Aliases  []string `json:"aliases,omitempty" yaml:"aliases"`
 	Domains  []string `json:"domains,omitempty" yaml:"domains"`
+	// MatchCase counts the name and aliases only with the same capitals.
+	MatchCase bool `json:"match_case,omitempty" yaml:"match_case"`
 }
 
 type ExpectedEntity struct {

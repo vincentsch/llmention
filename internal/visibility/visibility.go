@@ -34,6 +34,8 @@ type Brand struct {
 	Name    string   `json:"name"`
 	Aliases []string `json:"aliases,omitempty"`
 	Domains []string `json:"domains,omitempty"`
+	// MatchCase counts the name and aliases only with the same capitals.
+	MatchCase bool `json:"match_case,omitempty"`
 }
 
 // Same reports whether two brand definitions score answers the same way. An
@@ -461,11 +463,15 @@ func (s Summary) Totals() []BrandStats {
 // mentionBrands lists you first. Names are unique in a valid project, so
 // they double as ids.
 func mentionBrands(b Brands) []mention.Brand {
-	out := []mention.Brand{{ID: b.You.Name, Name: b.You.Name, Aliases: append(slices.Clone(b.You.Aliases), b.You.Domains...)}}
+	out := []mention.Brand{b.You.mentionBrand()}
 	for _, c := range b.Competitors {
-		out = append(out, mention.Brand{ID: c.Name, Name: c.Name, Aliases: append(slices.Clone(c.Aliases), c.Domains...)})
+		out = append(out, c.mentionBrand())
 	}
 	return out
+}
+
+func (b Brand) mentionBrand() mention.Brand {
+	return mention.Brand{ID: b.Name, Name: b.Name, Aliases: b.Aliases, Domains: b.Domains, MatchCase: b.MatchCase}
 }
 
 func displayDomain(d, rawURL string) string {

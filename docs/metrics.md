@@ -26,7 +26,7 @@ unfinished answers with a label.
 
 ```text
   Engine        Mode           Mentioned  Rate  Share of voice  Avg. rank
-  chatgpt-demo  no web search  9 of 10    90%   39%             2.4
+  chatgpt-demo  no web search  9 of 10    90%   37%             1.9
   claude-demo   web search     6 of 10    60%   24%             1.7
 ```
 
@@ -66,8 +66,10 @@ Competitors work the same way with their name, aliases and domains, so
 "globex.example" in an answer counts as a mention of Globex Billing.
 
 Upper and lower case don't matter, so "acme books" and "ACME BOOKS" both
-count for Acme Books. Accents do matter, so "Café" doesn't match "Cafe". Add the
-other spelling as an alias if answers use it.
+count for Acme Books. For a name that is also an everyday word, you can turn
+that off, as [described below](#names-that-are-also-everyday-words). Accents
+do matter, so "Café" doesn't match "Cafe". Add the other spelling as an alias
+if answers use it.
 
 A name only matches as whole words. llmention checks the character right
 before and right after the name. If that character is a letter or a digit, the
@@ -98,16 +100,30 @@ brand:
 
 ### Names that are also everyday words
 
-Some product names are also normal words, like Bonsai or Linear. llmention
-can't tell the product from the word. "Bonsai" matches "Bonsai sends
-reminders", but also "a bonsai tree" and another product that is called
-Bonsai. There is no setting for a name that only matches with a capital
-letter.
+Some product names are also normal words, like Bonsai or Linear. Without help,
+llmention can't tell the product from the word. "Bonsai" matches "Bonsai sends
+reminders", but also "a bonsai tree".
 
-Whether this matters depends on your questions. In answers about invoicing
-apps, "Bonsai" most likely means the product. Check it after the first run.
-Search the output of `llmention report --answers` for the word and read the
-lines that contain it.
+Set `match_case: true` on your brand or on a competitor. Then its name only
+counts when an answer writes it with the same capital letters as
+`llmention.yaml` does:
+
+```yaml
+competitors:
+  - name: Bonsai
+    domains: [hellobonsai.com]
+    match_case: true
+```
+
+Now "Bonsai sends reminders" counts, but "a bonsai tree" and "BONSAI" don't.
+The setting applies to the name and its aliases, and for your brand also to
+`products`. Domains still match in any case, so "HelloBonsai.com" in an answer
+is still a mention of Bonsai.
+
+Capitals don't solve everything. A sentence that starts with "Bonsai trees
+need light" still counts, and so does another product that is also called
+Bonsai. So check it after the first run. Search the output of
+`llmention report --answers` for the word and read the lines that contain it.
 
 If many of them are about something else, change the name to a longer form,
 such as "Bonsai invoicing", and put the competitor's site under `domains`.
@@ -133,9 +149,9 @@ leaves out the prompts that name that competitor.
 
 ```text
   Site                Citations  In answers  Whose
-  acme-books.example  11         11          yours
-  globex.example      10         10          Globex Billing
-  reddit.com          9          9
+  globex.example      11         11          Globex Billing
+  acme-books.example  10         10          yours
+  youtube.com         10         10
 ```
 
 Answers with web search come with sources. The Citations column counts each
@@ -189,10 +205,10 @@ across recent runs, with a small chart per column:
 ```text
   Run                chatgpt-demo · no web search  claude-demo · web search
   5 Oct 2026 18:58   50%                           10%
-  12 Oct 2026 18:58  60%                           30%
-  19 Oct 2026 18:58  80%                           30%
+  12 Oct 2026 18:58  60%                           20%
+  19 Oct 2026 18:58  60%                           40%
   26 Oct 2026 18:58  90%                           60%
-  Trend              ▅▅▇▇                          ▂▃▃▅
+  Trend              ▅▅▅▇                          ▂▂▄▅
 ```
 
 `llmention report --diff` compares the latest run with the one before it, on

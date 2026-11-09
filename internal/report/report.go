@@ -47,6 +47,9 @@ type RunInfo struct {
 	Prompts     int                `json:"prompts"`
 	Counts      scorecard.Counts   `json:"counts"`
 	Demo        bool               `json:"demo"`
+	// Mock is true for a run made with --mock, which is saved apart from
+	// real runs.
+	Mock bool `json:"mock,omitempty"`
 }
 
 // Answer is one stored answer, for --answers and the HTML page.
@@ -165,6 +168,7 @@ func runInfo(card *scorecard.Scorecard) RunInfo {
 		Engines:   card.Engines,
 		Counts:    card.Counts,
 		Demo:      card.Demo(),
+		Mock:      card.Mock,
 	}
 	if card.Brand != nil {
 		info.Brand = card.Brand.Name
@@ -191,7 +195,10 @@ func runInfo(card *scorecard.Scorecard) RunInfo {
 func notes(a *analysis.Analysis) []string {
 	var out []string
 	card := a.Card
-	if card.Demo() {
+	switch {
+	case card.Mock:
+		out = append(out, "Demo data: this run used --mock, so the mock engine made up every answer. The numbers and quotes say nothing about what the real assistants answer.")
+	case card.Demo():
 		out = append(out, "Demo data: the mock engine made up these answers. To measure real assistants, set up a provider.")
 	}
 	switch card.Status {

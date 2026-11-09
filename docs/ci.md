@@ -157,3 +157,12 @@ so, but the exit code of the run stays the same.
 | 5 | There is no saved run to show, or no earlier run to compare with |
 | 7 | A `--fail-under` check failed or was inconclusive |
 | 130 | The run was stopped early; the answers so far were saved |
+
+A dry run exits with 0 whenever `llmention.yaml` loads, also when a key is
+missing or the run doesn't fit the budget. To stop a script before the real
+run, check the JSON of the dry run. This line fails when anything would stop
+the run:
+
+```sh
+llmention run --dry-run --json | jq -e '.keys_missing == [] and .fits_budget and (.problems // []) == []'
+```

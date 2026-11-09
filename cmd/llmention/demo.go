@@ -52,7 +52,7 @@ func demoCommand() *rungrad.Command {
 		Related:     []string{"llmention quick", "llmention init"},
 		OutputModes: []string{rungrad.OutputModeHuman, rungrad.OutputModeJSON},
 		GroupID:     "start",
-		Args:        cobra.NoArgs,
+		Args:        noArgs,
 		Configure: func(cmd *cobra.Command) {
 			cmd.Flags().String("keep", "", "Save the demo project and its history in this folder")
 		},

@@ -30,7 +30,7 @@ func initCommand() *rungrad.Command {
 		OutputModes: []string{rungrad.OutputModeHuman, rungrad.OutputModeJSON},
 		Mutates:     true,
 		GroupID:     "start",
-		Args:        cobra.NoArgs,
+		Args:        noArgs,
 		Configure: func(cmd *cobra.Command) {
 			addStarterFlags(cmd)
 			cmd.Flags().Bool("force", false, "Overwrite an existing llmention.yaml")
@@ -88,9 +88,11 @@ func runInit(f *rungrad.Factory, cmd *cobra.Command, _ []string) error {
 	result := initResult{Path: path, DryRun: f.DryRun(), Prompts: len(project.Prompts)}
 	for _, e := range project.Engines {
 		result.Engines = append(result.Engines, e.ID+" ("+e.Model+")")
-		if e.KeyEnv != "" {
-			result.Keys = append(result.Keys, e.KeyEnv)
-		}
+	}
+	// Engines can share a key, like the four OpenRouter engines, so take the
+	// list from the project, which names each variable once.
+	if result.Keys, err = project.RequiredKeyEnvVars(config.KeySelection{}); err != nil {
+		return err
 	}
 	if note := lessTestedNote(project.Engines); note != "" {
 		result.Warnings = append(result.Warnings, note)
@@ -139,6 +141,9 @@ func writeNextSteps(w io.Writer, f *rungrad.Factory, keys []string, prompts int)
 	}
 	fmt.Fprintf(w, "  %d. llmention run --dry-run   (shows the requests and an estimated cost)\n", step)
 	fmt.Fprintf(w, "  %d. llmention run\n", step+1)
+	if len(missing) > 0 && prompts > 0 {
+		fmt.Fprintf(w, "\nBefore you have %s, `llmention run --mock` shows what the report will look like, with made-up answers.\n", pluralWord(len(missing), "the key", "the keys"))
+	}
 }
 
 func starterFromFlags(f *rungrad.Factory, cmd *cobra.Command) (config.Starter, error) {

@@ -1,4 +1,4 @@
-Show the summary of a saved run. It says how often each assistant mentions you and your competitors, and which sites the answers cite. Without a run id it shows the newest run. The numbers are worked out again from the saved answers with the brand and competitors in llmention.yaml, so you can still compare old runs after you edit the file. --html writes a single page you can share.
+Show the summary of a saved run. It says how often each assistant mentions you and your competitors, and which sites the answers cite. Without a run id it shows the newest run. The numbers are worked out again from the saved answers with the brand and competitors in llmention.yaml, so you can still compare old runs after you edit the file. --html writes a single page you can share. --mock shows the runs made with `llmention run --mock` instead of the real ones.
 
 Related commands:
   llmention run
@@ -22,6 +22,7 @@ llmention report --html report.html
 llmention report --format markdown >> "$GITHUB_STEP_SUMMARY"
 llmention report 20261026-1608 --details
 llmention report --fail-under mention-rate=30%
+llmention report --mock --html preview.html
 
 Flags:
       --answers                  Print every answer instead of the summary
@@ -31,6 +32,7 @@ Flags:
       --format string            Summary format: text or markdown (default "text")
   -h, --help                     help for report
       --html string              Write the report as one HTML file to this path
+      --mock                     Show the runs made with llmention run --mock
       --runs int                 How many recent runs --trend and --html include (default 12)
       --suite string             Only look at runs of this suite (default: your prompts)
       --trend                    Show your mention rate across recent runs

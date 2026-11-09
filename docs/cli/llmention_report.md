@@ -19,6 +19,7 @@ llmention report --html report.html
 llmention report --format markdown >> "$GITHUB_STEP_SUMMARY"
 llmention report 20261026-1608 --details
 llmention report --fail-under mention-rate=30%
+llmention report --mock --html preview.html
 ```
 
 ## Flags
@@ -29,6 +30,7 @@ llmention report --fail-under mention-rate=30%
 - `--fail-under` Fail with exit code 7 when a number is below a threshold, for example mention-rate=40% (repeatable)
 - `--format` Summary format: text or markdown
 - `--html` Write the report as one HTML file to this path
+- `--mock` Show the runs made with llmention run --mock
 - `--runs` How many recent runs --trend and --html include
 - `--suite` Only look at runs of this suite (default: your prompts)
 - `--trend` Show your mention rate across recent runs

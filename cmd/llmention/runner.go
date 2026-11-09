@@ -52,6 +52,8 @@ type runOptions struct {
 	Now time.Time
 	// Quiet hides the progress line.
 	Quiet bool
+	// Mock lets the mock engine answer for every engine, see withMockEngines.
+	Mock bool
 }
 
 // prepared is a run that is ready to send.
@@ -69,11 +71,15 @@ type prepared struct {
 	now        time.Time
 	quiet      bool
 	narrowed   bool
+	mock       bool
 }
 
 // prepareRun builds the plan and checks everything that can be checked
 // without reading a key or sending a request.
 func prepareRun(f *rungrad.Factory, project *config.Project, configPath string, opts runOptions) (*prepared, error) {
+	if opts.Mock {
+		project = withMockEngines(project)
+	}
 	if err := project.ValidateForRun(); err != nil {
 		return nil, usageError(err)
 	}
@@ -176,7 +182,32 @@ func prepareRun(f *rungrad.Factory, project *config.Project, configPath string, 
 		now:        opts.Now,
 		quiet:      opts.Quiet,
 		narrowed:   narrowed,
+		mock:       opts.Mock,
 	}, nil
+}
+
+// mockRunsDir is where runs made with --mock are saved: a folder inside the
+// history folder. The store only reads the files at the top of a folder, so
+// the made-up runs never show up in reports, diffs or trends of real runs.
+func mockRunsDir(runsDir string) string { return filepath.Join(runsDir, "mock") }
+
+// withMockEngines returns a copy of the project in which the mock engine
+// answers for every engine. The engine ids stay the same, so the report has
+// the same rows as a real one. The copy needs no key and sends nothing, so
+// the AI grader and the alerts are turned off.
+func withMockEngines(p *config.Project) *config.Project {
+	mocked := *p
+	mocked.Engines = nil
+	for _, e := range p.Engines {
+		if e.Provider != "mock" {
+			e = config.EngineConfig{ID: e.ID, Provider: "mock", Model: "demo"}
+		}
+		mocked.Engines = append(mocked.Engines, e)
+	}
+	mocked.Analysis = config.AnalysisConfig{}
+	mocked.Notify = config.NotifyConfig{}
+	mocked.RunsDir = mockRunsDir(p.RunsDir)
+	return &mocked
 }
 
 // runOutcome is a finished run.
@@ -234,6 +265,7 @@ func execute(f *rungrad.Factory, p *prepared, parent context.Context) (*runOutco
 		return nil, err
 	}
 	card.Narrowed = p.narrowed
+	card.Mock = p.mock
 	a, err := analysis.Analyze(card, analysis.Options{Project: p.project, Judge: judge, Context: context.Background(), Redact: p.secrets.redact})
 	if err != nil {
 		return nil, err

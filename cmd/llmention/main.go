@@ -3,8 +3,11 @@
 package main
 
 import (
+	"fmt"
 	"os"
+	"strings"
 
+	"github.com/spf13/cobra"
 	rungrad "github.com/vincentsch/rungrad"
 
 	"github.com/vincentsch/llmention/internal/version"
@@ -30,6 +33,31 @@ func newApp() *rungrad.App {
 	app.AddCommand(discoverCommand())
 	app.AddCommand(historyCommand(), suitesCommand(), updateCommand())
 	return app
+}
+
+// The argument checks below replace cobra's "accepts 1 arg(s), received 0",
+// which doesn't say what is missing.
+
+// noArgs refuses arguments for a command that only takes flags.
+func noArgs(cmd *cobra.Command, args []string) error {
+	if len(args) > 0 {
+		return fmt.Errorf("%s takes no arguments, but got %q; `%s --help` lists its flags", cmd.CommandPath(), strings.Join(args, " "), cmd.CommandPath())
+	}
+	return nil
+}
+
+// oneArg asks for one argument, such as "run id". When it is missing, the
+// error names it, shows an example and says where to find a value.
+func oneArg(name, example, where string) cobra.PositionalArgs {
+	return func(cmd *cobra.Command, args []string) error {
+		switch {
+		case len(args) == 0:
+			return fmt.Errorf("%s needs a %s, for example `%s`. %s", cmd.CommandPath(), name, example, where)
+		case len(args) > 1:
+			return fmt.Errorf("%s takes one %s, but got %d: %s", cmd.CommandPath(), name, len(args), strings.Join(args, " "))
+		}
+		return nil
+	}
 }
 
 func main() {

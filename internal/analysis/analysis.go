@@ -152,12 +152,13 @@ func ScoringBrands(card *scorecard.Scorecard, current *config.Project) (visibili
 // Product names count as mentions of you.
 func Brands(p *config.Project) visibility.Brands {
 	b := visibility.Brands{You: visibility.Brand{
-		Name:    p.Brand.Name,
-		Aliases: append(slices.Clone(p.Brand.Aliases), p.Brand.Products...),
-		Domains: slices.Clone(p.Brand.Domains),
+		Name:      p.Brand.Name,
+		Aliases:   append(slices.Clone(p.Brand.Aliases), p.Brand.Products...),
+		Domains:   slices.Clone(p.Brand.Domains),
+		MatchCase: p.Brand.MatchCase,
 	}}
 	for _, c := range p.Competitors {
-		b.Competitors = append(b.Competitors, visibility.Brand{Name: c.Name, Aliases: slices.Clone(c.Aliases), Domains: slices.Clone(c.Domains)})
+		b.Competitors = append(b.Competitors, visibility.Brand{Name: c.Name, Aliases: slices.Clone(c.Aliases), Domains: slices.Clone(c.Domains), MatchCase: c.MatchCase})
 	}
 	return b
 }

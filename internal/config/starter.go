@@ -66,7 +66,8 @@ type Starter struct {
 // tracking". None of them names your brand, because a question that names you
 // says nothing about whether an assistant would bring you up on its own. The
 // questions don't say who is asking, so they fit a freelancer, a company and
-// a consumer alike.
+// a consumer alike. Each one ends with "for" and the topic, so a topic that
+// has its own "for", like "invoicing for freelancers", still reads well.
 func StarterPrompts(category string, competitors []string) []string {
 	topic := topicPhrase(category)
 	if topic == "" {
@@ -75,12 +76,12 @@ func StarterPrompts(category string, competitors []string) []string {
 	prompts := []string{
 		"What are the best tools for " + topic + "?",
 		"What would you recommend for " + topic + "?",
-		"I need something for " + topic + ". What are my options?",
+		"Which tool should I use for " + topic + "?",
 		"What do most people use for " + topic + "?",
-		"Which options for " + topic + " are worth paying for?",
-		"What are good free or open-source options for " + topic + "?",
+		"Which paid tools are worth the money for " + topic + "?",
+		"What are good free or open-source tools for " + topic + "?",
 		"What should I look for when choosing a tool for " + topic + "?",
-		"What is the easiest way to get started with " + topic + "?",
+		"What is the easiest tool to set up for " + topic + "?",
 	}
 	for i, name := range competitors {
 		if i == 2 {

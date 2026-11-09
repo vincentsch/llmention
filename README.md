@@ -57,8 +57,8 @@ Demo data: the mock engine made up these answers. To measure real assistants, se
 
 How often assistants mention Acme Books
   Engine        Mode           Mentioned  Rate  Share of voice  Avg. rank
-  chatgpt-demo  no web search  9 of 10    90%   39%             2.4
-  chatgpt-demo  web search     9 of 10    90%   39%             1.9
+  chatgpt-demo  no web search  9 of 10    90%   37%             1.9
+  chatgpt-demo  web search     10 of 10   100%  50%             1.5
   claude-demo   no web search  0 of 10    0%    0%              –
   claude-demo   web search     6 of 10    60%   24%             1.7
   Rate is the share of counted answers that name Acme Books. Share of voice is its part of all mentions of the brands you track.
@@ -66,22 +66,22 @@ How often assistants mention Acme Books
 
 Mention rate next to your competitors
   Engine · mode                 Acme Books (you)  Globex Billing  Initech Invoices
-  chatgpt-demo · no web search  90%               89%             44%
-  chatgpt-demo · web search     90%               89%             56%
+  chatgpt-demo · no web search  90%               89%             56%
+  chatgpt-demo · web search     100%              78%             33%
   claude-demo · no web search   0%                89%             67%
   claude-demo · web search      60%               100%            67%
 
 Sites the answers cited
   Site                Citations  In answers  Whose
-  acme-books.example  11         11          yours
-  globex.example      10         10          Globex Billing
+  globex.example      11         11          Globex Billing
+  acme-books.example  10         10          yours
   youtube.com         10         10
-  reddit.com          9          9
+  g2.com              7          7
   ...
 
 What stands out
   - claude-demo mentioned Acme Books more often with web search on (60%) than off (0%).
-  - The most cited sites outside the brands you track were youtube.com (10) and reddit.com (9).
+  - The most cited sites outside the brands you track were youtube.com (10) and g2.com (7).
   ...
 ```
 
@@ -131,7 +131,7 @@ would send:
 Dry run: nothing was sent.
 Would send 40 requests: 10 prompts to 2 engines, in no web search and web search modes.
 Failed requests are retried, so the run sends at most 120 requests.
-Estimated cost: about $1.72, from list prices checked on 2026-10-26. Longer answers and extra web searches can make it higher.
+Estimated cost: about $1.72, from list prices checked on 2026-10-26. A run every week comes to about $89.62 a year. Longer answers and extra web searches can make it higher.
 
   Engine   Model                        Requests  Estimated cost
   chatgpt  openai gpt-6.1-sol           20        about $1.14

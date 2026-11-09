@@ -66,7 +66,8 @@ OpenRouter key reaches all four assistants, as shown under
 name, for example when you have several keys for one provider. llmention reads
 the key from the environment when it runs. It never writes the key to a file,
 and it removes it from everything it prints. The dry run lists which keys are
-set without printing them.
+set without printing them. With `--json`, they are under `keys_found` and
+`keys_missing`.
 
 ## Perplexity
 

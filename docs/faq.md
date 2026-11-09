@@ -45,8 +45,22 @@ each run is compared with answers from the same model.
 ## Does it work for other languages?
 
 Yes. Write the prompts in the language your buyers use. Name matching works
-with accented letters and other writing systems, and it ignores upper and lower
-case.
+with accented letters and other writing systems. It ignores upper and lower
+case unless you set [`match_case`](metrics.md#names-that-are-also-everyday-words).
+
+The starter questions from `init` and `quick` are English templates. They stay
+English when your category is in another language, so replace them with
+questions in your buyers' language. `discover` fills the same templates. With
+`--from chab --country DE --language de-DE` it suggests questions from German
+search data instead.
+
+To measure two languages, make a second project in its own folder, with its
+own `llmention.yaml` and its own questions. Then each language gets its own
+mention rate and its own trend. Tags on prompts don't split the report. So if
+you put the questions for both languages into one project, the report gives
+you one mention rate for both together. If you give a question the same `id`
+in both projects, such as `best-tools`, you can compare its answers across the
+two reports.
 
 ## Can I track several products?
 

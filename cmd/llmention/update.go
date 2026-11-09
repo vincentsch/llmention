@@ -27,7 +27,7 @@ func updateCommand() *rungrad.Command {
 		Related:     []string{"llmention --version"},
 		OutputModes: []string{rungrad.OutputModeHuman, rungrad.OutputModeJSON, rungrad.OutputModeJQ, rungrad.OutputModeTemplate},
 		GroupID:     "manage",
-		Args:        cobra.NoArgs,
+		Args:        noArgs,
 		Configure: func(cmd *cobra.Command) {
 			cmd.Flags().Bool("check", false, "Check for an update without installing it")
 		},

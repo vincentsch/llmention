@@ -62,15 +62,17 @@ runs_dir: ./.llmention/runs
 | `domains` | Your sites. Citations of these count as citations of you. |
 | `products` | Product names that count as a mention of you. |
 | `people` | Founders or authors. Only the recognition suite uses them. |
+| `match_case` | `true` counts your names only when an answer writes them with the same capital letters. Use it for a name that is also an everyday word. |
 
-Names match without regard to capitals, and only as whole words.
-[How a mention is found](metrics.md#how-a-mention-is-found) has the details,
-and what to do when a name is also an everyday word.
+Names match without regard to capitals, unless you set `match_case`, and only
+as whole words. [How a mention is found](metrics.md#how-a-mention-is-found)
+has the details, and what to do when a name is also an everyday word.
 
 ## competitors
 
 The brands to compare yourself with. Each one has a `name`. It can also have
-`aliases`, which count as a mention of it, and `domains`. Only list the
+`aliases`, which count as a mention of it, and `domains`. `match_case: true`
+works as it does for your brand. Only list the
 products your buyers compare you with. Each competitor lowers your share of
 voice, because share of voice is your part of all the mentions of tracked
 brands.

@@ -13,6 +13,7 @@ llmention run
 ```
 llmention run --dry-run
 llmention run
+llmention run --mock
 llmention run --engine chatgpt --mode search
 llmention run --fail-under mention-rate=40%
 llmention run --suite recognition.basic
@@ -25,6 +26,7 @@ llmention run --json
 - `--fail-under` Fail with exit code 7 when a number is below a threshold, for example mention-rate=40% (repeatable)
 - `--judge` Use the AI grader set up under analysis.judge
 - `--max-requests` The most requests this run may send, retries included (default execution.max_requests)
+- `--mock` Let the mock engine make up every answer, and save the run apart from real runs
 - `--mode` Only use these modes (no-search, search, forced-search, default)
 - `--repetitions` Ask each prompt this many times (default from llmention.yaml)
 - `--suite` Run these suites instead of your prompts, for example recognition.basic

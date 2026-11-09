@@ -13,7 +13,8 @@ First release of llmention.
 - Compare a run with the one before it on answers both runs have, and show the mention rate across recent runs. A full run is never compared with a run made with `--engine` or `--mode`.
 - Write the report as text or Markdown, or as a single HTML file with charts. Every command also has JSON output.
 - Count the mentions in saved runs again with the current brand names, so a new alias also fixes old runs.
-- Estimate the cost before a run, in total and for each engine, and stop at a request budget that includes retries. The dry run warns when the budget leaves little room for retries, and `init` sets a budget that fits a full run with all its retries.
+- Count a name that is also an everyday word, like Bonsai, only with the same capital letters when you set `match_case: true` on it.
+- Estimate the cost before a run, in total and for each engine, and stop at a request budget that includes retries. The dry run warns when the budget leaves little room for retries, and `init` sets a budget that fits a full run with all its retries. It also gives the cost of a year of weekly runs, and its JSON lists missing keys under `keys_missing`.
 - Save the answers so far when a run is stopped with Ctrl+C.
 - Fail CI jobs with `--fail-under` checks. A check also fails when an engine has no number to check.
 - Send an alert by script or webhook when a check fails.
@@ -22,5 +23,5 @@ First release of llmention.
 - Ask hosted and local models through Chat Completions services such as DeepSeek or Ollama.
 - Suggest buyer questions from templates or from Chab search data.
 - Check whether models know your brand with `llmention run --suite recognition.basic`, with one row per name and one column per engine.
-- Try everything without a key in `llmention demo`.
+- Try everything without a key in `llmention demo`. `llmention run --mock` shows the report for your own product with made-up answers, and saves it apart from your real runs.
 - Include research suites for factual accuracy as examples.

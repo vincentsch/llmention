@@ -3,12 +3,14 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"math"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"runtime"
 	"strings"
@@ -949,5 +951,223 @@ func TestInitWithoutACategoryAsksForPrompts(t *testing.T) {
 	}
 	if _, err := config.Load("llmention.yaml"); err != nil {
 		t.Fatalf("the file init wrote does not load: %v", err)
+	}
+}
+
+// The four OpenRouter engines share one key, and init printed
+// `export OPENROUTER_API_KEY=...` once for each of them.
+func TestInitNamesEachKeyOnce(t *testing.T) {
+	inTempProject(t, "")
+	res := runApp(t, "init", "--brand", "Acme", "--category", "invoicing", "--engines", "openrouter")
+	if res.Exit != 0 || strings.Count(res.Stdout, "export OPENROUTER_API_KEY=...") != 1 || !strings.Contains(res.Stdout, "Export your API key.") || !strings.Contains(res.Stdout, "`llmention run --mock` shows what the report will look like") {
+		t.Fatalf("exit %d:\n%s", res.Exit, res.Stdout)
+	}
+	if res := runApp(t, "run", "--dry-run"); strings.Count(res.Stdout, "OPENROUTER_API_KEY") != 2 {
+		t.Fatalf("the dry run names the key more than once in its line:\n%s", res.Stdout)
+	}
+	res = runApp(t, "init", "--brand", "Acme", "--category", "invoicing", "--engines", "openai,openrouter", "--force", "--json")
+	var result initResult
+	if err := json.Unmarshal([]byte(res.Stdout), &result); err != nil || len(result.Engines) != 4 || strings.Join(result.Keys, ",") != "OPENAI_API_KEY,OPENROUTER_API_KEY" {
+		t.Fatalf("keys = %q engines = %q (%v)", result.Keys, result.Engines, err)
+	}
+}
+
+// Seeing the report for your own product without keys took a copy of
+// llmention.yaml edited by hand, and its runs went into the real history.
+func TestMockRunShowsYourReportApartFromRealRuns(t *testing.T) {
+	inTempProject(t, mockProject)
+	if res := runApp(t, "run"); res.Exit != 0 {
+		t.Fatalf("run: %s", res.Stderr)
+	}
+	openRouter := strings.Replace(mockProject, "  - {id: chatgpt-demo, provider: mock, model: demo}\n  - {id: claude-demo, provider: mock, model: demo}\n",
+		"  - {id: chatgpt, provider: openrouter, model: openai/gpt-6.1-sol, key_env: OPENROUTER_API_KEY}\n"+
+			"  - {id: claude, provider: openrouter, model: anthropic/claude-sonnet-5.5, key_env: OPENROUTER_API_KEY}\n", 1)
+	if err := os.WriteFile("llmention.yaml", []byte(openRouter), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	res := runApp(t, "run", "--mock", "--dry-run")
+	if res.Exit != 0 || !strings.Contains(res.Stdout, "Estimated cost: nothing") || strings.Contains(res.Stdout, "Keys missing") {
+		t.Fatalf("mock dry run: exit %d:\n%s", res.Exit, res.Stdout)
+	}
+	time.Sleep(1100 * time.Millisecond) // run ids sort by second
+	res = runApp(t, "run", "--mock")
+	for _, want := range []string{"Demo data: this run used --mock", "Engines: chatgpt (demo), claude (demo)", "--mock --answers`", "in .llmention" + string(filepath.Separator) + "runs" + string(filepath.Separator) + "mock."} {
+		if res.Exit != 0 || !strings.Contains(res.Stdout, want) {
+			t.Fatalf("run --mock misses %q: exit %d:\n%s%s", want, res.Exit, res.Stdout, res.Stderr)
+		}
+	}
+	real, _, _ := store.New(".llmention/runs").List()
+	mocked, _, _ := store.New(".llmention/runs/mock").List()
+	if len(real) != 1 || len(mocked) != 1 || !mocked[0].Demo {
+		t.Fatalf("real runs %+v, mock runs %+v", real, mocked)
+	}
+	// The real history still has one run, so there is nothing to compare.
+	if res := runApp(t, "report", "--diff"); res.Exit != rungrad.ExitNotFound {
+		t.Fatalf("the diff used the mock run: exit %d:\n%s", res.Exit, res.Stdout)
+	}
+	if res := runApp(t, "report"); res.Exit != 0 || strings.Contains(res.Stdout, "--mock") {
+		t.Fatalf("report shows the mock run: exit %d:\n%s", res.Exit, res.Stdout)
+	}
+	res = runApp(t, "report", "--mock", "--json")
+	var r report.Report
+	if err := json.Unmarshal([]byte(res.Stdout), &r); err != nil || !r.Run.Mock || r.Answers[0].Engine != "chatgpt" {
+		t.Fatalf("report --mock: %v\n%s", err, res.Stdout)
+	}
+	if res := runApp(t, "report", "--mock", "--html", "preview.html"); res.Exit != 0 {
+		t.Fatalf("report --mock --html: %s", res.Stderr)
+	}
+	if page, _ := os.ReadFile("preview.html"); !strings.Contains(string(page), "this run used --mock") {
+		t.Fatal("the HTML page does not say the answers are made up")
+	}
+	if res := runApp(t, "run", "--mock", "--judge"); res.Exit != rungrad.ExitUsage || !strings.Contains(res.Stderr, "--judge does not work with --mock") {
+		t.Fatalf("--mock --judge: exit %d %s", res.Exit, res.Stderr)
+	}
+
+	// With only mock runs, report says where they are.
+	inTempProject(t, openRouter)
+	if res := runApp(t, "report", "--mock"); res.Exit != rungrad.ExitNotFound || !strings.Contains(res.Stderr, "llmention run --mock") {
+		t.Fatalf("report --mock without runs: exit %d %s", res.Exit, res.Stderr)
+	}
+	if res := runApp(t, "run", "--mock"); res.Exit != 0 {
+		t.Fatalf("run --mock: %s", res.Stderr)
+	}
+	if res := runApp(t, "report"); res.Exit != rungrad.ExitNotFound || !strings.Contains(res.Stderr, "add --mock to see them") {
+		t.Fatalf("report without real runs: exit %d %s", res.Exit, res.Stderr)
+	}
+}
+
+func TestMockEnginesNeedNoKeyAndSendNothing(t *testing.T) {
+	project := &config.Project{
+		RunsDir: "runs",
+		Engines: []config.EngineConfig{
+			{ID: "chatgpt", Provider: "openai", Model: "gpt-6.1-sol", KeyEnv: "OPENAI_API_KEY", BaseURL: "https://gateway.example/v1"},
+			{ID: "fixed", Provider: "mock", Model: "fixture", FixturesPath: "answers.yaml"},
+		},
+		Analysis: config.AnalysisConfig{ModelAssistedEnabled: true, Judge: &config.JudgeConfig{Provider: "openai", Model: "gpt-6-luna", KeyEnv: "OPENAI_API_KEY"}},
+		Notify:   config.NotifyConfig{Command: "./alert.sh", WebhookURLEnv: "SLACK_WEBHOOK_URL"},
+	}
+	got := withMockEngines(project)
+	if len(got.Engines) != 2 || !reflect.DeepEqual(got.Engines[0], config.EngineConfig{ID: "chatgpt", Provider: "mock", Model: "demo"}) || got.Engines[1].FixturesPath != "answers.yaml" {
+		t.Fatalf("engines = %+v", got.Engines)
+	}
+	if got.Analysis.Judge != nil || got.Analysis.ModelAssistedEnabled || got.Notify.Command != "" || got.Notify.WebhookURLEnv != "" {
+		t.Fatalf("the mock project still reaches out: %+v %+v", got.Analysis, got.Notify)
+	}
+	if got.RunsDir != filepath.Join("runs", "mock") || project.RunsDir != "runs" || project.Engines[0].Provider != "openai" {
+		t.Fatalf("runs dir %q, original changed: %+v", got.RunsDir, project)
+	}
+}
+
+// A competitor called Bonsai counted every bonsai tree in the answers, and
+// there was no way to ask for the capital B.
+func TestMatchCaseCountsOnlyTheSameCapitals(t *testing.T) {
+	project := `version: 1
+brand: {name: Acme Books}
+competitors:
+  - {name: Bonsai, domains: [hellobonsai.com]}
+engines: [{id: fixed, provider: mock, model: demo, fixtures_path: answers.yaml}]
+prompts: ["How do I keep my invoices in order?"]
+modes: [memory]
+`
+	inTempProject(t, project)
+	answers := "version: 1\ndefaults:\n  answer: {text: \"Acme Books works well. Like a bonsai tree, your books need care.\"}\n"
+	if err := os.WriteFile("answers.yaml", []byte(answers), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if res := runApp(t, "run"); res.Exit != 0 {
+		t.Fatalf("run: %s", res.Stderr)
+	}
+	bonsaiRate := func() (summary, metric float64) {
+		t.Helper()
+		res := runApp(t, "report", "--details", "--json")
+		var r report.Report
+		if err := json.Unmarshal([]byte(res.Stdout), &r); err != nil {
+			t.Fatalf("%v\n%s%s", err, res.Stdout, res.Stderr)
+		}
+		bonsai := r.Visibility.Cells[0].Brands[1]
+		summary = float64(bonsai.Mentioned) / float64(bonsai.Eligible)
+		metric = -1
+		for _, m := range r.Metrics {
+			if m.MetricID == "visibility.competitor_mention_rate" && m.Value.Number != nil {
+				metric = *m.Value.Number
+			}
+		}
+		return summary, metric
+	}
+	if summary, metric := bonsaiRate(); summary != 1 || metric != 1 {
+		t.Fatalf("without match_case: summary %v, metric %v", summary, metric)
+	}
+	if err := os.WriteFile("llmention.yaml", []byte(strings.Replace(project, "domains: [hellobonsai.com]}", "domains: [hellobonsai.com], match_case: true}", 1)), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if summary, metric := bonsaiRate(); summary != 0 || metric != 0 {
+		t.Fatalf("with match_case: summary %v, metric %v", summary, metric)
+	}
+}
+
+// "accepts 1 arg(s), received 0" said neither what was missing nor how to
+// pass it.
+func TestArgumentErrorsSayWhatIsMissing(t *testing.T) {
+	inTempProject(t, mockProject)
+	for _, tc := range []struct {
+		args []string
+		want string
+	}{
+		{[]string{"suites", "validate"}, "llmention suites validate needs a suite id or file, for example `llmention suites validate prompts`. `llmention suites list` shows"},
+		{[]string{"suites", "validate", "a", "b"}, "takes one suite id or file, but got 2: a b"},
+		{[]string{"history", "export"}, "llmention history export needs a run id, for example `llmention history export 20261026-1608 --output run.json`. `llmention history list` shows the run ids."},
+		{[]string{"report", "a", "b", "c"}, "llmention report takes up to two run ids, but got 3"},
+		{[]string{"init", "Acme"}, `llmention init takes no arguments, but got "Acme"; ` + "`llmention init --help` lists its flags"},
+		{[]string{"run", "prompts"}, `llmention run takes no arguments, but got "prompts"`},
+	} {
+		res := runApp(t, tc.args...)
+		if res.Exit != rungrad.ExitUsage || !strings.Contains(res.Stderr, tc.want) || strings.Contains(res.Stderr, "arg(s)") {
+			t.Errorf("%v: exit %d, %s", tc.args, res.Exit, res.Stderr)
+		}
+	}
+}
+
+// The dry run exits 0 when a key is missing, and scripts could only find
+// out by reading its text.
+func TestDryRunJSONSaysWhichKeysAreMissing(t *testing.T) {
+	project := strings.Replace(mockProject, "{id: claude-demo, provider: mock, model: demo}", "{id: claude, provider: anthropic, model: claude-sonnet-5-5, key_env: ANTHROPIC_API_KEY}", 1)
+	inTempProject(t, project)
+	res := runApp(t, "run", "--dry-run", "--json")
+	var plan planPreview
+	if err := json.Unmarshal([]byte(res.Stdout), &plan); err != nil || res.Exit != 0 {
+		t.Fatalf("exit %d: %v\n%s", res.Exit, err, res.Stdout)
+	}
+	if strings.Join(plan.KeysMissing, ",") != "ANTHROPIC_API_KEY" || len(plan.KeysFound) != 0 {
+		t.Fatalf("found %q, missing %q", plan.KeysFound, plan.KeysMissing)
+	}
+	withKey := testutil.Options{LookupEnv: func(name string) (string, bool) {
+		if name == "ANTHROPIC_API_KEY" {
+			return "test-anthropic-key", true
+		}
+		return "", false
+	}}
+	res = testutil.RunWith(newApp(), withKey, "run", "--dry-run", "--json")
+	if !strings.Contains(res.Stdout, `"keys_missing": []`) || !strings.Contains(res.Stdout, `"keys_found": [`+"\n"+`    "ANTHROPIC_API_KEY"`) {
+		t.Fatalf("with the key set:\n%s", res.Stdout)
+	}
+	testutil.AssertRedacted(t, res, "test-anthropic-key")
+
+	// The real run also needs the AI grader's key, so the dry run lists it.
+	inTempProject(t, project+"analysis:\n  model_assisted_enabled: true\n  judge: {provider: openai, model: gpt-6-luna, key_env: OPENAI_API_KEY, allow_answer_disclosure: true}\n")
+	res = testutil.RunWith(newApp(), withKey, "run", "--dry-run", "--json")
+	if err := json.Unmarshal([]byte(res.Stdout), &plan); err != nil || strings.Join(plan.KeysMissing, ",") != "OPENAI_API_KEY" {
+		t.Fatalf("missing %q (%v)\n%s", plan.KeysMissing, err, res.Stdout)
+	}
+}
+
+func TestDryRunShowsTheCostOfAYearOfWeeklyRuns(t *testing.T) {
+	inTempProject(t, strings.Replace(mockProject, "{id: claude-demo, provider: mock, model: demo}", "{id: claude, provider: anthropic, model: claude-sonnet-5-5, key_env: ANTHROPIC_API_KEY}", 1))
+	var plan planPreview
+	if err := json.Unmarshal([]byte(runApp(t, "run", "--dry-run", "--json").Stdout), &plan); err != nil {
+		t.Fatal(err)
+	}
+	want := fmt.Sprintf("A run every week comes to about $%.2f a year.", 52*plan.EstimatedCost.Dollars)
+	if res := runApp(t, "run", "--dry-run"); !strings.Contains(res.Stdout, want) {
+		t.Fatalf("dry run misses %q:\n%s", want, res.Stdout)
 	}
 }

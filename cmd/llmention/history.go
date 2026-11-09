@@ -30,7 +30,7 @@ func historyCommand() *rungrad.Command {
 		Related:      []string{"llmention report"},
 		OutputModes:  []string{rungrad.OutputModeHuman, rungrad.OutputModeJSON, rungrad.OutputModeJQ, rungrad.OutputModeTemplate},
 		SupportsMeta: true,
-		Args:         cobra.NoArgs,
+		Args:         noArgs,
 		Run:          runHistoryList,
 	}, &rungrad.Command{
 		Use:         "export <run-id>",
@@ -40,7 +40,7 @@ func historyCommand() *rungrad.Command {
 		Related:     []string{"llmention history list"},
 		OutputModes: []string{rungrad.OutputModeHuman, rungrad.OutputModeJSON},
 		Mutates:     true,
-		Args:        cobra.ExactArgs(1),
+		Args:        oneArg("run id", "llmention history export 20261026-1608 --output run.json", "`llmention history list` shows the run ids."),
 		Configure: func(cmd *cobra.Command) {
 			cmd.Flags().String("output", "", "File to write")
 			cmd.Flags().Bool("force", false, "Overwrite the output file")

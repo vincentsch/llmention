@@ -87,13 +87,17 @@ type BrandConfig struct {
 	Domains  []string `json:"domains,omitempty" yaml:"domains,omitempty"`
 	Products []string `json:"products,omitempty" yaml:"products,omitempty"`
 	People   []string `json:"people,omitempty" yaml:"people,omitempty"`
+	// MatchCase counts the name, aliases and products only with the same
+	// capital letters, for a name that is also an everyday word.
+	MatchCase bool `json:"match_case,omitempty" yaml:"match_case,omitempty"`
 }
 
 // CompetitorConfig describes one competitor to compare against.
 type CompetitorConfig struct {
-	Name    string   `json:"name" yaml:"name"`
-	Aliases []string `json:"aliases,omitempty" yaml:"aliases,omitempty"`
-	Domains []string `json:"domains,omitempty" yaml:"domains,omitempty"`
+	Name      string   `json:"name" yaml:"name"`
+	Aliases   []string `json:"aliases,omitempty" yaml:"aliases,omitempty"`
+	Domains   []string `json:"domains,omitempty" yaml:"domains,omitempty"`
+	MatchCase bool     `json:"match_case,omitempty" yaml:"match_case,omitempty"`
 }
 
 // EngineConfig is one assistant to ask: a provider, a model and the name of

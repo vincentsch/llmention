@@ -6,7 +6,7 @@ import (
 )
 
 func TestFindRespectsWordBoundariesAndNormalization(t *testing.T) {
-	brand := Brand{ID: "you", Name: "Tabslip", Aliases: []string{"tabslip.com"}}
+	brand := Brand{ID: "you", Name: "Tabslip", Domains: []string{"tabslip.com"}}
 	cases := []struct {
 		text string
 		want bool
@@ -28,13 +28,18 @@ func TestFindRespectsWordBoundariesAndNormalization(t *testing.T) {
 	if !Contains("Café is mentioned.", Brand{Name: "Café"}) {
 		t.Error("combining accent did not match the composed form")
 	}
+	if !Contains("Cafe\u0301 is mentioned.", Brand{Name: "Caf\u00e9", MatchCase: true}) {
+		t.Error("with MatchCase, a combining accent did not match the composed form")
+	}
 }
 
 // These are the examples in docs/metrics.md under "How a mention is found".
 func TestFindMatchesTheWayTheDocsSay(t *testing.T) {
-	acme := Brand{ID: "acme", Name: "Acme Books", Aliases: []string{"acme-books.example"}}
+	acme := Brand{ID: "acme", Name: "Acme Books", Domains: []string{"acme-books.example"}}
 	globex := Brand{ID: "globex", Name: "Globex Billing"}
-	bonsai := Brand{ID: "bonsai", Name: "Bonsai", Aliases: []string{"hellobonsai.com"}}
+	bonsai := Brand{ID: "bonsai", Name: "Bonsai", Domains: []string{"hellobonsai.com"}}
+	bonsaiCase := bonsai
+	bonsaiCase.MatchCase = true
 	cases := []struct {
 		brand Brand
 		text  string
@@ -52,6 +57,12 @@ func TestFindMatchesTheWayTheDocsSay(t *testing.T) {
 		{bonsai, "Bonsai sends reminders.", true},
 		{bonsai, "Water a bonsai tree once a week.", true},
 		{bonsai, "Prices are on hellobonsai.com.", true},
+		{bonsaiCase, "Bonsai sends reminders.", true},
+		{bonsaiCase, "Water a bonsai tree once a week.", false},
+		{bonsaiCase, "BONSAI TREES FOR SALE", false},
+		{bonsaiCase, "Bonsai trees need light.", true},
+		{bonsaiCase, "Bonsai's reminders are good.", true},
+		{bonsaiCase, "Prices are on HelloBonsai.com.", true},
 	}
 	for _, tc := range cases {
 		if got := Contains(tc.text, tc.brand); got != tc.want {

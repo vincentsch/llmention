@@ -1,4 +1,4 @@
-Send the prompts in llmention.yaml to each engine in each mode, then save the answers as a run and print the summary. Use --dry-run first. It sends nothing and shows how many requests the run would send and roughly what they cost, in total and for each engine. It also says which API keys are set. Ctrl+C stops the run and saves the answers that already came back.
+Send the prompts in llmention.yaml to each engine in each mode, then save the answers as a run and print the summary. Use --dry-run first. It sends nothing and shows how many requests the run would send and roughly what they cost, in total and for each engine. It also says which API keys are set. Ctrl+C stops the run and saves the answers that already came back. With --mock, the built-in mock engine makes up the answers for every engine, so you see the report for your own product without keys or cost. Those runs are saved apart from real runs, and `llmention report --mock` shows them.
 
 Related commands:
   llmention report
@@ -16,6 +16,7 @@ Usage:
 Examples:
 llmention run --dry-run
 llmention run
+llmention run --mock
 llmention run --engine chatgpt --mode search
 llmention run --fail-under mention-rate=40%
 llmention run --suite recognition.basic
@@ -27,6 +28,7 @@ Flags:
   -h, --help                     help for run
       --judge                    Use the AI grader set up under analysis.judge
       --max-requests int         The most requests this run may send, retries included (default execution.max_requests)
+      --mock                     Let the mock engine make up every answer, and save the run apart from real runs
       --mode strings             Only use these modes (no-search, search, forced-search, default)
       --repetitions int          Ask each prompt this many times (default from llmention.yaml)
       --suite strings            Run these suites instead of your prompts, for example recognition.basic

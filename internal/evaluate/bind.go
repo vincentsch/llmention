@@ -44,19 +44,21 @@ func BindProjectContext(project *config.Project, entries []suite.LoadedSuite) ([
 func bindItem(item *suite.Item, project *config.Project) {
 	b := project.Brand
 	item.Brand = &suite.Entity{
-		Name:     b.Name,
-		Category: b.Category,
-		Aliases:  append(append([]string(nil), b.Aliases...), b.Products...),
-		Domains:  append([]string(nil), b.Domains...),
+		Name:      b.Name,
+		Category:  b.Category,
+		Aliases:   append(append([]string(nil), b.Aliases...), b.Products...),
+		Domains:   append([]string(nil), b.Domains...),
+		MatchCase: b.MatchCase,
 	}
 	item.OwnedDomains = append([]string(nil), b.Domains...)
 	item.Competitors = nil
 	item.CompetitorDomains = nil
 	for _, c := range project.Competitors {
 		item.Competitors = append(item.Competitors, suite.Entity{
-			Name:    c.Name,
-			Aliases: append([]string(nil), c.Aliases...),
-			Domains: append([]string(nil), c.Domains...),
+			Name:      c.Name,
+			Aliases:   append([]string(nil), c.Aliases...),
+			Domains:   append([]string(nil), c.Domains...),
+			MatchCase: c.MatchCase,
 		})
 		item.CompetitorDomains = append(item.CompetitorDomains, c.Domains...)
 	}

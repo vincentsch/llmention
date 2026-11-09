@@ -29,7 +29,11 @@ func (s Style) heading(text string) string {
 // WriteText prints the summary a person reads first, then how to see more.
 func WriteText(w io.Writer, r Report, style Style) {
 	WriteSummary(w, r, style)
-	fmt.Fprintf(w, "\nRead every answer with `llmention report %s --answers`. For a page you can share, add --html report.html.\n", r.Run.ID)
+	command := "llmention report " + r.Run.ID
+	if r.Run.Mock {
+		command += " --mock"
+	}
+	fmt.Fprintf(w, "\nRead every answer with `%s --answers`. For a page you can share, add --html report.html.\n", command)
 }
 
 // WriteSummary prints the summary without pointing at saved runs, for

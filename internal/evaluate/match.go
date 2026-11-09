@@ -97,12 +97,11 @@ func evaluateMention(resultID, declarationID, version string, item suite.Item, p
 func mentionBrands(item suite.Item) []mention.Brand {
 	var out []mention.Brand
 	if item.Brand != nil {
-		aliases := append(append(append([]string(nil), item.Brand.Aliases...), item.Brand.Domains...), item.OwnedDomains...)
-		out = append(out, mention.Brand{ID: brandEntityID, Name: item.Brand.Name, Aliases: aliases})
+		domains := append(append([]string(nil), item.Brand.Domains...), item.OwnedDomains...)
+		out = append(out, mention.Brand{ID: brandEntityID, Name: item.Brand.Name, Aliases: item.Brand.Aliases, Domains: domains, MatchCase: item.Brand.MatchCase})
 	}
 	for _, c := range item.Competitors {
-		aliases := append(append([]string(nil), c.Aliases...), c.Domains...)
-		out = append(out, mention.Brand{ID: "competitor:" + c.Name, Name: c.Name, Aliases: aliases})
+		out = append(out, mention.Brand{ID: "competitor:" + c.Name, Name: c.Name, Aliases: c.Aliases, Domains: c.Domains, MatchCase: c.MatchCase})
 	}
 	return out
 }

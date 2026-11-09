@@ -30,7 +30,7 @@ func suitesCommand() *rungrad.Command {
 		Related:      []string{"llmention suites validate", "llmention run"},
 		OutputModes:  []string{rungrad.OutputModeHuman, rungrad.OutputModeJSON, rungrad.OutputModeJQ, rungrad.OutputModeTemplate},
 		SupportsMeta: true,
-		Args:         cobra.NoArgs,
+		Args:         noArgs,
 		Run:          runSuitesList,
 	}, &rungrad.Command{
 		Use:         "validate <suite-id-or-file>",
@@ -39,7 +39,7 @@ func suitesCommand() *rungrad.Command {
 		Examples:    []string{"llmention suites validate prompts", "llmention suites validate ./examples/research/factoid.yaml"},
 		Related:     []string{"llmention suites list"},
 		OutputModes: []string{rungrad.OutputModeHuman, rungrad.OutputModeJSON},
-		Args:        cobra.ExactArgs(1),
+		Args:        oneArg("suite id or file", "llmention suites validate prompts", "`llmention suites list` shows the suites you have."),
 		Run:         runSuitesValidate,
 	})
 	return suites

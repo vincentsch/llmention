@@ -26,7 +26,7 @@ func reportCommand() *rungrad.Command {
 		Short: "Show what the assistants said and how it changed",
 		Long: "Show the summary of a saved run. It says how often each assistant mentions you and your competitors, and which sites the answers cite. " +
 			"Without a run id it shows the newest run. The numbers are worked out again from the saved answers with the brand and competitors in llmention.yaml, so you can still compare old runs after you edit the file. " +
-			"--html writes a single page you can share.",
+			"--html writes a single page you can share. --mock shows the runs made with `llmention run --mock` instead of the real ones.",
 		Examples: []string{
 			"llmention report",
 			"llmention report --answers",
@@ -36,13 +36,19 @@ func reportCommand() *rungrad.Command {
 			"llmention report --format markdown >> \"$GITHUB_STEP_SUMMARY\"",
 			"llmention report 20261026-1608 --details",
 			"llmention report --fail-under mention-rate=30%",
+			"llmention report --mock --html preview.html",
 		},
 		Related:      []string{"llmention run", "llmention history list"},
 		OutputModes:  []string{rungrad.OutputModeHuman, rungrad.OutputModeJSON, rungrad.OutputModeJQ, rungrad.OutputModeTemplate},
 		Mutates:      true,
 		SupportsMeta: true,
 		GroupID:      "measure",
-		Args:         cobra.MaximumNArgs(2),
+		Args: func(cmd *cobra.Command, args []string) error {
+			if len(args) > 2 {
+				return fmt.Errorf("llmention report takes up to two run ids, but got %d: %s", len(args), strings.Join(args, " "))
+			}
+			return nil
+		},
 		Configure: func(cmd *cobra.Command) {
 			cmd.Flags().Bool("answers", false, "Print every answer instead of the summary")
 			cmd.Flags().Bool("details", false, "Print every metric of the run")
@@ -53,6 +59,7 @@ func reportCommand() *rungrad.Command {
 			cmd.Flags().String("format", "text", "Summary format: text or markdown")
 			cmd.Flags().String("html", "", "Write the report as one HTML file to this path")
 			cmd.Flags().StringArray("fail-under", nil, "Fail with exit code 7 when a number is below a threshold, for example mention-rate=40% (repeatable)")
+			cmd.Flags().Bool("mock", false, "Show the runs made with llmention run --mock")
 		},
 		Run: runReport,
 	}
@@ -63,7 +70,12 @@ func runReport(f *rungrad.Factory, cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	st := store.New(runsDir(project))
+	mock, _ := cmd.Flags().GetBool("mock")
+	dir := runsDir(project)
+	if mock {
+		dir = mockRunsDir(dir)
+	}
+	st := store.New(dir)
 	suiteID, _ := cmd.Flags().GetString("suite")
 	answers, _ := cmd.Flags().GetBool("answers")
 	details, _ := cmd.Flags().GetBool("details")
@@ -113,6 +125,15 @@ func runReport(f *rungrad.Factory, cmd *cobra.Command, args []string) error {
 	}
 
 	card, err := pickRun(st, args, defaultSuite)
+	var nf *store.NotFoundError
+	if len(args) == 0 && errors.As(err, &nf) {
+		if mock {
+			return rungrad.NewError(rungrad.ExitNotFound, "there is no run made with --mock yet; start one with `llmention run --mock`")
+		}
+		if runs, _, _ := store.New(mockRunsDir(dir)).List(); len(runs) > 0 {
+			return rungrad.NewError(rungrad.ExitNotFound, nf.Message+". Runs made with --mock are saved apart, so add --mock to see them")
+		}
+	}
 	if err != nil {
 		return storeError(err)
 	}

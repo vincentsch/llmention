@@ -1,7 +1,9 @@
 // Package mention finds brand names in assistant answers.
 //
 // Matching is case-insensitive and Unicode-normalized, and it respects word
-// boundaries: "Tabslip" matches "tabslip's" but not "Tabslipper". The package
+// boundaries: "Tabslip" matches "tabslip's" but not "Tabslipper". A brand
+// whose name is also an everyday word can ask for the same capitals, so
+// "Bonsai" matches "Bonsai" but not "bonsai". The package
 // also reads simple Markdown lists so callers can tell where a brand was
 // ranked and which other products an answer named.
 package mention
@@ -16,27 +18,55 @@ import (
 	"golang.org/x/text/unicode/norm"
 )
 
-// Brand is one name to look for. Aliases include every spelling that counts as
-// a mention, such as other names, domains or product names.
+// Brand is one name to look for. Aliases are the other spellings that count
+// as a mention, such as old names or product names. Domains count too.
 type Brand struct {
 	ID      string
 	Name    string
 	Aliases []string
+	Domains []string
+	// MatchCase counts the name and the aliases only when an answer writes
+	// them with the same capital letters. Domains match in any case.
+	MatchCase bool
 }
 
-// Terms returns the name and aliases without blanks or duplicates.
+// Terms returns the name, aliases and domains without blanks or duplicates.
 func (b Brand) Terms() []string {
 	var out []string
-	seen := map[string]bool{}
-	for _, term := range append([]string{b.Name}, b.Aliases...) {
-		term = strings.TrimSpace(term)
-		key := Normalize(term)
-		if key == "" || seen[key] {
-			continue
-		}
-		seen[key] = true
-		out = append(out, term)
+	for _, t := range b.terms() {
+		out = append(out, t.text)
 	}
+	return out
+}
+
+type term struct {
+	text      string
+	exactCase bool
+}
+
+func (b Brand) terms() []term {
+	var out []term
+	seen := map[string]bool{}
+	add := func(values []string, exactCase bool) {
+		for _, value := range values {
+			value = strings.TrimSpace(value)
+			key := Normalize(value)
+			if key == "" {
+				continue
+			}
+			if exactCase {
+				// "Bonsai" and "BONSAI" are two spellings here.
+				key = "case:" + norm.NFKC.String(value)
+			}
+			if seen[key] {
+				continue
+			}
+			seen[key] = true
+			out = append(out, term{value, exactCase})
+		}
+	}
+	add(append([]string{b.Name}, b.Aliases...), b.MatchCase)
+	add(b.Domains, false)
 	return out
 }
 
@@ -87,8 +117,8 @@ func Contains(text string, brand Brand) bool {
 // occurrences lists every place a brand term appears on word boundaries.
 func occurrences(text string, normalized normalizedText, brand Brand) []Match {
 	var out []Match
-	for _, term := range brand.Terms() {
-		needle := Normalize(term)
+	for _, term := range brand.terms() {
+		needle := Normalize(term.text)
 		for from := 0; ; {
 			i := strings.Index(normalized.text[from:], needle)
 			if i < 0 {
@@ -102,7 +132,11 @@ func occurrences(text string, normalized normalizedText, brand Brand) []Match {
 			}
 			byteStart := normalized.spans[start].start
 			byteEnd := normalized.spans[end-1].end
-			out = append(out, Match{BrandID: brand.ID, Start: byteStart, End: byteEnd, Quote: text[byteStart:byteEnd]})
+			quote := text[byteStart:byteEnd]
+			if term.exactCase && norm.NFKC.String(quote) != norm.NFKC.String(term.text) {
+				continue
+			}
+			out = append(out, Match{BrandID: brand.ID, Start: byteStart, End: byteEnd, Quote: quote})
 		}
 	}
 	return out

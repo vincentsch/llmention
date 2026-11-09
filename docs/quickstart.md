@@ -113,7 +113,7 @@ llmention run --dry-run
 Dry run: nothing was sent.
 Would send 40 requests: 10 prompts to 2 engines, in no web search and web search modes.
 Failed requests are retried, so the run sends at most 120 requests.
-Estimated cost: about $1.72, from list prices checked on 2026-10-26. Longer answers and extra web searches can make it higher.
+Estimated cost: about $1.72, from list prices checked on 2026-10-26. A run every week comes to about $89.62 a year. Longer answers and extra web searches can make it higher.
 
   Engine   Model                        Requests  Estimated cost
   chatgpt  openai gpt-6.1-sol           20        about $1.14
@@ -126,6 +126,21 @@ Each prompt goes to each engine once per mode. The two default modes ask once
 without web search, so the model answers from what it learned in training, and
 once with web search allowed. [Modes](modes.md) explains the difference, and
 [Costs](costs.md) explains the estimate and the budget.
+
+## See your report before you pay
+
+`--mock` lets the built-in mock engine answer in place of every engine in
+`llmention.yaml`. It needs no key and costs nothing:
+
+```sh
+llmention run --mock
+llmention report --mock --html preview.html
+```
+
+The report uses your own product and questions, but every answer in it is
+made up. It says so at the top. llmention saves these runs in
+`.llmention/runs/mock`, apart from your real runs, so they never mix with your
+real numbers.
 
 ## Run it
 

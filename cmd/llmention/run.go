@@ -26,10 +26,13 @@ func runCommand() *rungrad.Command {
 		Short: "Ask the assistants your prompts and save the answers",
 		Long: "Send the prompts in llmention.yaml to each engine in each mode, then save the answers as a run and print the summary. " +
 			"Use --dry-run first. It sends nothing and shows how many requests the run would send and roughly what they cost, in total and for each engine. It also says which API keys are set. " +
-			"Ctrl+C stops the run and saves the answers that already came back.",
+			"Ctrl+C stops the run and saves the answers that already came back. " +
+			"With --mock, the built-in mock engine makes up the answers for every engine, so you see the report for your own product without keys or cost. " +
+			"Those runs are saved apart from real runs, and `llmention report --mock` shows them.",
 		Examples: []string{
 			"llmention run --dry-run",
 			"llmention run",
+			"llmention run --mock",
 			"llmention run --engine chatgpt --mode search",
 			"llmention run --fail-under mention-rate=40%",
 			"llmention run --suite recognition.basic",
@@ -40,7 +43,7 @@ func runCommand() *rungrad.Command {
 		Mutates:      true,
 		SupportsMeta: true,
 		GroupID:      "measure",
-		Args:         cobra.NoArgs,
+		Args:         noArgs,
 		Configure: func(cmd *cobra.Command) {
 			addRunFlags(cmd)
 			cmd.Flags().StringArray("fail-under", nil, "Fail with exit code 7 when a number is below a threshold, for example mention-rate=40% (repeatable)")
@@ -70,6 +73,7 @@ func addRunFlags(cmd *cobra.Command) {
 	cmd.Flags().Int("repetitions", 0, "Ask each prompt this many times (default from llmention.yaml)")
 	cmd.Flags().Int("max-requests", 0, "The most requests this run may send, retries included (default execution.max_requests)")
 	cmd.Flags().Bool("judge", false, "Use the AI grader set up under analysis.judge")
+	cmd.Flags().Bool("mock", false, "Let the mock engine make up every answer, and save the run apart from real runs")
 }
 
 func runOptionsFromFlags(cmd *cobra.Command) (runOptions, error) {
@@ -85,8 +89,12 @@ func runOptionsFromFlags(cmd *cobra.Command) (runOptions, error) {
 	if o.Repetitions < 0 || o.MaxRequests < 0 {
 		return o, fmt.Errorf("--repetitions and --max-requests cannot be negative")
 	}
+	o.Mock, _ = cmd.Flags().GetBool("mock")
 	if cmd.Flags().Changed("judge") {
 		on, _ := cmd.Flags().GetBool("judge")
+		if on && o.Mock {
+			return o, fmt.Errorf("--judge does not work with --mock, because the AI grader is a real model that needs a key")
+		}
 		o.ModelAssisted = &on
 	}
 	return o, nil
@@ -113,7 +121,7 @@ func runAndReport(f *rungrad.Factory, cmd *cobra.Command, project *config.Projec
 		Model: result,
 		Human: func(w io.Writer) {
 			report.WriteText(w, r, styleFor(f))
-			fmt.Fprintf(w, "Saved as run %s in %s.\n", outcome.card.ID, displayDir(project.RunsDir))
+			fmt.Fprintf(w, "Saved as run %s in %s.\n", outcome.card.ID, displayDir(p.project.RunsDir))
 			for _, n := range outcome.notifications {
 				if n.Status == notify.StatusFailed {
 					fmt.Fprintf(w, "The alert did not go out: %s.\n", notify.Describe(n.ReasonCode))
@@ -145,13 +153,17 @@ type planPreview struct {
 	Suites          []string        `json:"suites"`
 	EstimatedCost   cost.Estimate   `json:"estimated_cost"`
 	PricesCheckedOn string          `json:"prices_checked_on"`
-	Keys            []keyPreview    `json:"keys"`
-	Skipped         []string        `json:"skipped,omitempty"`
-	Checks          []string        `json:"checks,omitempty"`
-	JudgeRequests   int             `json:"judge_requests,omitempty"`
-	Warnings        []string        `json:"warnings,omitempty"`
-	Problems        []string        `json:"problems,omitempty"`
-	FitsBudget      bool            `json:"fits_budget"`
+	// KeysFound and KeysMissing split the key variables the run needs. The
+	// real run stops with exit code 3 while a key is missing, but the dry run
+	// still exits 0, so scripts check keys_missing.
+	KeysFound     []string `json:"keys_found"`
+	KeysMissing   []string `json:"keys_missing"`
+	Skipped       []string `json:"skipped,omitempty"`
+	Checks        []string `json:"checks,omitempty"`
+	JudgeRequests int      `json:"judge_requests,omitempty"`
+	Warnings      []string `json:"warnings,omitempty"`
+	Problems      []string `json:"problems,omitempty"`
+	FitsBudget    bool     `json:"fits_budget"`
 }
 
 type enginePreview struct {
@@ -159,11 +171,6 @@ type enginePreview struct {
 	Provider string `json:"provider"`
 	Model    string `json:"model"`
 	Requests int    `json:"requests"`
-}
-
-type keyPreview struct {
-	Env string `json:"env"`
-	Set bool   `json:"set"`
 }
 
 func writePlan(f *rungrad.Factory, p *prepared) error {
@@ -175,6 +182,8 @@ func writePlan(f *rungrad.Factory, p *prepared) error {
 		EstimatedCost:   p.estimate,
 		PricesCheckedOn: cost.PricesCheckedOn,
 		FitsBudget:      len(p.plan.WorkUnits) <= p.plan.MaxRequests,
+		KeysFound:       []string{},
+		KeysMissing:     []string{},
 	}
 	prompts := map[string]bool{}
 	for _, u := range p.plan.WorkUnits {
@@ -200,9 +209,18 @@ func writePlan(f *rungrad.Factory, p *prepared) error {
 			pv.Engines = append(pv.Engines, enginePreview{ID: e.ID(), Provider: e.Provider(), Model: e.Model(), Requests: n})
 		}
 	}
-	for _, env := range p.plan.RequiredKeyEnv {
-		v, ok := lookupEnv(f)(env)
-		pv.Keys = append(pv.Keys, keyPreview{Env: env, Set: ok && v != ""})
+	keys := slices.Clone(p.plan.RequiredKeyEnv)
+	// The run reads the AI grader's key only when the grader has work.
+	graded := p.evaluation.ModelAssisted.Enabled && p.evaluation.ModelAssisted.PlannedCandidates > 0
+	if judge := p.project.Analysis.Judge; graded && judge != nil && judge.KeyEnv != "" && !slices.Contains(keys, judge.KeyEnv) {
+		keys = append(keys, judge.KeyEnv)
+	}
+	for _, env := range keys {
+		if v, ok := lookupEnv(f)(env); ok && v != "" {
+			pv.KeysFound = append(pv.KeysFound, env)
+		} else {
+			pv.KeysMissing = append(pv.KeysMissing, env)
+		}
 	}
 	for _, u := range p.plan.UnsupportedPairs {
 		pv.Skipped = append(pv.Skipped, fmt.Sprintf("%s · %s: %s", u.EngineID, config.ModeLabel(u.Mode), u.Reason))
@@ -272,7 +290,8 @@ func writePlanText(w io.Writer, pv planPreview) {
 	case pv.EstimatedCost.Dollars == 0:
 		fmt.Fprintf(w, "Estimated cost: %s.\n", pv.EstimatedCost)
 	default:
-		fmt.Fprintf(w, "Estimated cost: %s, from list prices checked on %s. Longer answers and extra web searches can make it higher.\n", pv.EstimatedCost, pv.PricesCheckedOn)
+		yearly := cost.Estimate{Dollars: 52 * pv.EstimatedCost.Dollars}
+		fmt.Fprintf(w, "Estimated cost: %s, from list prices checked on %s. A run every week comes to %s a year. Longer answers and extra web searches can make it higher.\n", pv.EstimatedCost, pv.PricesCheckedOn, yearly)
 	}
 	for _, line := range pv.EstimatedCost.LeftOut() {
 		fmt.Fprintln(w, line)
@@ -292,24 +311,14 @@ func writePlanText(w io.Writer, pv planPreview) {
 		fmt.Fprintf(tw, "  %s\t%s %s\t%d\t%s\n", e.ID, e.Provider, e.Model, e.Requests, estimate)
 	}
 	tw.Flush()
-	if len(pv.Keys) > 0 || len(pv.Skipped) > 0 || len(pv.Checks) > 0 || pv.JudgeRequests > 0 || len(pv.Warnings) > 0 {
+	if len(pv.KeysFound) > 0 || len(pv.KeysMissing) > 0 || len(pv.Skipped) > 0 || len(pv.Checks) > 0 || pv.JudgeRequests > 0 || len(pv.Warnings) > 0 {
 		fmt.Fprintln(w)
 	}
-	if len(pv.Keys) > 0 {
-		var set, missing []string
-		for _, k := range pv.Keys {
-			if k.Set {
-				set = append(set, k.Env)
-			} else {
-				missing = append(missing, k.Env)
-			}
-		}
-		if len(set) > 0 {
-			fmt.Fprintf(w, "Keys found: %s\n", strings.Join(set, ", "))
-		}
-		if len(missing) > 0 {
-			fmt.Fprintf(w, "Keys missing: %s. Export %s before you run, for example `export %s=...`.\n", strings.Join(missing, ", "), pluralWord(len(missing), "it", "them"), missing[0])
-		}
+	if len(pv.KeysFound) > 0 {
+		fmt.Fprintf(w, "Keys found: %s\n", strings.Join(pv.KeysFound, ", "))
+	}
+	if missing := pv.KeysMissing; len(missing) > 0 {
+		fmt.Fprintf(w, "Keys missing: %s. Export %s before you run, for example `export %s=...`.\n", strings.Join(missing, ", "), pluralWord(len(missing), "it", "them"), missing[0])
 	}
 	for _, s := range pv.Skipped {
 		fmt.Fprintf(w, "Left out: %s\n", s)

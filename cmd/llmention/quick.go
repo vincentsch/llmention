@@ -27,7 +27,7 @@ func quickCommand() *rungrad.Command {
 		Mutates:      true,
 		SupportsMeta: true,
 		GroupID:      "start",
-		Args:         cobra.NoArgs,
+		Args:         noArgs,
 		Configure: func(cmd *cobra.Command) {
 			addStarterFlags(cmd)
 			cmd.Flags().Bool("force", false, "Replace an existing llmention.yaml")

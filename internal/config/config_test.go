@@ -243,6 +243,16 @@ func TestStarterBudgetNeverGoesBelowTheDefault(t *testing.T) {
 
 // The starter questions used to say "I run a small company" and "most
 // teams", which reads oddly for freelancers and consumers.
+// "I need something for invoicing for freelancers. What are my options?"
+// read badly, because the topic sat in the middle of the question.
+func TestStarterPromptsEndWithTheTopic(t *testing.T) {
+	for _, prompt := range StarterPrompts("invoicing for freelancers", nil) {
+		if !strings.HasSuffix(prompt, " for invoicing for freelancers?") || strings.Count(prompt, "?") != 1 {
+			t.Errorf("starter prompt does not end with the topic: %q", prompt)
+		}
+	}
+}
+
 func TestStarterPromptsDoNotSayWhoIsAsking(t *testing.T) {
 	for _, prompt := range StarterPrompts("TOPIC", []string{"Globex"}) {
 		words := strings.ToLower(strings.ReplaceAll(prompt, "TOPIC", ""))

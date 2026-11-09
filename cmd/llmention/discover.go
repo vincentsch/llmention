@@ -36,7 +36,7 @@ func discoverCommand() *rungrad.Command {
 		Mutates:      true,
 		SupportsMeta: true,
 		GroupID:      "manage",
-		Args:         cobra.NoArgs,
+		Args:         noArgs,
 		Configure: func(cmd *cobra.Command) {
 			cmd.Flags().StringArray("seed", nil, "A topic or search phrase (repeatable, default: brand.category)")
 			cmd.Flags().String("from", "", "Where to find questions: chab, or leave it out for templates")
@@ -129,7 +129,7 @@ func runDiscover(f *rungrad.Factory, cmd *cobra.Command, _ []string) error {
 	if project != nil {
 		if project.Brand != nil {
 			b := analysis.Brands(project).You
-			brand = mention.Brand{ID: b.Name, Name: b.Name, Aliases: append(b.Aliases, b.Domains...)}
+			brand = mention.Brand{ID: b.Name, Name: b.Name, Aliases: b.Aliases, Domains: b.Domains, MatchCase: b.MatchCase}
 		}
 		for _, p := range project.Prompts {
 			existing = append(existing, p.Text)

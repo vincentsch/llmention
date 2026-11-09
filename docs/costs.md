@@ -11,7 +11,7 @@ total and for each engine:
 ```text
 Would send 40 requests: 10 prompts to 2 engines, in no web search and web search modes.
 Failed requests are retried, so the run sends at most 120 requests.
-Estimated cost: about $1.72, from list prices checked on 2026-10-26. Longer answers and extra web searches can make it higher.
+Estimated cost: about $1.72, from list prices checked on 2026-10-26. A run every week comes to about $89.62 a year. Longer answers and extra web searches can make it higher.
 
   Engine   Model                        Requests  Estimated cost
   chatgpt  openai gpt-6.1-sol           20        about $1.14
@@ -62,7 +62,8 @@ Some examples at the October 2026 prices of the starter models:
 | 10 prompts, all four starter providers, two modes | 80 | about $2.06, plus Perplexity's fee per request |
 | 10 prompts, all four through OpenRouter, two modes | 80 | about $2.15 |
 
-Weekly runs of the first size come to about $90 a year.
+The dry run also says what a run every week costs in a year, which is 52 times
+its estimate. For the first size that is about $90.
 
 ## The budget
 

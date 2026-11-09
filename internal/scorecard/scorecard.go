@@ -40,7 +40,10 @@ type Scorecard struct {
 	// Narrowed is true for a run made with --engine or --mode that asked
 	// fewer engines or modes than llmention.yaml lists. Comparisons and
 	// trends leave it out, so a one-off run never becomes the baseline.
-	Narrowed    bool                      `json:"narrowed,omitempty"`
+	Narrowed bool `json:"narrowed,omitempty"`
+	// Mock is true for a run made with --mock. The mock engine answered for
+	// every engine, and the run is saved apart from real runs.
+	Mock        bool                      `json:"mock,omitempty"`
 	Brand       *config.BrandConfig       `json:"brand,omitempty"`
 	Competitors []config.CompetitorConfig `json:"competitors,omitempty"`
 	Engines     []Engine                  `json:"engines"`
