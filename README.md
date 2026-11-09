@@ -55,7 +55,7 @@ are made up, but the report looks the same as the one you get for your own
 product:
 
 ```text
-Acme Books · run 20261026-193142-6edf67 · 26 Oct 2026 20:31 CET
+Acme Books · run 20261109-132404-525607 · 9 Nov 2026 14:24 CET
 Engines: chatgpt-demo (demo), claude-demo (demo)
 Competitors: Globex Billing, Initech Invoices
 10 prompts, 40 answers
