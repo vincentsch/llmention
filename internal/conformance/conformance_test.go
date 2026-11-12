@@ -22,7 +22,9 @@ func TestCLIRequiredRunGradConformance(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		bin += ".exe"
 	}
-	build := exec.Command("go", "build", "-o", bin, "./cmd/llmention")
+	// Exercise release update checks even when this checkout is a development build.
+	build := exec.Command("go", "build", "-tags", "conformance", "-ldflags",
+		"-X github.com/vincentsch/llmention/internal/version.Version=1.2.3", "-o", bin, "./cmd/llmention")
 	build.Dir = repoRoot
 	if out, err := build.CombinedOutput(); err != nil {
 		t.Fatalf("build llmention: %v\n%s", err, out)

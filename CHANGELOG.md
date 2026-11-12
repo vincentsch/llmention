@@ -2,9 +2,17 @@
 
 ## Unreleased
 
+## 0.1.2 - 2026-11-12
+
+- Binaries installed with `go install` report their release version instead of `dev`.
+- Release conformance checks use a local update fixture rather than GitHub's API.
+
 ## 0.1.1 - 2026-11-12
 
 - Binaries installed with `go install` report their release version instead of `dev`.
+
+The release job stopped before publishing downloads for this tag. Version 0.1.2
+includes the fix and makes the update check independent of GitHub during tests.
 
 ## 0.1.0 - 2026-11-09
 
