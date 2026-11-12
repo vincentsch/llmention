@@ -1,6 +1,6 @@
 # Releasing llmention
 
-This page describes how to cut a release. Nothing has been released yet.
+This page describes how to cut a release. The first public release was v0.1.0.
 
 ## Check the candidate
 
@@ -30,12 +30,12 @@ Placeholders such as `OPENAI_API_KEY=...` in examples are fine.
 
 ## Name the version
 
-Rename `## Unreleased` in `CHANGELOG.md` to `## 0.1.0 - YYYY-MM-DD` with the
-release date and commit the change. The tag is `v0.1.0`; the binary reports
-`0.1.0`. Check the notes the release will use:
+Add a dated version section below `## Unreleased` in `CHANGELOG.md` and commit
+the change. For example, the tag `v0.1.1` produces a binary that reports `0.1.1`.
+Check the notes the release will use:
 
 ```sh
-python3 scripts/release-notes.py 0.1.0
+python3 scripts/release-notes.py 0.1.1
 ```
 
 The script fails when the dated section is missing. Start a new
@@ -44,7 +44,7 @@ The script fails when the dated section is missing. Start a new
 ## Build and try the binaries
 
 ```sh
-make build-all VERSION=0.1.0 COMMIT="$(git rev-parse HEAD)"
+make build-all VERSION=0.1.1 COMMIT="$(git rev-parse HEAD)"
 ```
 
 `dist/` then holds six binaries and `checksums.txt`:
@@ -61,7 +61,7 @@ by hand, serve a copy of `dist/` under `releases/download/v0.1.0/` with any
 static file server and run:
 
 ```sh
-INSTALL_DIR=/tmp/llmention-install LLMENTION_VERSION=v0.1.0 \
+INSTALL_DIR=/tmp/llmention-install LLMENTION_VERSION=v0.1.1 \
   LLMENTION_DOWNLOAD_BASE=http://127.0.0.1:8765 sh install.sh
 ```
 
@@ -70,7 +70,7 @@ INSTALL_DIR=/tmp/llmention-install LLMENTION_VERSION=v0.1.0 \
 Do this only when publishing is approved. Make the repository public and turn
 on private vulnerability reporting. Check that the link in `SECURITY.md`
 works. Push `main` and wait until CI passes on Linux, macOS and Windows. Then
-push the `v0.1.0` tag.
+push the release tag.
 
 The tag starts `.github/workflows/release.yml`. It runs CI again and builds
 the six binaries. Then it adds a build attestation, GitHub's signed record of
@@ -87,7 +87,8 @@ curl -fsSL https://raw.githubusercontent.com/vincentsch/llmention/main/install.s
 llmention --version
 llmention demo
 gh attestation verify llmention-linux-amd64 --repo vincentsch/llmention
-go install github.com/vincentsch/llmention/cmd/llmention@v0.1.0
+go install github.com/vincentsch/llmention/cmd/llmention@v0.1.1
 ```
 
-`go install` reports the version as `dev`; release binaries report `0.1.0`.
+Starting with v0.1.1, `go install` reports the module's release version.
+Release binaries also include their build commit.
