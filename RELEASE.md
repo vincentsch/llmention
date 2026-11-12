@@ -31,11 +31,11 @@ Placeholders such as `OPENAI_API_KEY=...` in examples are fine.
 ## Name the version
 
 Add a dated version section below `## Unreleased` in `CHANGELOG.md` and commit
-the change. For example, the tag `v0.1.1` produces a binary that reports `0.1.1`.
+the change. For example, the tag `v0.1.2` produces a binary that reports `0.1.2`.
 Check the notes the release will use:
 
 ```sh
-python3 scripts/release-notes.py 0.1.1
+python3 scripts/release-notes.py 0.1.2
 ```
 
 The script fails when the dated section is missing. Start a new
@@ -44,7 +44,7 @@ The script fails when the dated section is missing. Start a new
 ## Build and try the binaries
 
 ```sh
-make build-all VERSION=0.1.1 COMMIT="$(git rev-parse HEAD)"
+make build-all VERSION=0.1.2 COMMIT="$(git rev-parse HEAD)"
 ```
 
 `dist/` then holds six binaries and `checksums.txt`:
@@ -61,7 +61,7 @@ by hand, serve a copy of `dist/` under `releases/download/v0.1.0/` with any
 static file server and run:
 
 ```sh
-INSTALL_DIR=/tmp/llmention-install LLMENTION_VERSION=v0.1.1 \
+INSTALL_DIR=/tmp/llmention-install LLMENTION_VERSION=v0.1.2 \
   LLMENTION_DOWNLOAD_BASE=http://127.0.0.1:8765 sh install.sh
 ```
 
@@ -87,8 +87,8 @@ curl -fsSL https://raw.githubusercontent.com/vincentsch/llmention/main/install.s
 llmention --version
 llmention demo
 gh attestation verify llmention-linux-amd64 --repo vincentsch/llmention
-go install github.com/vincentsch/llmention/cmd/llmention@v0.1.1
+go install github.com/vincentsch/llmention/cmd/llmention@v0.1.2
 ```
 
-Starting with v0.1.1, `go install` reports the module's release version.
+Starting with v0.1.2, `go install` reports the module's release version.
 Release binaries also include their build commit.
