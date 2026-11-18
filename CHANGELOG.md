@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.1.3 - 2026-11-18
+
 - `init` and `quick` set up OpenAI's `gpt-6.2-sol` instead of `gpt-6.1-sol`, directly and through OpenRouter. It costs the same. The price table still knows `gpt-6.1-sol`, so existing `llmention.yaml` files keep their estimate.
 
 ## 0.1.2 - 2026-11-12
