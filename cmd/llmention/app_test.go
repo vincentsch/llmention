@@ -141,7 +141,7 @@ func TestDryRunShowsCostAndMissingKeys(t *testing.T) {
 // missing, so pricing a smaller run took a second dry run.
 func TestDryRunShowsTheCostOfEachEngine(t *testing.T) {
 	inTempProject(t, strings.Replace(mockProject, "  - {id: claude-demo, provider: mock, model: demo}\n",
-		"  - {id: chatgpt, provider: openai, model: gpt-6.1-sol, key_env: OPENAI_API_KEY}\n"+
+		"  - {id: chatgpt, provider: openai, model: gpt-6.2-sol, key_env: OPENAI_API_KEY}\n"+
 			"  - {id: perplexity, provider: perplexity, model: sonar, key_env: PERPLEXITY_API_KEY}\n", 1))
 	res := runApp(t, "run", "--dry-run")
 	if res.Exit != 0 {
@@ -151,7 +151,7 @@ func TestDryRunShowsTheCostOfEachEngine(t *testing.T) {
 		"The total leaves out the fee per request for perplexity, because llmention's price table doesn't have it.",
 		"  Engine        Model               Requests  Estimated cost\n",
 		"  chatgpt-demo  mock demo           6         no cost\n",
-		"  chatgpt       openai gpt-6.1-sol  6         about $0.",
+		"  chatgpt       openai gpt-6.2-sol  6         about $0.",
 		"  perplexity    perplexity sonar    6         about $0.02 plus a fee per request\n",
 	} {
 		if !strings.Contains(res.Stdout, want) {
@@ -432,7 +432,7 @@ func TestMissingKeyStopsBeforeSending(t *testing.T) {
 	var hits int
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { hits++ }))
 	defer server.Close()
-	inTempProject(t, strings.Replace(mockProject, "{id: claude-demo, provider: mock, model: demo}", "{id: chatgpt, provider: openai, model: gpt-6.1-sol, key_env: OPENAI_API_KEY, base_url: \""+server.URL+"/v1\"}", 1))
+	inTempProject(t, strings.Replace(mockProject, "{id: claude-demo, provider: mock, model: demo}", "{id: chatgpt, provider: openai, model: gpt-6.2-sol, key_env: OPENAI_API_KEY, base_url: \""+server.URL+"/v1\"}", 1))
 	res := runApp(t, "run")
 	if res.Exit != rungrad.ExitAuth || !strings.Contains(res.Stderr, "export OPENAI_API_KEY=") || hits != 0 {
 		t.Fatalf("exit %d hits %d: %s", res.Exit, hits, res.Stderr)
@@ -449,7 +449,7 @@ func TestOpenAIBaseURLReachesTheGateway(t *testing.T) {
 		_, _ = w.Write([]byte(`{"id":"resp","status":"completed","output":[{"type":"message","content":[{"type":"output_text","text":"Try Acme Books or Globex Billing."}]}]}`))
 	}))
 	defer server.Close()
-	inTempProject(t, strings.Replace(mockProject, "{id: claude-demo, provider: mock, model: demo}", "{id: gateway, provider: openai, model: gpt-6.1-sol, key_env: GATEWAY_KEY, base_url: \""+server.URL+"/v1\"}", 1))
+	inTempProject(t, strings.Replace(mockProject, "{id: claude-demo, provider: mock, model: demo}", "{id: gateway, provider: openai, model: gpt-6.2-sol, key_env: GATEWAY_KEY, base_url: \""+server.URL+"/v1\"}", 1))
 	res := testutil.RunWith(newApp(), testutil.Options{LookupEnv: func(name string) (string, bool) {
 		if name == "GATEWAY_KEY" {
 			return "test-gateway-key", true
@@ -1013,7 +1013,7 @@ func TestMockRunShowsYourReportApartFromRealRuns(t *testing.T) {
 		t.Fatalf("run: %s", res.Stderr)
 	}
 	openRouter := strings.Replace(mockProject, "  - {id: chatgpt-demo, provider: mock, model: demo}\n  - {id: claude-demo, provider: mock, model: demo}\n",
-		"  - {id: chatgpt, provider: openrouter, model: openai/gpt-6.1-sol, key_env: OPENROUTER_API_KEY}\n"+
+		"  - {id: chatgpt, provider: openrouter, model: openai/gpt-6.2-sol, key_env: OPENROUTER_API_KEY}\n"+
 			"  - {id: claude, provider: openrouter, model: anthropic/claude-sonnet-5.5, key_env: OPENROUTER_API_KEY}\n", 1)
 	if err := os.WriteFile("llmention.yaml", []byte(openRouter), 0o644); err != nil {
 		t.Fatal(err)
@@ -1073,7 +1073,7 @@ func TestMockEnginesNeedNoKeyAndSendNothing(t *testing.T) {
 	project := &config.Project{
 		RunsDir: "runs",
 		Engines: []config.EngineConfig{
-			{ID: "chatgpt", Provider: "openai", Model: "gpt-6.1-sol", KeyEnv: "OPENAI_API_KEY", BaseURL: "https://gateway.example/v1"},
+			{ID: "chatgpt", Provider: "openai", Model: "gpt-6.2-sol", KeyEnv: "OPENAI_API_KEY", BaseURL: "https://gateway.example/v1"},
 			{ID: "fixed", Provider: "mock", Model: "fixture", FixturesPath: "answers.yaml"},
 		},
 		Analysis: config.AnalysisConfig{ModelAssistedEnabled: true, Judge: &config.JudgeConfig{Provider: "openai", Model: "gpt-6-luna", KeyEnv: "OPENAI_API_KEY"}},

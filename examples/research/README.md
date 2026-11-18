@@ -73,7 +73,7 @@ analysis:
   model_assisted_enabled: true
   judge:
     provider: openai
-    model: gpt-6.1-sol
+    model: gpt-6.2-sol
     key_env: OPENAI_API_KEY
     allow_answer_disclosure: true
 ```

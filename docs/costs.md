@@ -14,7 +14,7 @@ Failed requests are retried, so the run sends at most 120 requests.
 Estimated cost: about $1.72, from list prices checked on 2026-10-26. A run every week comes to about $89.62 a year. Longer answers and extra web searches can make it higher.
 
   Engine   Model                        Requests  Estimated cost
-  chatgpt  openai gpt-6.1-sol           20        about $1.14
+  chatgpt  openai gpt-6.2-sol           20        about $1.14
   claude   anthropic claude-sonnet-5-5  20        about $0.58
 ```
 

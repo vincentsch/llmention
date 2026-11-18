@@ -80,7 +80,7 @@ Put a competitor's website in brackets after its name. Then the report can tell
 which cited sites belong to which competitor.
 
 Each assistant you ask is called an engine in llmention. An engine is a
-provider and a model, such as OpenAI with `gpt-6.1-sol`.
+provider and a model, such as OpenAI with `gpt-6.2-sol`.
 
 ## Check the questions
 
@@ -116,7 +116,7 @@ Failed requests are retried, so the run sends at most 120 requests.
 Estimated cost: about $1.72, from list prices checked on 2026-10-26. A run every week comes to about $89.62 a year. Longer answers and extra web searches can make it higher.
 
   Engine   Model                        Requests  Estimated cost
-  chatgpt  openai gpt-6.1-sol           20        about $1.14
+  chatgpt  openai gpt-6.2-sol           20        about $1.14
   claude   anthropic claude-sonnet-5-5  20        about $0.58
 
 Keys found: OPENAI_API_KEY, ANTHROPIC_API_KEY

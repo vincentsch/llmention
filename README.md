@@ -140,7 +140,7 @@ Failed requests are retried, so the run sends at most 120 requests.
 Estimated cost: about $1.72, from list prices checked on 2026-10-26. A run every week comes to about $89.62 a year. Longer answers and extra web searches can make it higher.
 
   Engine   Model                        Requests  Estimated cost
-  chatgpt  openai gpt-6.1-sol           20        about $1.14
+  chatgpt  openai gpt-6.2-sol           20        about $1.14
   claude   anthropic claude-sonnet-5-5  20        about $0.58
 ```
 
@@ -151,7 +151,8 @@ in the terminal, `llmention init` asks for the same details one by one.
 [Writing prompts](docs/prompts.md) has advice on picking questions, and
 `llmention discover` suggests more.
 
-The model names in `llmention.yaml` were current in October 2026. You can
+The model names in `llmention.yaml` were current in October 2026, and the
+OpenAI one in November 2026. You can
 change them to any model your key can use. [Providers and models](docs/providers.md)
 covers the other providers. It also shows how to use a gateway or a model that
 runs on your own computer.

@@ -30,6 +30,7 @@ type Price struct {
 // reported as unknown. llmention does not guess their price.
 var prices = map[string]Price{
 	"openai/gpt-6-luna":            {0.10, 0.50, 0.010, 0, false},
+	"openai/gpt-6.2-sol":           {2.00, 10.00, 0.010, 0, false}, // checked 2026-11-18
 	"openai/gpt-6.1-sol":           {2.00, 10.00, 0.010, 0, false},
 	"openai/gpt-6-astra":           {10.00, 50.00, 0.010, 0, false},
 	"openai/gpt-5-mini":            {0.25, 2.00, 0.010, 0, false},
@@ -54,6 +55,7 @@ var prices = map[string]Price{
 	"openrouter/google/gemini-3.5-flash-lite": {0.30, 2.50, 0.014, 0, false},
 	"openrouter/google/gemini-4-argon":        {2.00, 10.00, 0.014, 0, false},
 	"openrouter/openai/gpt-6.1-sol":           {2.00, 10.00, 0.010, 0, false},
+	"openrouter/openai/gpt-6.2-sol":           {2.00, 10.00, 0.010, 0, false}, // checked 2026-11-18
 	"openrouter/anthropic/claude-sonnet-5.5":  {2.00, 10.00, 0.010, 0, false},
 }
 

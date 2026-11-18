@@ -86,7 +86,7 @@ func TestEstimateNamesModelsWithoutAPrice(t *testing.T) {
 func TestEstimateSplitsByEngine(t *testing.T) {
 	engines := []config.EngineConfig{
 		{ID: "mock", Provider: "mock", Model: "demo"},
-		{ID: "chatgpt", Provider: "openai", Model: "gpt-6.1-sol"},
+		{ID: "chatgpt", Provider: "openai", Model: "gpt-6.2-sol"},
 		{ID: "perplexity", Provider: "perplexity", Model: "sonar"},
 		{ID: "sonar", Provider: "openrouter", Model: "perplexity/sonar"},
 		{ID: "llama", Provider: "openrouter", Model: "meta-llama/llama-4-maverick"},

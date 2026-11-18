@@ -7,7 +7,7 @@ model to use, and which environment variable holds the API key:
 engines:
   - id: chatgpt
     provider: openai
-    model: gpt-6.1-sol
+    model: gpt-6.2-sol
     key_env: OPENAI_API_KEY
 ```
 
@@ -19,7 +19,7 @@ Two engines can use the same provider with different models.
 
 | `provider` | API | Modes | Starter model |
 | --- | --- | --- | --- |
-| `openai` | OpenAI Responses API, with its web search tool | all | `gpt-6.1-sol` |
+| `openai` | OpenAI Responses API, with its web search tool | all | `gpt-6.2-sol` |
 | `anthropic` | Anthropic Messages API, with its web search tool | no web search, web search, provider default | `claude-sonnet-5-5` |
 | `google` | Gemini Interactions API, with Google Search | no web search, web search, forced web search, provider default | `gemini-3.8-flash` |
 | `perplexity` | Perplexity Sonar API (see [Perplexity](#perplexity)) | no web search, web search, forced web search, provider default | `sonar` |
@@ -28,8 +28,9 @@ Two engines can use the same provider with different models.
 | `mock` | Made-up answers for demos and tests, no network | all | `demo` |
 
 `llmention init` and `quick` write the starter models. They were current on the
-providers' model pages in October 2026. Providers release new models every few
-months, and you can change the id to any model your key can use.
+providers' model pages in October 2026, and OpenAI's in November 2026.
+Providers release new models every few months, and you can change the id to
+any model your key can use.
 
 For cheaper runs, llmention's price table also knows these smaller models:
 
@@ -43,8 +44,8 @@ so this only gets you close. [Modes](modes.md) explains what else differs.
 
 ## Which providers were checked with real requests
 
-On October 29, 2026, the starter models of OpenAI and Anthropic and
-Perplexity's `sonar` through OpenRouter answered real requests, with and
+On October 29, 2026, OpenAI's `gpt-6.1-sol`, Anthropic's `claude-sonnet-5-5`
+and Perplexity's `sonar` through OpenRouter answered real requests, with and
 without web search. Their citations, answers cut off at the token limit and
 errors for a wrong model id all came out as these pages describe.
 
@@ -52,6 +53,10 @@ On November 8, 2026, Gemini (`google/gemini-3.8-flash`) answered real
 requests through OpenRouter, and so did `openai/gpt-6.1-sol` and
 `anthropic/claude-sonnet-5.5` with web search. All three searched with their
 own provider's search there.
+
+OpenAI's starter model is `gpt-6.2-sol` since November 2026. It uses the same
+API and web search tool as `gpt-6.1-sol` and costs the same, but llmention has
+not sent it real requests yet.
 
 The `google` provider, which talks to Google's own API, has so far only been
 checked against a rejected key. The `perplexity` provider, which talks to
@@ -124,7 +129,7 @@ they find:
 engines:
   - id: chatgpt
     provider: openrouter
-    model: openai/gpt-6.1-sol
+    model: openai/gpt-6.2-sol
     key_env: OPENROUTER_API_KEY
   - id: claude
     provider: openrouter
@@ -255,7 +260,7 @@ features off for that engine:
 ```yaml
   - id: gateway
     provider: openai
-    model: gpt-6.1-sol
+    model: gpt-6.2-sol
     key_env: GATEWAY_KEY
     base_url: https://gateway.example.com/v1
     capabilities:

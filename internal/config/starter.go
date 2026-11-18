@@ -13,9 +13,10 @@ import (
 
 // StarterEngines are the engines `init` and `quick` write for each provider.
 // Model ids change every few months; these were current on the providers'
-// model pages in October 2026 and are meant to be edited.
+// model pages in October 2026, OpenAI's in November 2026, and are meant to
+// be edited.
 var StarterEngines = map[string]EngineConfig{
-	"openai":     {ID: "chatgpt", Provider: "openai", Model: "gpt-6.1-sol", KeyEnv: "OPENAI_API_KEY"},
+	"openai":     {ID: "chatgpt", Provider: "openai", Model: "gpt-6.2-sol", KeyEnv: "OPENAI_API_KEY"},
 	"anthropic":  {ID: "claude", Provider: "anthropic", Model: "claude-sonnet-5-5", KeyEnv: "ANTHROPIC_API_KEY"},
 	"google":     {ID: "gemini", Provider: "google", Model: "gemini-3.8-flash", KeyEnv: "GEMINI_API_KEY"},
 	"perplexity": {ID: "perplexity", Provider: "perplexity", Model: "sonar", KeyEnv: "PERPLEXITY_API_KEY"},
@@ -26,7 +27,7 @@ var StarterEngines = map[string]EngineConfig{
 // OpenRouter key. OpenRouter gives OpenAI, Anthropic and Gemini models their
 // own provider's web search, and Perplexity searches by itself.
 var OpenRouterStarterEngines = []EngineConfig{
-	{ID: "chatgpt", Provider: "openrouter", Model: "openai/gpt-6.1-sol", KeyEnv: "OPENROUTER_API_KEY"},
+	{ID: "chatgpt", Provider: "openrouter", Model: "openai/gpt-6.2-sol", KeyEnv: "OPENROUTER_API_KEY"},
 	{ID: "claude", Provider: "openrouter", Model: "anthropic/claude-sonnet-5.5", KeyEnv: "OPENROUTER_API_KEY"},
 	{ID: "gemini", Provider: "openrouter", Model: "google/gemini-3.8-flash", KeyEnv: "OPENROUTER_API_KEY"},
 	{ID: "perplexity", Provider: "openrouter", Model: "perplexity/sonar", KeyEnv: "OPENROUTER_API_KEY"},

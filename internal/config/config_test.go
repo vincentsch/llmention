@@ -31,7 +31,7 @@ competitors:
 engines:
   - id: chatgpt
     provider: openai
-    model: gpt-6.1-sol
+    model: gpt-6.2-sol
     key_env: OPENAI_API_KEY
     max_output_tokens: 900
     capabilities:
@@ -456,7 +456,7 @@ func TestStarterOpenRouterAsksTheFourAssistantsThroughOneKey(t *testing.T) {
 		}
 		got = append(got, e.ID+"="+e.Model)
 	}
-	want := "chatgpt=openai/gpt-6.1-sol claude=anthropic/claude-sonnet-5.5 gemini=google/gemini-3.8-flash perplexity=perplexity/sonar"
+	want := "chatgpt=openai/gpt-6.2-sol claude=anthropic/claude-sonnet-5.5 gemini=google/gemini-3.8-flash perplexity=perplexity/sonar"
 	if strings.Join(got, " ") != want {
 		t.Fatalf("engines = %v", got)
 	}

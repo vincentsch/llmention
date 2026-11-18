@@ -26,7 +26,7 @@ competitors:
 engines:
   - id: chatgpt
     provider: openai
-    model: gpt-6.1-sol
+    model: gpt-6.2-sol
     key_env: OPENAI_API_KEY
   - id: claude
     provider: anthropic
